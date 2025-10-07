@@ -23,12 +23,31 @@ class ConfigManager:
         self.load_config()
     
     def load_config(self):
+        # Define all default configuration options
+        default_config = {
+            'output_directory': os.path.join(os.getcwd(), 'logs'),
+            'syslog_ip': '127.0.0.1',
+            'syslog_port': '514',
+            'syslog_protocol': 'UDP'
+        }
+        
+        # 1. Load existing config or initialize defaults
         if os.path.exists(CONFIG_FILE):
             self.config.read(CONFIG_FILE)
+            if 'DEFAULT' not in self.config:
+                self.config['DEFAULT'] = {}
         else:
-            self.config['DEFAULT'] = {
-                'output_directory': os.path.join(os.getcwd(), 'logs')
-            }
+            self.config['DEFAULT'] = {}
+        
+        # 2. Check for and add any missing keys (migration/first run)
+        config_changed = False
+        for key, value in default_config.items():
+            if key not in self.config['DEFAULT']:
+                self.config['DEFAULT'][key] = value
+                config_changed = True
+        
+        # 3. Save if a key was missing or if the file didn't exist
+        if config_changed or not os.path.exists(CONFIG_FILE):
             self.save_config()
     
     def save_config(self):
@@ -40,6 +59,19 @@ class ConfigManager:
     
     def set_output_dir(self, directory):
         self.config['DEFAULT']['output_directory'] = directory
+        self.save_config()
+
+    def get_syslog_config(self):
+        return {
+            'ip': self.config.get('DEFAULT', 'syslog_ip'),
+            'port': self.config.get('DEFAULT', 'syslog_port'),
+            'protocol': self.config.get('DEFAULT', 'syslog_protocol')
+        }
+
+    def set_syslog_config(self, ip, port, protocol):
+        self.config['DEFAULT']['syslog_ip'] = ip
+        self.config['DEFAULT']['syslog_port'] = port
+        self.config['DEFAULT']['syslog_protocol'] = protocol
         self.save_config()
 
 config_manager = ConfigManager()
@@ -163,6 +195,14 @@ def ensure_output_directory(directory):
     except Exception as e:
         return False, f"Error: {str(e)}"
 
+def check_nc_availability():
+    """Check if 'nc' (netcat) command is available"""
+    try:
+        subprocess.run(['nc', '-h'], capture_output=True, check=True)
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return False
+
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -241,7 +281,7 @@ HTML_TEMPLATE = '''
             font-size: 1.1rem;
         }
 
-        select, input[type="text"] {
+        select, input[type="text"], input[type="number"] {
             width: 100%;
             padding: 0.75rem 1rem;
             background: rgba(255, 255, 255, 0.1);
@@ -252,13 +292,46 @@ HTML_TEMPLATE = '''
             transition: all 0.3s ease;
         }
 
-        select:focus, input[type="text"]:focus {
+        select:focus, input[type="text"]:focus, input[type="number"]:focus {
             outline: none;
             border-color: var(--lighter-purple);
             box-shadow: 0 0 20px rgba(199, 125, 255, 0.5);
         }
 
         select option { background: var(--dark-purple); }
+        
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            padding-top: 0.5rem;
+        }
+        
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 0;
+            color: var(--lightest-purple);
+            font-size: 1rem;
+        }
+        
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 0.5rem;
+            appearance: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--light-purple);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .radio-group input[type="radio"]:checked {
+            border-color: var(--lighter-purple);
+            background-color: var(--lighter-purple);
+            box-shadow: 0 0 10px rgba(199, 125, 255, 0.8);
+        }
 
         .button-group {
             display: flex;
@@ -348,8 +421,7 @@ HTML_TEMPLATE = '''
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.3);
-            /* Removed backdrop-filter: blur(5px); to keep background visible */
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
         .modal-content {
@@ -439,14 +511,56 @@ HTML_TEMPLATE = '''
                 </select>
             </div>
             
+            <h3 style="color: var(--lightest-purple); margin: 1rem 0;">Output Configuration</h3>
+
             <div class="form-group">
-                <label for="outputDir">Output Directory</label>
-                <input type="text" id="outputDir" value="{{ output_dir }}" placeholder="/path/to/output/directory">
+                <label for="outputTarget">Output Target</label>
+                <div class="radio-group" id="outputTarget">
+                    <label>
+                        <input type="radio" name="output_target" value="local" checked>
+                        Local File
+                    </label>
+                    <label>
+                        <input type="radio" name="output_target" value="syslog">
+                        Remote Syslog
+                    </label>
+                </div>
+            </div>
+
+            <div id="localFileConfig">
+                <div class="form-group">
+                    <label for="outputDir">Output Directory</label>
+                    <input type="text" id="outputDir" value="{{ output_dir }}" placeholder="/path/to/output/directory">
+                </div>
+            </div>
+
+            <div id="syslogConfig" style="display: none;">
+                <div class="form-group">
+                    <label for="syslogIP">Syslog IP Address</label>
+                    <input type="text" id="syslogIP" value="{{ syslog_ip }}" placeholder="e.g., 192.168.1.1">
+                </div>
+                <div class="form-group">
+                    <label for="syslogPort">Syslog Port</label>
+                    <input type="number" id="syslogPort" value="{{ syslog_port }}" placeholder="e.g., 514">
+                </div>
+                <div class="form-group">
+                    <label for="syslogProtocol">Syslog Protocol</label>
+                    <div class="radio-group" id="syslogProtocol">
+                        <label>
+                            <input type="radio" name="syslog_protocol" value="UDP" {{ 'checked' if syslog_protocol == 'UDP' else '' }}>
+                            UDP
+                        </label>
+                        <label>
+                            <input type="radio" name="syslog_protocol" value="TCP" {{ 'checked' if syslog_protocol == 'TCP' else '' }}>
+                            TCP
+                        </label>
+                    </div>
+                </div>
             </div>
             
             <div class="button-group">
                 <button class="btn-primary" onclick="executeScript()">Execute Script</button>
-                <button class="btn-secondary" onclick="updateOutputDir()">Update Output Directory</button>
+                <button class="btn-secondary" onclick="updateOutputConfig()">Save Configuration</button>
             </div>
         </div>
         
@@ -462,7 +576,6 @@ HTML_TEMPLATE = '''
         Crafted with <span class="heart">💜</span> by RoarinPenguin
     </footer>
     
-    <!-- Format Selection Modal -->
     <div id="formatModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">Log Format Detected</div>
@@ -477,15 +590,68 @@ HTML_TEMPLATE = '''
             </div>
         </div>
     </div>
+
+    <div id="ncWarningModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Warning: Netcat (nc) Not Found</div>
+            <div class="modal-body">
+                <p>The **Remote Syslog** option requires the `nc` (netcat) command to be installed and available in your system's PATH. Please install it to use this feature.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeWarningModal()">Acknowledge</button>
+            </div>
+        </div>
+    </div>
     
     <script>
         let currentScriptOutput = '';
         let currentScriptName = '';
+        let ncAvailable = {{ 'true' if nc_available else 'false' }};
         
         // Load scripts on page load
         window.onload = function() {
             loadScripts();
+            setupOutputTargetToggle();
+            checkNcWarning();
         };
+
+        function checkNcWarning() {
+            if (!ncAvailable) {
+                document.getElementById('ncWarningModal').style.display = 'block';
+            }
+        }
+
+        function closeWarningModal() {
+            document.getElementById('ncWarningModal').style.display = 'none';
+        }
+
+        function setupOutputTargetToggle() {
+            const radioButtons = document.querySelectorAll('input[name="output_target"]');
+            const localConfig = document.getElementById('localFileConfig');
+            const syslogConfig = document.getElementById('syslogConfig');
+            
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'local') {
+                        localConfig.style.display = 'block';
+                        syslogConfig.style.display = 'none';
+                    } else if (this.value === 'syslog') {
+                        localConfig.style.display = 'none';
+                        syslogConfig.style.display = 'block';
+                    }
+                });
+            });
+
+            // Initial state based on checked radio button (default to local)
+            const initialTarget = document.querySelector('input[name="output_target"]:checked')?.value || 'local';
+            if (initialTarget === 'local') {
+                localConfig.style.display = 'block';
+                syslogConfig.style.display = 'none';
+            } else {
+                localConfig.style.display = 'none';
+                syslogConfig.style.display = 'block';
+            }
+        }
         
         function loadScripts() {
             fetch('/api/scripts')
@@ -551,10 +717,18 @@ HTML_TEMPLATE = '''
         
         function processLogs(format) {
             closeModal();
-            showStatus('Processing logs as ' + format + ' format... <span class="loading"></span>', 'info');
-            
-            // Get the current output directory value from the input field
+            const outputTarget = document.querySelector('input[name="output_target"]:checked').value;
             const outputDir = document.getElementById('outputDir').value;
+            const syslogIP = document.getElementById('syslogIP').value;
+            const syslogPort = document.getElementById('syslogPort').value;
+            const syslogProtocol = document.querySelector('input[name="syslog_protocol"]:checked').value;
+            
+            if (outputTarget === 'syslog' && !ncAvailable) {
+                showStatus('Error: Netcat (nc) command is not available for Syslog output.', 'error');
+                return;
+            }
+
+            showStatus('Processing logs as ' + format + ' format to ' + outputTarget + '... <span class="loading"></span>', 'info');
             
             fetch('/api/process', {
                 method: 'POST',
@@ -563,7 +737,11 @@ HTML_TEMPLATE = '''
                     output: currentScriptOutput,
                     format: format,
                     script_name: currentScriptName,
-                    output_dir: outputDir  // Include the current directory value
+                    output_target: outputTarget,
+                    output_dir: outputDir,
+                    syslog_ip: syslogIP,
+                    syslog_port: syslogPort,
+                    syslog_protocol: syslogProtocol
                 })
             })
             .then(response => response.json())
@@ -577,23 +755,42 @@ HTML_TEMPLATE = '''
             .catch(error => showStatus('Error processing logs: ' + error, 'error'));
         }
         
-        function updateOutputDir() {
+        function updateOutputConfig() {
+            const outputTarget = document.querySelector('input[name="output_target"]:checked').value;
             const newDir = document.getElementById('outputDir').value;
+            const newSyslogIP = document.getElementById('syslogIP').value;
+            const newSyslogPort = document.getElementById('syslogPort').value;
+            const newSyslogProtocol = document.querySelector('input[name="syslog_protocol"]:checked').value;
+
+            if (outputTarget === 'local' && !newDir) {
+                showStatus('Error: Output directory cannot be empty', 'error');
+                return;
+            }
+
+            if (outputTarget === 'syslog' && (!newSyslogIP || !newSyslogPort)) {
+                showStatus('Error: Syslog IP and Port cannot be empty', 'error');
+                return;
+            }
             
-            fetch('/api/update-output-dir', {
+            fetch('/api/update-output-config', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({directory: newDir})
+                body: JSON.stringify({
+                    output_dir: newDir,
+                    syslog_ip: newSyslogIP,
+                    syslog_port: newSyslogPort,
+                    syslog_protocol: newSyslogProtocol
+                })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showStatus('Output directory updated successfully', 'success');
+                    showStatus(data.message, 'success');
                 } else {
                     showStatus('Error: ' + data.error, 'error');
                 }
             })
-            .catch(error => showStatus('Error updating directory: ' + error, 'error'));
+            .catch(error => showStatus('Error updating configuration: ' + error, 'error'));
         }
         
         function closeModal() {
@@ -608,8 +805,12 @@ HTML_TEMPLATE = '''
         // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('formatModal');
+            const ncWarningModal = document.getElementById('ncWarningModal');
             if (event.target == modal) {
                 closeModal();
+            }
+            if (event.target == ncWarningModal) {
+                closeWarningModal();
             }
         }
     </script>
@@ -620,7 +821,15 @@ HTML_TEMPLATE = '''
 @app.route('/')
 def index():
     """Render the main UI"""
-    return render_template_string(HTML_TEMPLATE, output_dir=config_manager.get_output_dir())
+    syslog_config = config_manager.get_syslog_config()
+    return render_template_string(
+        HTML_TEMPLATE, 
+        output_dir=config_manager.get_output_dir(),
+        syslog_ip=syslog_config['ip'],
+        syslog_port=syslog_config['port'],
+        syslog_protocol=syslog_config['protocol'],
+        nc_available=check_nc_availability()
+    )
 
 @app.route('/api/scripts')
 def api_scripts():
@@ -663,21 +872,49 @@ def api_execute():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+def send_to_syslog(logs, ip, port, protocol):
+    """Send cleaned logs to a remote syslog server using nc (netcat)"""
+    if not check_nc_availability():
+        return False, "Error: 'nc' (netcat) command is not available. Cannot send to syslog."
+
+    if protocol.upper() == 'TCP':
+        nc_command = ['nc', '-w', '3', ip, port]
+    elif protocol.upper() == 'UDP':
+        nc_command = ['nc', '-u', '-w', '3', ip, port]
+    else:
+        return False, f"Error: Unknown protocol '{protocol}'. Must be TCP or UDP."
+
+    try:
+        # Use subprocess.run with input to pipe the logs to nc
+        result = subprocess.run(
+            nc_command,
+            input=logs,
+            encoding='utf-8',
+            capture_output=True,
+            timeout=10  # Timeout for nc execution
+        )
+
+        if result.returncode == 0:
+            return True, f"Logs successfully sent to syslog at {ip}:{port} ({protocol})."
+        else:
+            error_message = result.stderr or f"nc command failed with exit code {result.returncode}."
+            return False, f"Syslog transmission failed: {error_message}"
+    except FileNotFoundError:
+        return False, "Error: 'nc' command is not available. Cannot send to syslog."
+    except subprocess.TimeoutExpired:
+        return False, f"Syslog transmission timed out to {ip}:{port}."
+    except Exception as e:
+        return False, f"Syslog transmission failed: {str(e)}"
+
+
 @app.route('/api/process', methods=['POST'])
 def api_process():
-    """Process logs according to selected format"""
+    """Process logs according to selected format and send to target"""
     data = request.json
     output = data.get('output', '')
     format_type = data.get('format', 'RAW')
     script_name = data.get('script_name', 'unknown')
-    
-    # Use the output directory from the request if provided, otherwise use config
-    output_dir = data.get('output_dir', config_manager.get_output_dir())
-    
-    # Check directory permissions
-    is_writable, message = ensure_output_directory(output_dir)
-    if not is_writable:
-        return jsonify({'success': False, 'error': message})
+    output_target = data.get('output_target', 'local')
     
     try:
         if format_type == 'JSON':
@@ -687,36 +924,77 @@ def api_process():
             cleaned_output = clean_raw_logs(output, script_name)
             filename = f"{script_name}-raw.log"
         
-        # Write to file
-        output_path = os.path.join(output_dir, filename)
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(cleaned_output)
-        
-        return jsonify({
-            'success': True,
-            'message': f'Logs processed and saved to {output_path}'
-        })
+        if output_target == 'local':
+            output_dir = data.get('output_dir', config_manager.get_output_dir())
+            
+            # Check directory permissions
+            is_writable, message = ensure_output_directory(output_dir)
+            if not is_writable:
+                return jsonify({'success': False, 'error': message})
+            
+            # Write to file
+            output_path = os.path.join(output_dir, filename)
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(cleaned_output)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Logs processed and saved to {output_path}'
+            })
+
+        elif output_target == 'syslog':
+            syslog_ip = data.get('syslog_ip')
+            syslog_port = data.get('syslog_port')
+            syslog_protocol = data.get('syslog_protocol')
+            
+            if not syslog_ip or not syslog_port or not syslog_protocol:
+                 return jsonify({'success': False, 'error': 'Syslog configuration is incomplete.'})
+
+            success, message = send_to_syslog(cleaned_output, syslog_ip, syslog_port, syslog_protocol)
+
+            return jsonify({'success': success, 'message': message} if success else {'success': False, 'error': message})
+            
+        else:
+            return jsonify({'success': False, 'error': f'Unknown output target: {output_target}'})
+
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
-@app.route('/api/update-output-dir', methods=['POST'])
-def api_update_output_dir():
-    """Update the output directory"""
+@app.route('/api/update-output-config', methods=['POST'])
+def api_update_output_config():
+    """Update the output directory and syslog configuration"""
     data = request.json
-    new_dir = data.get('directory', '')
+    new_dir = data.get('output_dir')
+    new_syslog_ip = data.get('syslog_ip')
+    new_syslog_port = data.get('syslog_port')
+    new_syslog_protocol = data.get('syslog_protocol')
     
-    if not new_dir:
-        return jsonify({'success': False, 'error': 'Directory path cannot be empty'})
+    messages = []
+    errors = []
+
+    # Update local output directory
+    if new_dir:
+        is_writable, message = ensure_output_directory(new_dir)
+        if is_writable:
+            config_manager.set_output_dir(new_dir)
+            messages.append('Output directory updated successfully.')
+        else:
+            errors.append(f'Output directory error: {message}')
     
-    # Check if directory is writable
-    is_writable, message = ensure_output_directory(new_dir)
-    if not is_writable:
-        return jsonify({'success': False, 'error': message})
+    # Update syslog configuration
+    if new_syslog_ip and new_syslog_port and new_syslog_protocol:
+        config_manager.set_syslog_config(new_syslog_ip, new_syslog_port, new_syslog_protocol)
+        messages.append('Syslog configuration updated successfully.')
     
-    # Save configuration
-    config_manager.set_output_dir(new_dir)
+    if errors:
+        return jsonify({'success': False, 'error': '; '.join(errors)})
     
-    return jsonify({'success': True, 'message': 'Output directory updated'})
+    if not messages:
+        # A successful no-op for when the user clicks 'Save' but hasn't changed anything relevant.
+        return jsonify({'success': True, 'message': 'Configuration settings saved.'})
+
+    return jsonify({'success': True, 'message': '; '.join(messages)})
+
 
 if __name__ == '__main__':
     # Ensure default output directory exists

@@ -1,0 +1,178 @@
+receivers:
+  # Filelog Receiver
+  filelog/meraki:
+    include: [/tmp/jarvislogs/meraki/*.log]
+    start_at: beginning
+    operators:
+    include_file_name: true
+    poll_interval: 1s
+    attributes:
+      dataSource.name: "meraki"
+      dataSource.vendor: "cisco"
+
+  filelog/f5:
+    include: [/tmp/jarvislogs/f5/*.log]
+    start_at: beginning
+    operators:
+    include_file_name: true
+    poll_interval: 1s
+    attributes:
+      dataSource.name: "f5"
+      dataSource.vendor: "f5"
+
+  filelog/fortigate:
+    include: [/tmp/jarvislogs/forti/*.log]
+    start_at: beginning
+    operators:
+    include_file_name: true
+    poll_interval: 1s
+    attributes:
+      dataSource.name: "fortigate"
+      dataSource.vendor: "fortigate"
+
+  filelog/netskope:
+    include: [/tmp/jarvislogs/netskope/*.log]
+    start_at: beginning
+    operators:
+    include_file_name: true
+    poll_interval: 1s
+    attributes:
+      dataSource.name: "netskope"
+      dataSource.vendor: "netskope"
+
+  filelog/palo:
+    include: [/tmp/jarvislogs/palo/*.log]
+    start_at: beginning
+    operators:
+    include_file_name: true
+    poll_interval: 1s
+    attributes:
+      dataSource.name: "paloalto"
+      dataSource.vendor: "paloalto"
+
+  filelog/mimecast:
+    include: [/tmp/jarvislogs/mimecast/*.log]
+    start_at: beginning
+    operators:
+    include_file_name: true
+    poll_interval: 1s
+    attributes:
+      dataSource.name: "mimecast"
+      dataSource.vendor: "mimecast"
+
+  filelog/zscaler:
+    include: [/tmp/jarvislogs/zscaler/*.log]
+    start_at: beginning
+    operators:
+    include_file_name: true
+    poll_interval: 1s
+    attributes:
+      dataSource.name: "zscaler"
+      dataSource.vendor: "zscaler"
+
+processors:
+  # Batches logs for efficient export
+  batch:
+    timeout: 10s
+    send_batch_size: 1000
+
+  # Enrich
+  attributes/add_metadata:
+    actions:
+      - key: dataSource.category
+        value: "security"
+        action: insert
+      - key: sourcetype
+        value: "Jarvis"
+        action: insert
+
+  attributes/add_metadata_meraki:
+    actions:
+      - key: parser
+        value: "meraki"
+        action: insert
+
+  attributes/add_metadata_f5:
+    actions:
+      - key: parser
+        value: "f5"
+        action: insert
+
+  attributes/add_metadata_fortigate:
+    actions:
+      - key: parser
+        value: "fortigate"
+        action: insert
+
+  attributes/add_metadata_netskope:
+    actions:
+      - key: parser
+        value: "netskope"
+        action: insert
+
+  attributes/add_metadata_palo:
+    actions:
+      - key: parser
+        value: "palo"
+        action: insert
+
+  attributes/add_metadata_mimecast:
+    actions:
+      - key: parser
+        value: "mimecast"
+        action: insert
+
+  attributes/add_metadata_zscaler:
+    actions:
+      - key: parser
+        value: "zscaler"
+        action: insert
+
+exporters:
+  dataset/logs:
+    dataset_url: "https://xdr.us1.sentinelone.net"
+    api_key: "1DnK0Y4eJFcfCulc6IvGIHOVBFMjSM6Nn0P81ZOlOWPipwGm1bJHBZbcXg1KyRh4y"
+    buffer:
+      max_lifetime: 5s
+      retry_shutdown_timeout: 30s
+    server_host:
+      use_hostname: true
+    logs:
+      export_resource_info_on_event: false
+
+service:
+  pipelines:
+    logs/filelog/meraki:
+      receivers: [filelog/meraki]
+      processors: [batch,attributes/add_metadata,attributes/add_metadata_meraki]
+      exporters: [dataset/logs]
+
+    logs/filelog/f5:
+      receivers: [filelog/f5]
+      processors: [batch,attributes/add_metadata,attributes/add_metadata_f5]
+      exporters: [dataset/logs]
+
+    logs/filelog/fortigate:
+      receivers: [filelog/fortigate]
+      processors: [batch,attributes/add_metadata,attributes/add_metadata_fortigate]
+      exporters: [dataset/logs]
+
+    logs/filelog/netskope:
+      receivers: [filelog/netskope]
+      processors: [batch,attributes/add_metadata,attributes/add_metadata_netskope]
+      exporters: [dataset/logs]
+
+    logs/filelog/palo:
+      receivers: [filelog/palo]
+      processors: [batch,attributes/add_metadata,attributes/add_metadata_palo]
+      exporters: [dataset/logs]
+
+    logs/filelog/mimecast:
+      receivers: [filelog/mimecast]
+      processors: [batch,attributes/add_metadata,attributes/add_metadata_mimecast]
+      exporters: [dataset/logs]
+
+    logs/filelog/zscaler:
+      receivers: [filelog/zscaler]
+      processors: [batch,attributes/add_metadata,attributes/add_metadata_zscaler]
+      exporters: [dataset/logs]

@@ -131,7 +131,7 @@ processors:
 exporters:
   dataset/logs:
     dataset_url: "https://xdr.us1.sentinelone.net"
-    api_key: "1DnK0Y4eJFcfCulc6IvGIHOVBFMjSM6Nn0P81ZOlOWPipwGm1bJHBZbcXg1KyRh4y"
+    api_key: "${OTEL_HEC_KEY}"
     buffer:
       max_lifetime: 5s
       retry_shutdown_timeout: 30s

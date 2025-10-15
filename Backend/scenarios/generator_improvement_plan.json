@@ -1,0 +1,1144 @@
+{
+  "critical_fixes": [
+    {
+      "generator": "aws_cloudtrail",
+      "category": "cloud_infrastructure",
+      "error": "No log function found (tried aws_cloudtrail_log)",
+      "fix_type": "MISSING_LOG_FUNCTION"
+    },
+    {
+      "generator": "aws_guardduty",
+      "category": "cloud_infrastructure",
+      "error": "No log function found (tried aws_guardduty_log)",
+      "fix_type": "MISSING_LOG_FUNCTION"
+    },
+    {
+      "generator": "aws_vpcflowlogs",
+      "category": "cloud_infrastructure",
+      "error": "No log function found (tried aws_vpcflowlogs_log)",
+      "fix_type": "MISSING_LOG_FUNCTION"
+    },
+    {
+      "generator": "crowdstrike_falcon",
+      "category": "endpoint_security",
+      "error": "No log function found (tried crowdstrike_falcon_log)",
+      "fix_type": "MISSING_LOG_FUNCTION"
+    },
+    {
+      "generator": "microsoft_azuread",
+      "category": "identity_access",
+      "error": "No log function found (tried microsoft_azuread_log)",
+      "fix_type": "MISSING_LOG_FUNCTION"
+    },
+    {
+      "generator": "cisco_asa",
+      "category": "network_security",
+      "error": "No log function found (tried cisco_asa_log)",
+      "fix_type": "MISSING_LOG_FUNCTION"
+    },
+    {
+      "generator": "cisco_umbrella",
+      "category": "network_security",
+      "error": "Unexpected error: No module named 'requests'\nTraceback (most recent call last):\n  File \"/Users/nathanial.smalley/projects/jarvis_coding/testing/comprehensive_generator_test.py\", line 97, in test_generator\n    spec.loader.exec_module(module)\n    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^\n  File \"<frozen importlib._bootstrap_external>\", line 1026, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_umbrella.py\", line 5, in <module>\n    import requests\nModuleNotFoundError: No module named 'requests'\n",
+      "fix_type": "MISSING_DEPENDENCY"
+    },
+    {
+      "generator": "fortinet_fortigate",
+      "category": "network_security",
+      "error": "No log function found (tried fortinet_fortigate_log)",
+      "fix_type": "MISSING_LOG_FUNCTION"
+    }
+  ],
+  "star_trek_needed": [
+    {
+      "generator": "aws_elasticloadbalancer",
+      "category": "cloud_infrastructure",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "aws_waf",
+      "category": "cloud_infrastructure",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_defender_email",
+      "category": "email_security",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "beyondtrust_privilegemgmt_windows",
+      "category": "identity_access",
+      "current_format": "Key-Value",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "hypr_auth",
+      "category": "identity_access",
+      "current_format": "JSON/Dict",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "microsoft_azure_ad",
+      "category": "identity_access",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_eventhub_azure_signin",
+      "category": "identity_access",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_eventhub_defender_email",
+      "category": "identity_access",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_eventhub_defender_emailforcloud",
+      "category": "identity_access",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "axway_sftp",
+      "category": "infrastructure",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "cohesity_backup",
+      "category": "infrastructure",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "harness_ci",
+      "category": "infrastructure",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "manageengine_adauditplus",
+      "category": "infrastructure",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "tailscale",
+      "category": "infrastructure",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "vmware_vcenter",
+      "category": "infrastructure",
+      "current_format": "Syslog/CEF",
+      "priority": "LOW"
+    },
+    {
+      "generator": "windows_dhcp",
+      "category": "infrastructure",
+      "current_format": "Plain Text",
+      "priority": "LOW"
+    },
+    {
+      "generator": "zscaler",
+      "category": "infrastructure",
+      "current_format": "JSON String",
+      "priority": "LOW"
+    },
+    {
+      "generator": "apache_http",
+      "category": "network_security",
+      "current_format": "Plain Text",
+      "priority": "LOW"
+    },
+    {
+      "generator": "armis",
+      "category": "network_security",
+      "current_format": "Syslog/CEF",
+      "priority": "LOW"
+    },
+    {
+      "generator": "aruba_clearpass",
+      "category": "network_security",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "checkpoint",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "cisco_firewall_threat_defense",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_ironport",
+      "category": "network_security",
+      "current_format": "Key-Value",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_meraki_flow",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "corelight_conn",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "corelight_http",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "corelight_ssl",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "corelight_tunnel",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "extrahop",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "f5_vpn",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "forcepoint_firewall",
+      "category": "network_security",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "fortimanager",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "infoblox_ddi",
+      "category": "network_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    },
+    {
+      "generator": "paloalto_firewall",
+      "category": "network_security",
+      "current_format": "Plain Text",
+      "priority": "LOW"
+    },
+    {
+      "generator": "vectra_ai",
+      "category": "network_security",
+      "current_format": "Syslog/CEF",
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_cdn",
+      "category": "web_security",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_dns",
+      "category": "web_security",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_general",
+      "category": "web_security",
+      "current_format": "Key-Value",
+      "priority": "LOW"
+    },
+    {
+      "generator": "zscaler_private_access",
+      "category": "web_security",
+      "current_format": "JSON/Dict",
+      "priority": "LOW"
+    }
+  ],
+  "timestamp_updates": [
+    {
+      "generator": "aws_route53",
+      "category": "cloud_infrastructure",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "aws_vpc_dns",
+      "category": "cloud_infrastructure",
+      "current_timestamp": "2025-08-25 12:34:09+00:00",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "google_cloud_dns",
+      "category": "cloud_infrastructure",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "google_workspace",
+      "category": "cloud_infrastructure",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "abnormal_security",
+      "category": "email_security",
+      "current_timestamp": "2025-08-25T07:37:09.782243+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "mimecast",
+      "category": "email_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "proofpoint",
+      "category": "email_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "jamf_protect",
+      "category": "endpoint_security",
+      "current_timestamp": null,
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "linux_auth",
+      "category": "endpoint_security",
+      "current_timestamp": "2025-08-25T16:15:09Z",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "microsoft_windows_eventlog",
+      "category": "endpoint_security",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "sentinelone_endpoint",
+      "category": "endpoint_security",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "sentinelone_identity",
+      "category": "endpoint_security",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "beyondtrust_passwordsafe",
+      "category": "identity_access",
+      "current_timestamp": null,
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "cyberark_conjur",
+      "category": "identity_access",
+      "current_timestamp": "2025-08-25T17:06:09Z",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "cyberark_pas",
+      "category": "identity_access",
+      "current_timestamp": null,
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "hashicorp_vault",
+      "category": "identity_access",
+      "current_timestamp": null,
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "microsoft_365_mgmt_api",
+      "category": "identity_access",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_azure_ad_signin",
+      "category": "identity_access",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "okta_authentication",
+      "category": "identity_access",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "pingfederate",
+      "category": "identity_access",
+      "current_timestamp": "2025-08-25T13:46:09Z",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "pingone_mfa",
+      "category": "identity_access",
+      "current_timestamp": "2025-08-25T17:48:09.798744Z",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "pingprotect",
+      "category": "identity_access",
+      "current_timestamp": "2025-08-25T17:23:09.799002Z",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "rsa_adaptive",
+      "category": "identity_access",
+      "current_timestamp": "2025-08-25T17:34:09.799124Z",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "buildkite",
+      "category": "infrastructure",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "github_audit",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-25T02:22:09Z",
+      "priority": "LOW"
+    },
+    {
+      "generator": "iis_w3c",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-25T00:36:09Z",
+      "priority": "LOW"
+    },
+    {
+      "generator": "isc_dhcp",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-25T17:26:05Z",
+      "priority": "LOW"
+    },
+    {
+      "generator": "manageengine_general",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-25T17:15:09.800860+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "sap",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-24T19:32:09.801086+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "securelink",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-25T13:31:09.801294+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "teleport",
+      "category": "infrastructure",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "ubiquiti_unifi",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-25 10:55:09+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "veeam_backup",
+      "category": "infrastructure",
+      "current_timestamp": "2025-08-25T10:41:09.802195Z",
+      "priority": "LOW"
+    },
+    {
+      "generator": "wiz_cloud",
+      "category": "infrastructure",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "cisco_ios",
+      "category": "network_security",
+      "current_timestamp": "2025-08-25T07:36:09.805486+00:00",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_isa3000",
+      "category": "network_security",
+      "current_timestamp": "2025-08-25T05:37:09.805783+00:00",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_ise",
+      "category": "network_security",
+      "current_timestamp": null,
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_networks",
+      "category": "network_security",
+      "current_timestamp": "2025-08-25T05:38:09.806660+00:00",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "darktrace",
+      "category": "network_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "extreme_networks",
+      "category": "network_security",
+      "current_timestamp": "2025-08-25T13:53:09.811786+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "f5_networks",
+      "category": "network_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "juniper_networks",
+      "category": "network_security",
+      "current_timestamp": "2025-08-25T15:36:09.813403+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "manch_siem",
+      "category": "network_security",
+      "current_timestamp": "2025-08-25T01:08:09.813623+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "paloalto_prismasase",
+      "category": "network_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_sitedefender",
+      "category": "web_security",
+      "current_timestamp": "2025-08-25T18:06:09.815765Z",
+      "priority": "LOW"
+    },
+    {
+      "generator": "cloudflare_general",
+      "category": "web_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "cloudflare_waf",
+      "category": "web_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "imperva_sonar",
+      "category": "web_security",
+      "current_timestamp": "2025-08-25T17:57:09.816524Z",
+      "priority": "LOW"
+    },
+    {
+      "generator": "imperva_waf",
+      "category": "web_security",
+      "current_timestamp": "2025-08-24T22:38:09.816809+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "incapsula",
+      "category": "web_security",
+      "current_timestamp": "2025-08-25T08:02:09.816998+00:00",
+      "priority": "LOW"
+    },
+    {
+      "generator": "netskope",
+      "category": "web_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    },
+    {
+      "generator": "zscaler_dns_firewall",
+      "category": "web_security",
+      "current_timestamp": "2025-08-25T04:57:09Z",
+      "priority": "LOW"
+    },
+    {
+      "generator": "zscaler_firewall",
+      "category": "web_security",
+      "current_timestamp": null,
+      "priority": "LOW"
+    }
+  ],
+  "override_support": [
+    {
+      "generator": "aws_cloudtrail",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "aws_elasticloadbalancer",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "aws_guardduty",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "aws_vpc_dns",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "aws_vpcflowlogs",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "aws_waf",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "google_cloud_dns",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "google_workspace",
+      "category": "cloud_infrastructure",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "abnormal_security",
+      "category": "email_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "crowdstrike_falcon",
+      "category": "endpoint_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "jamf_protect",
+      "category": "endpoint_security",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "linux_auth",
+      "category": "endpoint_security",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "microsoft_windows_eventlog",
+      "category": "endpoint_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "sentinelone_endpoint",
+      "category": "endpoint_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "sentinelone_identity",
+      "category": "endpoint_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cyberark_conjur",
+      "category": "identity_access",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "hypr_auth",
+      "category": "identity_access",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "microsoft_azure_ad",
+      "category": "identity_access",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_azuread",
+      "category": "identity_access",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_eventhub_azure_signin",
+      "category": "identity_access",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_eventhub_defender_email",
+      "category": "identity_access",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "microsoft_eventhub_defender_emailforcloud",
+      "category": "identity_access",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "okta_authentication",
+      "category": "identity_access",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "pingfederate",
+      "category": "identity_access",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "pingone_mfa",
+      "category": "identity_access",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "pingprotect",
+      "category": "identity_access",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "rsa_adaptive",
+      "category": "identity_access",
+      "priority": "MEDIUM"
+    },
+    {
+      "generator": "axway_sftp",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "buildkite",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "cohesity_backup",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "github_audit",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "harness_ci",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "iis_w3c",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "isc_bind",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "isc_dhcp",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "manageengine_adauditplus",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "manageengine_general",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "sap",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "securelink",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "teleport",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "ubiquiti_unifi",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "veeam_backup",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "wiz_cloud",
+      "category": "infrastructure",
+      "priority": "LOW"
+    },
+    {
+      "generator": "cisco_asa",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_duo",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_firewall_threat_defense",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_ios",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_ironport",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_isa3000",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_ise",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_meraki",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_meraki_flow",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_networks",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "cisco_umbrella",
+      "category": "network_security",
+      "priority": "HIGH"
+    },
+    {
+      "generator": "extreme_networks",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "f5_networks",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "f5_vpn",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "fortimanager",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "fortinet_fortigate",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "infoblox_ddi",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "juniper_networks",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "manch_siem",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "paloalto_prismasase",
+      "category": "network_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_cdn",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_dns",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_general",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "akamai_sitedefender",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "cloudflare_general",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "imperva_sonar",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "imperva_waf",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "incapsula",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "zscaler_dns_firewall",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "zscaler_firewall",
+      "category": "web_security",
+      "priority": "LOW"
+    },
+    {
+      "generator": "zscaler_private_access",
+      "category": "web_security",
+      "priority": "LOW"
+    }
+  ],
+  "parser_missing": [
+    {
+      "generator": "aws_cloudtrail",
+      "category": "cloud_infrastructure",
+      "format": null
+    },
+    {
+      "generator": "aws_guardduty",
+      "category": "cloud_infrastructure",
+      "format": null
+    },
+    {
+      "generator": "aws_vpcflowlogs",
+      "category": "cloud_infrastructure",
+      "format": null
+    },
+    {
+      "generator": "microsoft_defender_email",
+      "category": "email_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "mimecast",
+      "category": "email_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "proofpoint",
+      "category": "email_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "crowdstrike_falcon",
+      "category": "endpoint_security",
+      "format": null
+    },
+    {
+      "generator": "sentinelone_endpoint",
+      "category": "endpoint_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "sentinelone_identity",
+      "category": "endpoint_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "beyondtrust_privilegemgmt_windows",
+      "category": "identity_access",
+      "format": "Key-Value"
+    },
+    {
+      "generator": "hashicorp_vault",
+      "category": "identity_access",
+      "format": "JSON String"
+    },
+    {
+      "generator": "microsoft_azure_ad_signin",
+      "category": "identity_access",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "microsoft_azuread",
+      "category": "identity_access",
+      "format": null
+    },
+    {
+      "generator": "okta_authentication",
+      "category": "identity_access",
+      "format": "JSON String"
+    },
+    {
+      "generator": "buildkite",
+      "category": "infrastructure",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "tailscale",
+      "category": "infrastructure",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "zscaler",
+      "category": "infrastructure",
+      "format": "JSON String"
+    },
+    {
+      "generator": "armis",
+      "category": "network_security",
+      "format": "Syslog/CEF"
+    },
+    {
+      "generator": "checkpoint",
+      "category": "network_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "cisco_asa",
+      "category": "network_security",
+      "format": null
+    },
+    {
+      "generator": "cisco_umbrella",
+      "category": "network_security",
+      "format": null
+    },
+    {
+      "generator": "darktrace",
+      "category": "network_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "extrahop",
+      "category": "network_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "forcepoint_firewall",
+      "category": "network_security",
+      "format": "Key-Value"
+    },
+    {
+      "generator": "fortimanager",
+      "category": "network_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "fortinet_fortigate",
+      "category": "network_security",
+      "format": null
+    },
+    {
+      "generator": "infoblox_ddi",
+      "category": "network_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "paloalto_firewall",
+      "category": "network_security",
+      "format": "Plain Text"
+    },
+    {
+      "generator": "incapsula",
+      "category": "web_security",
+      "format": "JSON/Dict"
+    },
+    {
+      "generator": "netskope",
+      "category": "web_security",
+      "format": "JSON String"
+    },
+    {
+      "generator": "zscaler_private_access",
+      "category": "web_security",
+      "format": "JSON/Dict"
+    }
+  ],
+  "summary": {
+    "critical_fixes_needed": 8,
+    "star_trek_needed": 39,
+    "timestamp_updates_needed": 53,
+    "override_support_needed": 74,
+    "parsers_missing": 31
+  }
+}

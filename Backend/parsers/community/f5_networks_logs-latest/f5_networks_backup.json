@@ -1,0 +1,126 @@
+{
+  "attributes": {
+    "dataSource.vendor": "F5",
+    "dataSource.name": "F5 Networks",
+    "dataSource.category": "security",
+    "dataSource.technology": "load_balancer",
+    "source": "f5_networks"
+  },
+  
+  "formats": [
+    {
+      "id": "f5_networks_kvp",
+      "format": "$unmapped.{parse=kvp, kvpDelimiter=\"=\", fieldDelimiter=\" \", kvpPrefix=\"\", escape=\"\\\\\"}$",
+      "attributes": {
+        "dataSource.app": "F5 BIG-IP Security",
+        "class_uid": 4001,
+        "class_name": "Network Activity",
+        "category_uid": 4,
+        "category_name": "Network Activity",
+        "type_uid": 400101,
+        "activity_id": 6,
+        "activity_name": "Traffic",
+        "severity_id": 3
+      },
+      "rewrites": [
+        {
+          "input": "unmapped.hostname",
+          "output": "device.hostname",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.deviceIp",
+          "output": "device.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.clientIp",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.serverIp",
+          "output": "dst_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.clientPort",
+          "output": "src_endpoint.port",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.serverPort",
+          "output": "dst_endpoint.port",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.module",
+          "output": "metadata.product.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.eventType",
+          "output": "type_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.virtualServer",
+          "output": "dst_endpoint.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.pool",
+          "output": "resource.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.protocol",
+          "output": "connection_info.protocol_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.severity",
+          "output": "severity_id",
+          "match": "(?i)(CRITICAL)",
+          "replace": "5"
+        },
+        {
+          "input": "unmapped.severity",
+          "output": "severity_id",
+          "match": "(?i)(ERROR|WARNING)",
+          "replace": "3"
+        },
+        {
+          "input": "unmapped.severity",
+          "output": "severity_id",
+          "match": "(?i)(INFO)",
+          "replace": "1"
+        },
+        {
+          "input": "unmapped.eventType",
+          "output": "status_id",
+          "match": "(?i)(UP|SUCCESS|ESTABLISHED|ACCEPTED)",
+          "replace": "1"
+        },
+        {
+          "input": "unmapped.eventType",
+          "output": "status_id",
+          "match": "(?i)(DOWN|FAILURE|BLOCKED|DENIED|DETECTED|EXCEEDED)",
+          "replace": "2"
+        }
+      ],
+      "halt": true
+    }
+  ]
+}

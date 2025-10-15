@@ -1,0 +1,28 @@
+# Exclude AI assistant/local agent configs
+.claude/
+.codex/
+.anthropic/
+.openai/
+
+# Local secrets and env
+.env
+.env.*
+*.local.json
+
+# Python build/test artifacts
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+
+# Editor/OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Logs and scratch
+logs/
+tmp/

@@ -1,0 +1,914 @@
+[
+  {
+    "error": "Parser marketplace-fortinetfortigate-latest not found"
+  },
+  {
+    "error": "Parser marketplace-zscalerinternetaccess-latest not found"
+  },
+  {
+    "error": "Parser marketplace-awscloudtrail-latest not found"
+  },
+  {
+    "error": "Parser marketplace-awsvpcflowlogs-latest not found"
+  },
+  {
+    "error": "Parser marketplace-awsguardduty-latest not found"
+  },
+  {
+    "generator": "microsoft_azuread",
+    "parser": "microsoft_azure_ad_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "okta_authentication",
+    "parser": "okta_ocsf_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_asa",
+    "parser": "cisco_firewall-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_umbrella",
+    "parser": "cisco_umbrella-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_meraki",
+    "parser": "cisco_meraki-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "crowdstrike_falcon",
+    "parser": "crowdstrike_endpoint-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cyberark_pas",
+    "parser": "cyberark_pas_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "darktrace",
+    "parser": "darktrace_darktrace_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "proofpoint",
+    "parser": "proofpoint_proofpoint_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_365_mgmt_api",
+    "parser": "microsoft_365_mgmt_api_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "netskope",
+    "parser": "netskope_netskope_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "mimecast",
+    "parser": "mimecast_mimecast_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_azure_ad_signin",
+    "parser": "microsoft_eventhub_azure_signin_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_defender_email",
+    "parser": "microsoft_eventhub_defender_email_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "beyondtrust_passwordsafe",
+    "parser": "beyondtrust_passwordsafe_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "hashicorp_vault",
+    "parser": "hashicorp_hcp_vault_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "corelight_conn",
+    "parser": "corelight_conn_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "error": "Parser marketplace-corelight-http-latest not found"
+  },
+  {
+    "error": "Parser marketplace-corelight-ssl-latest not found"
+  },
+  {
+    "error": "Parser marketplace-corelight-tunnel-latest not found"
+  },
+  {
+    "generator": "vectra_ai",
+    "parser": "vectra_ai_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "tailscale",
+    "parser": "tailscale_tailscale_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "extrahop",
+    "parser": "extrahop_extrahop_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "armis",
+    "parser": "armis_armis_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "error": "Parser singularityidentity_logs-latest not found"
+  },
+  {
+    "generator": "sentinelone_identity",
+    "parser": "singularityidentity_singularityidentity_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "apache_http",
+    "parser": "apache_http_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "abnormal_security",
+    "parser": "abnormal_security_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "buildkite",
+    "parser": "buildkite_ci_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "teleport",
+    "parser": "teleport_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_ise",
+    "parser": "cisco_ise_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "google_workspace",
+    "parser": "google_workspace_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "aws_vpc_dns",
+    "parser": "aws_vpc_dns_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_networks",
+    "parser": "cisco_networks_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cloudflare_general",
+    "parser": "cloudflare_general_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cloudflare_waf",
+    "parser": "cloudflare_waf_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "extreme_networks",
+    "parser": "extreme_networks_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "f5_networks",
+    "parser": "f5_networks_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "google_cloud_dns",
+    "parser": "google_cloud_dns_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "imperva_waf",
+    "parser": "imperva_waf_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "juniper_networks",
+    "parser": "juniper_networks_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "ubiquiti_unifi",
+    "parser": "ubiquiti_unifi_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "zscaler_firewall",
+    "parser": "zscaler_firewall_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_fmc",
+    "parser": "cisco_fmc_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_ios",
+    "parser": "cisco_ios_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "incapsula",
+    "parser": "incapsula_incapsula_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "manageengine_general",
+    "parser": "manageengine_general_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "manch_siem",
+    "parser": "manch_siem_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_windows_eventlog",
+    "parser": "microsoft_windows_eventlog-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "error": "Parser marketplace-paloaltonetworksprismaaccess-latest not found"
+  },
+  {
+    "generator": "sap",
+    "parser": "sap_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "securelink",
+    "parser": "securelink_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "aws_waf",
+    "parser": "aws_waf-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "aws_route53",
+    "parser": "aws_route53-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_ironport",
+    "parser": "cisco_ironport-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cyberark_conjur",
+    "parser": "cyberark_conjur-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "iis_w3c",
+    "parser": "iis_w3c-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "linux_auth",
+    "parser": "linux_auth-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_365_collaboration",
+    "parser": "microsoft_365_collaboration-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_365_defender",
+    "parser": "microsoft_365_defender-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "pingfederate",
+    "parser": "pingfederate-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "zscaler_dns_firewall",
+    "parser": "zscaler_dns_firewall-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "akamai_cdn",
+    "parser": "akamai_cdn-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "akamai_dns",
+    "parser": "akamai_dns-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "akamai_general",
+    "parser": "akamai_general-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "akamai_sitedefender",
+    "parser": "akamai_sitedefender-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "axway_sftp",
+    "parser": "axway_sftp-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_duo",
+    "parser": "cisco_duo-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cohesity_backup",
+    "parser": "cohesity_backup-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "f5_vpn",
+    "parser": "f5_vpn-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "github_audit",
+    "parser": "github_audit-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "harness_ci",
+    "parser": "harness_ci-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "hypr_auth",
+    "parser": "hypr_auth-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "imperva_sonar",
+    "parser": "imperva_sonar-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "isc_bind",
+    "parser": "isc_bind-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "isc_dhcp",
+    "parser": "isc_dhcp-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "jamf_protect",
+    "parser": "jamf_protect-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "pingone_mfa",
+    "parser": "pingone_mfa-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "pingprotect",
+    "parser": "pingprotect-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "rsa_adaptive",
+    "parser": "rsa_adaptive-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "veeam_backup",
+    "parser": "veeam_backup-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "wiz_cloud",
+    "parser": "wiz_cloud-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "error": "Parser marketplace-awselasticloadbalancer-latest not found"
+  },
+  {
+    "generator": "beyondtrust_privilegemgmt_windows",
+    "parser": "beyondtrust_privilegemgmtwindows_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_firewall_threat_defense",
+    "parser": "cisco_firewall_threat_defense-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "cisco_meraki_flow",
+    "parser": "cisco_meraki_flow_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "manageengine_adauditplus",
+    "parser": "manageengine_adauditplus_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_azure_ad",
+    "parser": "microsoft_azure_ad_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_eventhub_azure_signin",
+    "parser": "microsoft_eventhub_azure_signin_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_eventhub_defender_email",
+    "parser": "microsoft_eventhub_defender_email_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "microsoft_eventhub_defender_emailforcloud",
+    "parser": "microsoft_eventhub_defender_emailforcloud_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "error": "Parser marketplace-checkpointfirewall-latest not found"
+  },
+  {
+    "error": "Parser marketplace-fortinetfortimanager-latest not found"
+  },
+  {
+    "error": "Parser marketplace-infobloxddi-latest not found"
+  },
+  {
+    "generator": "paloalto_firewall",
+    "parser": "paloalto_paloalto_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  },
+  {
+    "generator": "zscaler_private_access",
+    "parser": "zscaler_firewall_logs-latest",
+    "generator_format": "unknown",
+    "parser_expects": "unknown",
+    "format_match": true,
+    "generator_fields": 0,
+    "parser_can_extract": 0,
+    "extraction_potential": 0
+  }
+]

@@ -1,0 +1,243 @@
+{
+  "attributes": {
+    "dataSource.vendor": "SentinelOne",
+    "dataSource.name": "SentinelOne Ranger AD",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "SentinelOne",
+    "metadata.product.name": "SentinelOne Ranger AD",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.time",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 3002,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Authentication",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Identity & Access Management",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.time",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event_id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event_type",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.activity",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.user_name",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.user_sid",
+              "to": "user.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.domain",
+              "to": "user.domain"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.source_ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.computer_name",
+              "to": "device.hostname"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.computer_fqdn",
+              "to": "device.fqdn"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.logon_type",
+              "to": "auth_protocol"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.session_id",
+              "to": "session.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.process_name",
+              "to": "process.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.process_id",
+              "to": "process.pid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.target_user_name",
+              "to": "dst_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.target_domain",
+              "to": "dst_endpoint.domain"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.privilege_list",
+              "to": "metadata.extensions.privileges"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.status",
+              "to": "status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.failure_reason",
+              "to": "status_detail"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.status = 'Success'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.status = 'Failure'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.status = 'Success'"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "unmapped.status = 'Failure'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.status = 'Success'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.status = 'Failure'"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "device.hostname",
+        "type": "Hostname"
+      },
+      {
+        "name": "user.uid",
+        "type": "User"
+      },
+      {
+        "name": "session.uid",
+        "type": "Other"
+      }
+    ]
+  }
+}

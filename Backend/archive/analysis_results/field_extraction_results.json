@@ -1,0 +1,279 @@
+[
+  {
+    "generator": "aws_guardduty",
+    "format": "dict/json",
+    "generator_fields": 36,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Parser not found",
+    "sample_keys": [
+      "schemaVersion",
+      "accountId",
+      "region",
+      "partition",
+      "id"
+    ]
+  },
+  {
+    "generator": "aws_cloudtrail",
+    "format": "dict/json",
+    "generator_fields": 53,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Parser not found",
+    "sample_keys": [
+      "eventCategory",
+      "eventName",
+      "eventSource",
+      "eventTime",
+      "eventVersion"
+    ]
+  },
+  {
+    "generator": "aws_waf",
+    "format": "dict/json",
+    "generator_fields": 19,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f No parser fields",
+    "sample_keys": [
+      "timestamp",
+      "formatVersion",
+      "webaclId",
+      "ruleGroupId",
+      "terminatingRuleType"
+    ]
+  },
+  {
+    "generator": "aws_vpcflowlogs",
+    "format": "syslog/raw",
+    "generator_fields": 2,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Parser not found",
+    "sample_keys": []
+  },
+  {
+    "generator": "microsoft_365_defender",
+    "format": "dict/json",
+    "generator_fields": 13,
+    "parser_fields": 2,
+    "status": "\ud83d\udd34 Poor match (15%)",
+    "sample_keys": [
+      "Timestamp",
+      "DeviceName",
+      "DeviceId",
+      "AccountName",
+      "AccountDomain"
+    ]
+  },
+  {
+    "generator": "microsoft_azuread",
+    "format": "dict/json",
+    "generator_fields": 18,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": [
+      "activityDateTime",
+      "correlationId",
+      "id",
+      "initiatedBy",
+      "targetResources"
+    ]
+  },
+  {
+    "generator": "okta_authentication",
+    "format": "json_string",
+    "generator_fields": 39,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": [
+      "uuid",
+      "published",
+      "eventType",
+      "version",
+      "severity"
+    ]
+  },
+  {
+    "generator": "cisco_fmc",
+    "format": "dict/json",
+    "generator_fields": 37,
+    "parser_fields": 2,
+    "status": "\ud83d\udd34 Poor match (5%)",
+    "sample_keys": [
+      "timestamp",
+      "event_id",
+      "event_type",
+      "event_subtype",
+      "severity"
+    ]
+  },
+  {
+    "generator": "cisco_asa",
+    "format": "syslog/raw",
+    "generator_fields": 9,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": []
+  },
+  {
+    "generator": "cisco_duo",
+    "format": "dict/json",
+    "generator_fields": 39,
+    "parser_fields": 2,
+    "status": "\ud83d\udd34 Poor match (5%)",
+    "sample_keys": [
+      "timestamp",
+      "time",
+      "class_uid",
+      "class_name",
+      "category_uid"
+    ]
+  },
+  {
+    "generator": "paloalto_firewall",
+    "format": "syslog/raw",
+    "generator_fields": 47,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f No parser fields",
+    "sample_keys": []
+  },
+  {
+    "generator": "fortinet_fortigate",
+    "format": "syslog/raw",
+    "generator_fields": 38,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Parser not found",
+    "sample_keys": []
+  },
+  {
+    "generator": "crowdstrike_falcon",
+    "format": "syslog/raw",
+    "generator_fields": 41,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": []
+  },
+  {
+    "generator": "sentinelone_endpoint",
+    "format": "dict/json",
+    "generator_fields": 93,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Parser not found",
+    "sample_keys": [
+      "event.id",
+      "event.time",
+      "event.category",
+      "event.type",
+      "meta.event.name"
+    ]
+  },
+  {
+    "generator": "proofpoint",
+    "format": "dict/json",
+    "generator_fields": 43,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": [
+      "GUID",
+      "QID",
+      "id",
+      "messageID",
+      "messageTime"
+    ]
+  },
+  {
+    "generator": "mimecast",
+    "format": "dict/json",
+    "generator_fields": 12,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": [
+      "identifier",
+      "mimecastEvent"
+    ]
+  },
+  {
+    "generator": "cloudflare_waf",
+    "format": "syslog/raw",
+    "generator_fields": 10,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting value: lin",
+    "sample_keys": []
+  },
+  {
+    "generator": "zscaler",
+    "format": "json_string",
+    "generator_fields": 33,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Parser not found",
+    "sample_keys": [
+      "datetime",
+      "protocol",
+      "action",
+      "requestmethod",
+      "urlsupercategory"
+    ]
+  },
+  {
+    "generator": "netskope",
+    "format": "json_string",
+    "generator_fields": 65,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": [
+      "_id",
+      "_event_id",
+      "_category_id",
+      "_category_tags",
+      "_correlation_id"
+    ]
+  },
+  {
+    "generator": "cyberark_pas",
+    "format": "json_string",
+    "generator_fields": 33,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting property n",
+    "sample_keys": [
+      "policyName",
+      "policyCategory",
+      "eventType",
+      "sourceType",
+      "sourceName"
+    ]
+  },
+  {
+    "generator": "hashicorp_vault",
+    "format": "json_string",
+    "generator_fields": 34,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting value: lin",
+    "sample_keys": [
+      "time",
+      "type",
+      "auth",
+      "request",
+      "response"
+    ]
+  },
+  {
+    "generator": "jamf_protect",
+    "format": "syslog/raw",
+    "generator_fields": 13,
+    "parser_fields": 0,
+    "status": "\u26a0\ufe0f Parser error: Expecting ',' delimi",
+    "sample_keys": []
+  },
+  {
+    "generator": "linux_auth",
+    "format": "dict/json",
+    "generator_fields": 13,
+    "parser_fields": 2,
+    "status": "\ud83d\udd34 Poor match (15%)",
+    "sample_keys": [
+      "timestamp",
+      "hostname",
+      "facility",
+      "severity",
+      "process_name"
+    ]
+  }
+]

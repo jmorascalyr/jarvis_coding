@@ -1,0 +1,9 @@
+name: "AWS CloudTrail"
+slug: "aws_cloudtrail"
+description: "Parser for AWS CloudTrail audit logs"
+productTags: ["aws", "audit", "api", "cloudtrail", "cloud"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

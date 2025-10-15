@@ -1,0 +1,1572 @@
+{
+  "working": [
+    {
+      "product": "fortinet_fortigate",
+      "sourcetype": "marketplace-fortinetfortigate-latest",
+      "details": {
+        "product": "fortinet_fortigate",
+        "sourcetype": "marketplace-fortinetfortigate-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "marketplace_remote",
+        "expected_json": false
+      }
+    },
+    {
+      "product": "zscaler",
+      "sourcetype": "marketplace-zscalerinternetaccess-latest",
+      "details": {
+        "product": "zscaler",
+        "sourcetype": "marketplace-zscalerinternetaccess-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "aws_cloudtrail",
+      "sourcetype": "marketplace-awscloudtrail-latest",
+      "details": {
+        "product": "aws_cloudtrail",
+        "sourcetype": "marketplace-awscloudtrail-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "aws_vpcflowlogs",
+      "sourcetype": "marketplace-awsvpcflowlogs-latest",
+      "details": {
+        "product": "aws_vpcflowlogs",
+        "sourcetype": "marketplace-awsvpcflowlogs-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "marketplace_remote",
+        "expected_json": false
+      }
+    },
+    {
+      "product": "aws_guardduty",
+      "sourcetype": "marketplace-awsguardduty-latest",
+      "details": {
+        "product": "aws_guardduty",
+        "sourcetype": "marketplace-awsguardduty-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": false
+      }
+    },
+    {
+      "product": "okta_authentication",
+      "sourcetype": "okta_ocsf_logs-latest",
+      "details": {
+        "product": "okta_authentication",
+        "sourcetype": "okta_ocsf_logs-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "community",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "crowdstrike_falcon",
+      "sourcetype": "crowdstrike_endpoint-latest",
+      "details": {
+        "product": "crowdstrike_falcon",
+        "sourcetype": "crowdstrike_endpoint-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "community",
+        "expected_json": false
+      }
+    },
+    {
+      "product": "netskope",
+      "sourcetype": "marketplace-netskopecloudlogshipper-latest",
+      "details": {
+        "product": "netskope",
+        "sourcetype": "marketplace-netskopecloudlogshipper-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "corelight_conn",
+      "sourcetype": "marketplace-corelight-conn-latest",
+      "details": {
+        "product": "corelight_conn",
+        "sourcetype": "marketplace-corelight-conn-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "corelight_http",
+      "sourcetype": "marketplace-corelight-http-latest",
+      "details": {
+        "product": "corelight_http",
+        "sourcetype": "marketplace-corelight-http-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "corelight_ssl",
+      "sourcetype": "marketplace-corelight-ssl-latest",
+      "details": {
+        "product": "corelight_ssl",
+        "sourcetype": "marketplace-corelight-ssl-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "corelight_tunnel",
+      "sourcetype": "marketplace-corelight-tunnel-latest",
+      "details": {
+        "product": "corelight_tunnel",
+        "sourcetype": "marketplace-corelight-tunnel-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "vectra_ai",
+      "sourcetype": "vectra_ai_logs-latest",
+      "details": {
+        "product": "vectra_ai",
+        "sourcetype": "vectra_ai_logs-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "community",
+        "expected_json": false
+      }
+    },
+    {
+      "product": "sentinelone_identity",
+      "sourcetype": "singularityidentity_singularityidentity_logs-latest",
+      "details": {
+        "product": "sentinelone_identity",
+        "sourcetype": "singularityidentity_singularityidentity_logs-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "community",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "paloalto_prismasase",
+      "sourcetype": "marketplace-paloaltonetworksprismaaccess-latest",
+      "details": {
+        "product": "paloalto_prismasase",
+        "sourcetype": "marketplace-paloaltonetworksprismaaccess-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "aws_elasticloadbalancer",
+      "sourcetype": "marketplace-awselasticloadbalancer-latest",
+      "details": {
+        "product": "aws_elasticloadbalancer",
+        "sourcetype": "marketplace-awselasticloadbalancer-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "cisco_firewall_threat_defense",
+      "sourcetype": "marketplace-ciscofirewallthreatdefense-latest",
+      "details": {
+        "product": "cisco_firewall_threat_defense",
+        "sourcetype": "marketplace-ciscofirewallthreatdefense-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "checkpoint",
+      "sourcetype": "marketplace-checkpointfirewall-latest",
+      "details": {
+        "product": "checkpoint",
+        "sourcetype": "marketplace-checkpointfirewall-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "fortimanager",
+      "sourcetype": "marketplace-fortinetfortimanager-latest",
+      "details": {
+        "product": "fortimanager",
+        "sourcetype": "marketplace-fortinetfortimanager-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "infoblox_ddi",
+      "sourcetype": "marketplace-infobloxddi-latest",
+      "details": {
+        "product": "infoblox_ddi",
+        "sourcetype": "marketplace-infobloxddi-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    },
+    {
+      "product": "paloalto_firewall",
+      "sourcetype": "marketplace-paloaltonetworksfirewall-latest",
+      "details": {
+        "product": "paloalto_firewall",
+        "sourcetype": "marketplace-paloaltonetworksfirewall-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "str",
+        "parser_location": "marketplace_remote",
+        "expected_json": false
+      }
+    },
+    {
+      "product": "zscaler_private_access",
+      "sourcetype": "marketplace-zscalerprivateaccess-latest",
+      "details": {
+        "product": "zscaler_private_access",
+        "sourcetype": "marketplace-zscalerprivateaccess-latest",
+        "status": "working",
+        "error": null,
+        "generator_working": true,
+        "parser_exists": true,
+        "format_match": true,
+        "event_type": "dict",
+        "parser_location": "marketplace_remote",
+        "expected_json": true
+      }
+    }
+  ],
+  "failed": [
+    {
+      "product": "microsoft_azuread",
+      "sourcetype": "azuread",
+      "error": "Parser not found: azuread",
+      "details": {
+        "product": "microsoft_azuread",
+        "sourcetype": "azuread",
+        "status": "parser_missing",
+        "error": "Parser not found: azuread",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cisco_asa",
+      "sourcetype": "CommCiscoASA",
+      "error": "Parser not found: CommCiscoASA",
+      "details": {
+        "product": "cisco_asa",
+        "sourcetype": "CommCiscoASA",
+        "status": "parser_missing",
+        "error": "Parser not found: CommCiscoASA",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "cisco_umbrella",
+      "sourcetype": "community-ciscoumbrella-latest",
+      "error": "Parser not found: community-ciscoumbrella-latest",
+      "details": {
+        "product": "cisco_umbrella",
+        "sourcetype": "community-ciscoumbrella-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscoumbrella-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "cisco_meraki",
+      "sourcetype": "CommCiscoMeraki",
+      "error": "Parser not found: CommCiscoMeraki",
+      "details": {
+        "product": "cisco_meraki",
+        "sourcetype": "CommCiscoMeraki",
+        "status": "parser_missing",
+        "error": "Parser not found: CommCiscoMeraki",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cyberark_pas",
+      "sourcetype": "community-cyberarkpaslogs-latest",
+      "error": "Parser not found: community-cyberarkpaslogs-latest",
+      "details": {
+        "product": "cyberark_pas",
+        "sourcetype": "community-cyberarkpaslogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-cyberarkpaslogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "darktrace",
+      "sourcetype": "community-darktracedarktrace-latest",
+      "error": "Parser not found: community-darktracedarktrace-latest",
+      "details": {
+        "product": "darktrace",
+        "sourcetype": "community-darktracedarktrace-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-darktracedarktrace-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "proofpoint",
+      "sourcetype": "community-proofpointproofpoint-latest",
+      "error": "Parser not found: community-proofpointproofpoint-latest",
+      "details": {
+        "product": "proofpoint",
+        "sourcetype": "community-proofpointproofpoint-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-proofpointproofpoint-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_365_mgmt_api",
+      "sourcetype": "community-microsoft365mgmtapi-latest",
+      "error": "Parser not found: community-microsoft365mgmtapi-latest",
+      "details": {
+        "product": "microsoft_365_mgmt_api",
+        "sourcetype": "community-microsoft365mgmtapi-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsoft365mgmtapi-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "mimecast",
+      "sourcetype": "community-mimecastmimecast-latest",
+      "error": "Parser not found: community-mimecastmimecast-latest",
+      "details": {
+        "product": "mimecast",
+        "sourcetype": "community-mimecastmimecast-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-mimecastmimecast-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_azure_ad_signin",
+      "sourcetype": "community-microsofteventhubazuresigninlogs-latest",
+      "error": "Parser not found: community-microsofteventhubazuresigninlogs-latest",
+      "details": {
+        "product": "microsoft_azure_ad_signin",
+        "sourcetype": "community-microsofteventhubazuresigninlogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsofteventhubazuresigninlogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_defender_email",
+      "sourcetype": "community-microsofteventhubdefenderemaillogs-latest",
+      "error": "Parser not found: community-microsofteventhubdefenderemaillogs-latest",
+      "details": {
+        "product": "microsoft_defender_email",
+        "sourcetype": "community-microsofteventhubdefenderemaillogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsofteventhubdefenderemaillogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "beyondtrust_passwordsafe",
+      "sourcetype": "community-beyondtrustpasswordsafelogs-latest",
+      "error": "Parser not found: community-beyondtrustpasswordsafelogs-latest",
+      "details": {
+        "product": "beyondtrust_passwordsafe",
+        "sourcetype": "community-beyondtrustpasswordsafelogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-beyondtrustpasswordsafelogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "hashicorp_vault",
+      "sourcetype": "community-hashicorphcpvaultlogs-latest",
+      "error": "Parser not found: community-hashicorphcpvaultlogs-latest",
+      "details": {
+        "product": "hashicorp_vault",
+        "sourcetype": "community-hashicorphcpvaultlogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-hashicorphcpvaultlogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "tailscale",
+      "sourcetype": "community-tailscaletailscalelogs-latest",
+      "error": "Parser not found: community-tailscaletailscalelogs-latest",
+      "details": {
+        "product": "tailscale",
+        "sourcetype": "community-tailscaletailscalelogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-tailscaletailscalelogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "extrahop",
+      "sourcetype": "community-extrahopextrahoplogs-latest",
+      "error": "Parser not found: community-extrahopextrahoplogs-latest",
+      "details": {
+        "product": "extrahop",
+        "sourcetype": "community-extrahopextrahoplogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-extrahopextrahoplogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "armis",
+      "sourcetype": "community-armisarmislogs-latest",
+      "error": "Parser not found: community-armisarmislogs-latest",
+      "details": {
+        "product": "armis",
+        "sourcetype": "community-armisarmislogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-armisarmislogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "sentinelone_endpoint",
+      "sourcetype": "json",
+      "error": "Parser not found: json",
+      "details": {
+        "product": "sentinelone_endpoint",
+        "sourcetype": "json",
+        "status": "parser_missing",
+        "error": "Parser not found: json",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "apache_http",
+      "sourcetype": "community-apachehttplogs-latest",
+      "error": "Parser not found: community-apachehttplogs-latest",
+      "details": {
+        "product": "apache_http",
+        "sourcetype": "community-apachehttplogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-apachehttplogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "abnormal_security",
+      "sourcetype": "community-abnormalsecurityemailsecurity-latest",
+      "error": "Parser not found: community-abnormalsecurityemailsecurity-latest",
+      "details": {
+        "product": "abnormal_security",
+        "sourcetype": "community-abnormalsecurityemailsecurity-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-abnormalsecurityemailsecurity-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "buildkite",
+      "sourcetype": "community-buildkiteaudit-latest",
+      "error": "Parser not found: community-buildkiteaudit-latest",
+      "details": {
+        "product": "buildkite",
+        "sourcetype": "community-buildkiteaudit-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-buildkiteaudit-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "teleport",
+      "sourcetype": "community-teleportaccessproxy-latest",
+      "error": "Parser not found: community-teleportaccessproxy-latest",
+      "details": {
+        "product": "teleport",
+        "sourcetype": "community-teleportaccessproxy-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-teleportaccessproxy-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cisco_ise",
+      "sourcetype": "community-ciscoidentityservicesengine-latest",
+      "error": "Parser not found: community-ciscoidentityservicesengine-latest",
+      "details": {
+        "product": "cisco_ise",
+        "sourcetype": "community-ciscoidentityservicesengine-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscoidentityservicesengine-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "google_workspace",
+      "sourcetype": "community-googleworkspaceaudit-latest",
+      "error": "Parser not found: community-googleworkspaceaudit-latest",
+      "details": {
+        "product": "google_workspace",
+        "sourcetype": "community-googleworkspaceaudit-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-googleworkspaceaudit-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "aws_vpc_dns",
+      "sourcetype": "community-awsvpcdns-latest",
+      "error": "Parser not found: community-awsvpcdns-latest",
+      "details": {
+        "product": "aws_vpc_dns",
+        "sourcetype": "community-awsvpcdns-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-awsvpcdns-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cisco_networks",
+      "sourcetype": "community-cisconetworks-latest",
+      "error": "Parser not found: community-cisconetworks-latest",
+      "details": {
+        "product": "cisco_networks",
+        "sourcetype": "community-cisconetworks-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-cisconetworks-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cloudflare_general",
+      "sourcetype": "community-cloudflaregeneral-latest",
+      "error": "Parser not found: community-cloudflaregeneral-latest",
+      "details": {
+        "product": "cloudflare_general",
+        "sourcetype": "community-cloudflaregeneral-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-cloudflaregeneral-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cloudflare_waf",
+      "sourcetype": "community-cloudflarewaflogs-latest",
+      "error": "Parser not found: community-cloudflarewaflogs-latest",
+      "details": {
+        "product": "cloudflare_waf",
+        "sourcetype": "community-cloudflarewaflogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-cloudflarewaflogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "extreme_networks",
+      "sourcetype": "community-extremenetworks-latest",
+      "error": "Parser not found: community-extremenetworks-latest",
+      "details": {
+        "product": "extreme_networks",
+        "sourcetype": "community-extremenetworks-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-extremenetworks-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "f5_networks",
+      "sourcetype": "community-f5networks-latest",
+      "error": "Parser not found: community-f5networks-latest",
+      "details": {
+        "product": "f5_networks",
+        "sourcetype": "community-f5networks-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-f5networks-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "google_cloud_dns",
+      "sourcetype": "community-googleclouddns-latest",
+      "error": "Parser not found: community-googleclouddns-latest",
+      "details": {
+        "product": "google_cloud_dns",
+        "sourcetype": "community-googleclouddns-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-googleclouddns-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "imperva_waf",
+      "sourcetype": "community-impervawaf-latest",
+      "error": "Parser not found: community-impervawaf-latest",
+      "details": {
+        "product": "imperva_waf",
+        "sourcetype": "community-impervawaf-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-impervawaf-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "juniper_networks",
+      "sourcetype": "community-junipernetworks-latest",
+      "error": "Parser not found: community-junipernetworks-latest",
+      "details": {
+        "product": "juniper_networks",
+        "sourcetype": "community-junipernetworks-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-junipernetworks-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "ubiquiti_unifi",
+      "sourcetype": "community-ubiquitiunifi-latest",
+      "error": "Parser not found: community-ubiquitiunifi-latest",
+      "details": {
+        "product": "ubiquiti_unifi",
+        "sourcetype": "community-ubiquitiunifi-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ubiquitiunifi-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "zscaler_firewall",
+      "sourcetype": "community-zscalerfirewall-latest",
+      "error": "Parser not found: community-zscalerfirewall-latest",
+      "details": {
+        "product": "zscaler_firewall",
+        "sourcetype": "community-zscalerfirewall-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-zscalerfirewall-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "cisco_fmc",
+      "sourcetype": "community-ciscofmc-latest",
+      "error": "Parser not found: community-ciscofmc-latest",
+      "details": {
+        "product": "cisco_fmc",
+        "sourcetype": "community-ciscofmc-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscofmc-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cisco_ios",
+      "sourcetype": "community-ciscoios-latest",
+      "error": "Parser not found: community-ciscoios-latest",
+      "details": {
+        "product": "cisco_ios",
+        "sourcetype": "community-ciscoios-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscoios-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cisco_isa3000",
+      "sourcetype": "community-ciscoisa3000-latest",
+      "error": "Parser not found: community-ciscoisa3000-latest",
+      "details": {
+        "product": "cisco_isa3000",
+        "sourcetype": "community-ciscoisa3000-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscoisa3000-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "incapsula",
+      "sourcetype": "community-incapsula-latest",
+      "error": "Parser not found: community-incapsula-latest",
+      "details": {
+        "product": "incapsula",
+        "sourcetype": "community-incapsula-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-incapsula-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "manageengine_general",
+      "sourcetype": "community-manageenginegeneral-latest",
+      "error": "Parser not found: community-manageenginegeneral-latest",
+      "details": {
+        "product": "manageengine_general",
+        "sourcetype": "community-manageenginegeneral-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-manageenginegeneral-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "manch_siem",
+      "sourcetype": "community-manchsiem-latest",
+      "error": "Parser not found: community-manchsiem-latest",
+      "details": {
+        "product": "manch_siem",
+        "sourcetype": "community-manchsiem-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-manchsiem-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_windows_eventlog",
+      "sourcetype": "community-microsoftwindowseventlog-latest",
+      "error": "Parser not found: community-microsoftwindowseventlog-latest",
+      "details": {
+        "product": "microsoft_windows_eventlog",
+        "sourcetype": "community-microsoftwindowseventlog-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsoftwindowseventlog-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "sap",
+      "sourcetype": "community-sap-latest",
+      "error": "Parser not found: community-sap-latest",
+      "details": {
+        "product": "sap",
+        "sourcetype": "community-sap-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-sap-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "securelink",
+      "sourcetype": "community-securelink-latest",
+      "error": "Parser not found: community-securelink-latest",
+      "details": {
+        "product": "securelink",
+        "sourcetype": "community-securelink-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-securelink-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "aws_waf",
+      "sourcetype": "community-awswaf-latest",
+      "error": "Parser not found: community-awswaf-latest",
+      "details": {
+        "product": "aws_waf",
+        "sourcetype": "community-awswaf-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-awswaf-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "aws_route53",
+      "sourcetype": "community-awsroute53-latest",
+      "error": "Parser not found: community-awsroute53-latest",
+      "details": {
+        "product": "aws_route53",
+        "sourcetype": "community-awsroute53-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-awsroute53-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "cisco_ironport",
+      "sourcetype": "community-ciscoironport-latest",
+      "error": "Parser not found: community-ciscoironport-latest",
+      "details": {
+        "product": "cisco_ironport",
+        "sourcetype": "community-ciscoironport-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscoironport-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "cyberark_conjur",
+      "sourcetype": "community-cyberarkconjur-latest",
+      "error": "Parser not found: community-cyberarkconjur-latest",
+      "details": {
+        "product": "cyberark_conjur",
+        "sourcetype": "community-cyberarkconjur-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-cyberarkconjur-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "iis_w3c",
+      "sourcetype": "community-iisw3c-latest",
+      "error": "Parser not found: community-iisw3c-latest",
+      "details": {
+        "product": "iis_w3c",
+        "sourcetype": "community-iisw3c-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-iisw3c-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "linux_auth",
+      "sourcetype": "community-linuxauth-latest",
+      "error": "Parser not found: community-linuxauth-latest",
+      "details": {
+        "product": "linux_auth",
+        "sourcetype": "community-linuxauth-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-linuxauth-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_365_collaboration",
+      "sourcetype": "community-microsoft365collaboration-latest",
+      "error": "Parser not found: community-microsoft365collaboration-latest",
+      "details": {
+        "product": "microsoft_365_collaboration",
+        "sourcetype": "community-microsoft365collaboration-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsoft365collaboration-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_365_defender",
+      "sourcetype": "community-microsoft365defender-latest",
+      "error": "Parser not found: community-microsoft365defender-latest",
+      "details": {
+        "product": "microsoft_365_defender",
+        "sourcetype": "community-microsoft365defender-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsoft365defender-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "pingfederate",
+      "sourcetype": "community-pingfederate-latest",
+      "error": "Parser not found: community-pingfederate-latest",
+      "details": {
+        "product": "pingfederate",
+        "sourcetype": "community-pingfederate-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-pingfederate-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "zscaler_dns_firewall",
+      "sourcetype": "community-zscalerdnsfirewall-latest",
+      "error": "Parser not found: community-zscalerdnsfirewall-latest",
+      "details": {
+        "product": "zscaler_dns_firewall",
+        "sourcetype": "community-zscalerdnsfirewall-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-zscalerdnsfirewall-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "akamai_cdn",
+      "sourcetype": "community-akamaicdn-latest",
+      "error": "Parser not found: community-akamaicdn-latest",
+      "details": {
+        "product": "akamai_cdn",
+        "sourcetype": "community-akamaicdn-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-akamaicdn-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "akamai_dns",
+      "sourcetype": "community-akamaidns-latest",
+      "error": "Parser not found: community-akamaidns-latest",
+      "details": {
+        "product": "akamai_dns",
+        "sourcetype": "community-akamaidns-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-akamaidns-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "akamai_general",
+      "sourcetype": "community-akamaigeneral-latest",
+      "error": "Parser not found: community-akamaigeneral-latest",
+      "details": {
+        "product": "akamai_general",
+        "sourcetype": "community-akamaigeneral-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-akamaigeneral-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "akamai_sitedefender",
+      "sourcetype": "community-akamaisitedefender-latest",
+      "error": "Parser not found: community-akamaisitedefender-latest",
+      "details": {
+        "product": "akamai_sitedefender",
+        "sourcetype": "community-akamaisitedefender-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-akamaisitedefender-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "axway_sftp",
+      "sourcetype": "community-axwaysftp-latest",
+      "error": "Parser not found: community-axwaysftp-latest",
+      "details": {
+        "product": "axway_sftp",
+        "sourcetype": "community-axwaysftp-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-axwaysftp-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "cisco_duo",
+      "sourcetype": "community-ciscoduo-latest",
+      "error": "Parser not found: community-ciscoduo-latest",
+      "details": {
+        "product": "cisco_duo",
+        "sourcetype": "community-ciscoduo-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscoduo-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "cohesity_backup",
+      "sourcetype": "community-cohesitybackup-latest",
+      "error": "Parser not found: community-cohesitybackup-latest",
+      "details": {
+        "product": "cohesity_backup",
+        "sourcetype": "community-cohesitybackup-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-cohesitybackup-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "f5_vpn",
+      "sourcetype": "community-f5vpn-latest",
+      "error": "Parser not found: community-f5vpn-latest",
+      "details": {
+        "product": "f5_vpn",
+        "sourcetype": "community-f5vpn-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-f5vpn-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "github_audit",
+      "sourcetype": "community-githubaudit-latest",
+      "error": "Parser not found: community-githubaudit-latest",
+      "details": {
+        "product": "github_audit",
+        "sourcetype": "community-githubaudit-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-githubaudit-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "harness_ci",
+      "sourcetype": "community-harnessci-latest",
+      "error": "Parser not found: community-harnessci-latest",
+      "details": {
+        "product": "harness_ci",
+        "sourcetype": "community-harnessci-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-harnessci-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "hypr_auth",
+      "sourcetype": "community-hyprauth-latest",
+      "error": "Parser not found: community-hyprauth-latest",
+      "details": {
+        "product": "hypr_auth",
+        "sourcetype": "community-hyprauth-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-hyprauth-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "imperva_sonar",
+      "sourcetype": "community-impervasonar-latest",
+      "error": "Parser not found: community-impervasonar-latest",
+      "details": {
+        "product": "imperva_sonar",
+        "sourcetype": "community-impervasonar-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-impervasonar-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "isc_bind",
+      "sourcetype": "community-iscbind-latest",
+      "error": "Parser not found: community-iscbind-latest",
+      "details": {
+        "product": "isc_bind",
+        "sourcetype": "community-iscbind-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-iscbind-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "isc_dhcp",
+      "sourcetype": "community-iscdhcp-latest",
+      "error": "Parser not found: community-iscdhcp-latest",
+      "details": {
+        "product": "isc_dhcp",
+        "sourcetype": "community-iscdhcp-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-iscdhcp-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "jamf_protect",
+      "sourcetype": "community-jamfprotect-latest",
+      "error": "Parser not found: community-jamfprotect-latest",
+      "details": {
+        "product": "jamf_protect",
+        "sourcetype": "community-jamfprotect-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-jamfprotect-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "pingone_mfa",
+      "sourcetype": "community-pingonemfa-latest",
+      "error": "Parser not found: community-pingonemfa-latest",
+      "details": {
+        "product": "pingone_mfa",
+        "sourcetype": "community-pingonemfa-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-pingonemfa-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "pingprotect",
+      "sourcetype": "community-pingprotect-latest",
+      "error": "Parser not found: community-pingprotect-latest",
+      "details": {
+        "product": "pingprotect",
+        "sourcetype": "community-pingprotect-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-pingprotect-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "rsa_adaptive",
+      "sourcetype": "community-rsaadaptive-latest",
+      "error": "Parser not found: community-rsaadaptive-latest",
+      "details": {
+        "product": "rsa_adaptive",
+        "sourcetype": "community-rsaadaptive-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-rsaadaptive-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "veeam_backup",
+      "sourcetype": "community-veeambackup-latest",
+      "error": "Parser not found: community-veeambackup-latest",
+      "details": {
+        "product": "veeam_backup",
+        "sourcetype": "community-veeambackup-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-veeambackup-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "wiz_cloud",
+      "sourcetype": "community-wizcloud-latest",
+      "error": "Parser not found: community-wizcloud-latest",
+      "details": {
+        "product": "wiz_cloud",
+        "sourcetype": "community-wizcloud-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-wizcloud-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "beyondtrust_privilegemgmt_windows",
+      "sourcetype": "community-beyondtrustprivilegemgmtwindowslogs-latest",
+      "error": "Parser not found: community-beyondtrustprivilegemgmtwindowslogs-latest",
+      "details": {
+        "product": "beyondtrust_privilegemgmt_windows",
+        "sourcetype": "community-beyondtrustprivilegemgmtwindowslogs-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-beyondtrustprivilegemgmtwindowslogs-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "str"
+      }
+    },
+    {
+      "product": "cisco_meraki_flow",
+      "sourcetype": "community-ciscomerkiflow-latest",
+      "error": "Parser not found: community-ciscomerkiflow-latest",
+      "details": {
+        "product": "cisco_meraki_flow",
+        "sourcetype": "community-ciscomerkiflow-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-ciscomerkiflow-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "manageengine_adauditplus",
+      "sourcetype": "community-manageengineadauditplus-latest",
+      "error": "Parser not found: community-manageengineadauditplus-latest",
+      "details": {
+        "product": "manageengine_adauditplus",
+        "sourcetype": "community-manageengineadauditplus-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-manageengineadauditplus-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_azure_ad",
+      "sourcetype": "community-microsoftazuread-latest",
+      "error": "Parser not found: community-microsoftazuread-latest",
+      "details": {
+        "product": "microsoft_azure_ad",
+        "sourcetype": "community-microsoftazuread-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsoftazuread-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_eventhub_azure_signin",
+      "sourcetype": "community-microsofteventhubazuresignin-latest",
+      "error": "Parser not found: community-microsofteventhubazuresignin-latest",
+      "details": {
+        "product": "microsoft_eventhub_azure_signin",
+        "sourcetype": "community-microsofteventhubazuresignin-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsofteventhubazuresignin-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_eventhub_defender_email",
+      "sourcetype": "community-microsofteventhhubdefenderemail-latest",
+      "error": "Parser not found: community-microsofteventhhubdefenderemail-latest",
+      "details": {
+        "product": "microsoft_eventhub_defender_email",
+        "sourcetype": "community-microsofteventhhubdefenderemail-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsofteventhhubdefenderemail-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    },
+    {
+      "product": "microsoft_eventhub_defender_emailforcloud",
+      "sourcetype": "community-microsofteventhubdefenderemailforcloud-latest",
+      "error": "Parser not found: community-microsofteventhubdefenderemailforcloud-latest",
+      "details": {
+        "product": "microsoft_eventhub_defender_emailforcloud",
+        "sourcetype": "community-microsofteventhubdefenderemailforcloud-latest",
+        "status": "parser_missing",
+        "error": "Parser not found: community-microsofteventhubdefenderemailforcloud-latest",
+        "generator_working": true,
+        "parser_exists": false,
+        "format_match": false,
+        "event_type": "dict"
+      }
+    }
+  ],
+  "summary": {
+    "total_tests": 102,
+    "working_pairs": 22,
+    "failed_pairs": 80,
+    "success_rate": 21.568627450980394,
+    "phase_1_fixes_applied": [
+      "okta_authentication \u2192 okta_ocsf_logs-latest",
+      "crowdstrike_falcon \u2192 crowdstrike_endpoint-latest",
+      "sentinelone_endpoint \u2192 singularityidentity_logs-latest",
+      "microsoft_azure_ad_signin \u2192 microsoft_azure_ad_logs-latest",
+      "paloalto_firewall \u2192 paloalto_paloalto_logs-latest",
+      "microsoft_defender_email \u2192 microsoft_eventhub_defender_email_logs-latest"
+    ]
+  }
+}

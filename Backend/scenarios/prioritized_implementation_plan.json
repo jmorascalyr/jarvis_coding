@@ -1,0 +1,467 @@
+{
+  "metadata": {
+    "created": "2025-08-24T21:34:45.597552",
+    "total_issues": 40
+  },
+  "phase_1_critical": {
+    "description": "Tier 1 vendors with critical security impact",
+    "timeline": "Week 1-2",
+    "format_fixes": [
+      {
+        "parser": "Cisco Meraki Flow",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_meraki_flow.py",
+        "current_format": "JSON",
+        "target_format": "Syslog",
+        "priority_score": 0.93,
+        "vendor_tier": 1,
+        "complexity": 0.8
+      },
+      {
+        "parser": "Microsoft 365 Collaboration",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/microsoft_365_collaboration.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.895,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Microsoft 365 Defender",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/microsoft_365_defender.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.895,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Aws Route53",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/cloud_infrastructure/aws_route53.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Aws Vpc Dns",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/cloud_infrastructure/aws_vpc_dns.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Cisco Duo",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_duo.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Cisco Fmc",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_fmc.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Cisco Ironport",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_ironport.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Cisco Isa3000",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_isa3000.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Cisco Networks",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_networks.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Google Workspace",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/cloud_infrastructure/google_workspace.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.8800000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Cloudflare General",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/web_security/cloudflare_general.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.8500000000000001,
+        "vendor_tier": 1,
+        "complexity": 1.0
+      }
+    ],
+    "missing_generators": []
+  },
+  "phase_2_high": {
+    "description": "Tier 2 vendors and remaining Tier 1 issues",
+    "timeline": "Week 3-4",
+    "format_fixes": [
+      {
+        "parser": "Cyberark Conjur",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/cyberark_conjur.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.7749999999999999,
+        "vendor_tier": 2,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Abnormal Security",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/email_security/abnormal_security.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.7449999999999999,
+        "vendor_tier": 2,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Zscaler Dns Firewall",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/web_security/zscaler_dns_firewall.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.73,
+        "vendor_tier": 2,
+        "complexity": 1.0
+      }
+    ],
+    "missing_generators": []
+  },
+  "phase_3_medium": {
+    "description": "Tier 3 vendors and Star Trek integration",
+    "timeline": "Week 5-6",
+    "format_fixes": [
+      {
+        "parser": "Beyondtrust Privilegemgmtwindows",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/beyondtrust_privilegemgmt_windows.py",
+        "current_format": "CSV",
+        "target_format": "JSON",
+        "priority_score": 0.655,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Hypr Auth",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/hypr_auth.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.655,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Linux Auth",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/endpoint_security/linux_auth.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.655,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Pingfederate",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/pingfederate.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.655,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Extreme Networks",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/extreme_networks.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.6400000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "F5 Networks",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/f5_networks.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.6400000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "F5 Vpn",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/f5_vpn.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.6400000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Juniper Networks",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/juniper_networks.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.6400000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Manch Siem",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/manch_siem.py",
+        "current_format": "CSV",
+        "target_format": "JSON",
+        "priority_score": 0.6400000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Akamai Cdn",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/web_security/akamai_cdn.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.6100000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Akamai Dns",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/web_security/akamai_dns.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.6100000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Akamai General",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/web_security/akamai_general.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.6100000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Akamai Sitedefender",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/web_security/akamai_sitedefender.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.6100000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Ubiquiti Unifi",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/ubiquiti_unifi.py",
+        "current_format": "Syslog",
+        "target_format": "Key-Value",
+        "priority_score": 0.61,
+        "vendor_tier": 3,
+        "complexity": 0.7
+      },
+      {
+        "parser": "Axway Sftp",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/axway_sftp.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Cohesity Backup",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/cohesity_backup.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Harness Ci",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/harness_ci.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Iis W3C",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/iis_w3c.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Manageengine General",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/manageengine_general.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Sap",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/sap.py",
+        "current_format": "Key-Value",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Securelink",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/securelink.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      },
+      {
+        "parser": "Teleport",
+        "generator": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/infrastructure/teleport.py",
+        "current_format": "Syslog",
+        "target_format": "JSON",
+        "priority_score": 0.5800000000000001,
+        "vendor_tier": 3,
+        "complexity": 1.0
+      }
+    ],
+    "missing_generators": [
+      {
+        "parser": "Buildkite Ci",
+        "expected_format": "JSON",
+        "priority_score": 0.52,
+        "vendor_tier": 3
+      },
+      {
+        "parser": "Paloalto Paloalto",
+        "expected_format": "JSON",
+        "priority_score": 0.52,
+        "vendor_tier": 3
+      },
+      {
+        "parser": "Singularityidentity Singularityidentity",
+        "expected_format": "JSON",
+        "priority_score": 0.52,
+        "vendor_tier": 3
+      }
+    ],
+    "star_trek_integration": [
+      {
+        "generator": "aws_route53",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "aws_vpc_dns",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "aws_waf",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_duo",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_fmc",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_ios",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_ironport",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_isa3000",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_ise",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_meraki",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_meraki_flow",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cisco_networks",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cloudflare_general",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "cyberark_conjur",
+        "priority": "MEDIUM"
+      },
+      {
+        "generator": "google_workspace",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "microsoft_365_collaboration",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "microsoft_365_defender",
+        "priority": "HIGH"
+      },
+      {
+        "generator": "zscaler_dns_firewall",
+        "priority": "MEDIUM"
+      },
+      {
+        "generator": "zscaler_firewall",
+        "priority": "MEDIUM"
+      }
+    ]
+  },
+  "phase_4_automation": {
+    "description": "Automated testing and CI/CD integration",
+    "timeline": "Week 7-8",
+    "tasks": [
+      "Implement automated format validation",
+      "Create parser-generator compatibility tests",
+      "Add CI/CD pipeline integration",
+      "Create generator templates and documentation"
+    ]
+  }
+}

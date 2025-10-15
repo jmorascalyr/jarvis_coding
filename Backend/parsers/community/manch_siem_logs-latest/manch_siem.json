@@ -1,0 +1,191 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Manchester",
+    "dataSource.name": "Manchester SIEM",
+    "dataSource.category": "security",
+    "dataSource.technology": "siem",
+    "source": "manch_siem"
+  },
+  
+  "patterns": {
+    "timestamp": "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?[+-]\\d{2}:\\d{2}",
+    "ip_address": "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+    "email_address": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
+    "event_id": "MSIEM-\\d+",
+    "alert_id": "ALERT-\\d+",
+    "hostname": "[a-zA-Z0-9\\-_]+",
+    "field_value": "[^\\s,]+",
+    "quoted_string": "\"[^\"]*\""
+  },
+  
+  "formats": [
+    {
+      "id": "manch_siem_security_alert",
+      "format": "$timestamp$ ManchesterSIEM eventId=$event_id{name=event_id}$ alertId=$alert_id{name=alert_id}$ eventType=$quoted_string{name=event_type}$ severity=$quoted_string{name=severity}$ category=$quoted_string{name=category}$ status=$quoted_string{name=status}$ riskScore=$field_value{name=risk_score}$ confidence=$field_value{name=confidence}$ title=$quoted_string{name=title}$ sourceIp=$ip_address{name=source_ip}$ destinationIp=$ip_address{name=destination_ip}$ sourceHostname=$hostname{name=source_hostname}$ destinationHostname=$hostname{name=destination_hostname}$ userName=$email_address{name=user_name}$ dataSource=$quoted_string{name=data_source}$ ruleName=$quoted_string{name=rule_name}$",
+      "attributes": {
+        "dataSource.app": "Manchester SIEM Security Platform",
+        "class_uid": 2001,
+        "class_name": "Security Finding",
+        "category_uid": 2,
+        "category_name": "Findings",
+        "type_uid": 200101,
+        "activity_id": 1,
+        "activity_name": "Create",
+        "severity_id": 4
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_id",
+          "output": "metadata.correlation_uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "alert_id",
+          "output": "finding.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "title",
+          "output": "finding.title",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_type",
+          "output": "finding.types",
+          "match": ".*",
+          "replace": "[$0]"
+        },
+        {
+          "input": "source_ip",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "destination_ip",
+          "output": "dst_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "source_hostname",
+          "output": "src_endpoint.hostname",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "destination_hostname",
+          "output": "dst_endpoint.hostname",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "user_name",
+          "output": "actor.user.email_addr",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "data_source",
+          "output": "metadata.product.feature.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "rule_name",
+          "output": "rule.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "category",
+          "output": "finding.category",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "risk_score",
+          "output": "risk_score",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "confidence",
+          "output": "confidence",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(CRITICAL)",
+          "replace": "5"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(HIGH)",
+          "replace": "4"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(MEDIUM)",
+          "replace": "3"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(LOW)",
+          "replace": "2"
+        },
+        {
+          "input": "status",
+          "output": "status_id",
+          "match": "(?i)(New|Open|Investigating)",
+          "replace": "1"
+        },
+        {
+          "input": "status",
+          "output": "status_id",
+          "match": "(?i)(Resolved|Closed)",
+          "replace": "2"
+        },
+        {
+          "input": "status",
+          "output": "status_id",
+          "match": "(?i)(False Positive)",
+          "replace": "3"
+        },
+        {
+          "input": "event_type",
+          "output": "activity_id",
+          "match": "(?i)(CORRELATION|THREAT|INSIDER|ANOMALY)",
+          "replace": "1"
+        },
+        {
+          "input": "event_type",
+          "output": "activity_id",
+          "match": "(?i)(RULE_MATCH|BEHAVIORAL)",
+          "replace": "2"
+        },
+        {
+          "input": "alert_id",
+          "output": "observables",
+          "match": ".*",
+          "replace": "[{\"name\":\"alert_id\",\"type\":\"Alert ID\",\"value\":\"$0\"},{\"name\":\"source_ip\",\"type\":\"IP Address\",\"value\":\"${source_ip}\"},{\"name\":\"destination_ip\",\"type\":\"IP Address\",\"value\":\"${destination_ip}\"},{\"name\":\"user_email\",\"type\":\"Email Address\",\"value\":\"${user_name}\"}]"
+        }
+      ],
+      "halt": true
+    }
+  ]
+}

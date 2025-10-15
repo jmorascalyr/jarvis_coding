@@ -1,0 +1,183 @@
+{
+  "attributes": {
+    "dataSource.vendor": "ManageEngine",
+    "dataSource.name": "ManageEngine",
+    "dataSource.category": "security",
+    "dataSource.technology": "it_management",
+    "source": "manageengine_general"
+  },
+  
+  "patterns": {
+    "timestamp": "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?[+-]\\d{2}:\\d{2}",
+    "ip_address": "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+    "username": "[a-zA-Z0-9._\\-@]+",
+    "event_id": "ME-\\d+",
+    "field_value": "[^\\s,]+",
+    "quoted_string": "\"[^\"]*\""
+  },
+  
+  "formats": [
+    {
+      "id": "manageengine_general_activity",
+      "format": "$timestamp$ ManageEngine eventId=$event_id{name=event_id}$ product=$quoted_string{name=product}$ eventCategory=$quoted_string{name=event_category}$ action=$quoted_string{name=action}$ severity=$quoted_string{name=severity}$ sourceIp=$ip_address{name=source_ip}$ userName=$username{name=user_name}$ domain=$quoted_string{name=domain}$ workstation=$quoted_string{name=workstation}$ computerName=$quoted_string{name=computer_name}$ operatingSystem=$quoted_string{name=operating_system}$ location=$quoted_string{name=location}$ department=$quoted_string{name=department}$",
+      "attributes": {
+        "dataSource.app": "ManageEngine IT Management",
+        "class_uid": 1001,
+        "class_name": "System Activity",
+        "category_uid": 1,
+        "category_name": "System Activity",
+        "type_uid": 100101,
+        "activity_id": 1,
+        "activity_name": "Create",
+        "severity_id": 2
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_id",
+          "output": "metadata.correlation_uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "product",
+          "output": "metadata.product.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "user_name",
+          "output": "actor.user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "source_ip",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "domain",
+          "output": "actor.user.domain",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "workstation",
+          "output": "src_endpoint.hostname",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "computer_name",
+          "output": "device.hostname",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "operating_system",
+          "output": "device.os.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "location",
+          "output": "device.location",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "department",
+          "output": "actor.user.groups",
+          "match": ".*",
+          "replace": "[$0]"
+        },
+        {
+          "input": "event_category",
+          "output": "category_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "action",
+          "output": "type_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "action",
+          "output": "activity_id",
+          "match": "(?i)(CREATED|INSTALLED|STARTED|DISCOVERED)",
+          "replace": "1"
+        },
+        {
+          "input": "action",
+          "output": "activity_id",
+          "match": "(?i)(MODIFIED|RESET|UNLOCKED|RESOLVED)",
+          "replace": "2"
+        },
+        {
+          "input": "action",
+          "output": "activity_id",
+          "match": "(?i)(DELETED|UNINSTALLED|STOPPED|RETIRED)",
+          "replace": "3"
+        },
+        {
+          "input": "action",
+          "output": "activity_id",
+          "match": "(?i)(LOGIN|ACCESS)",
+          "replace": "1"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(CRITICAL)",
+          "replace": "5"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(HIGH)",
+          "replace": "4"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(WARNING)",
+          "replace": "3"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(INFO)",
+          "replace": "1"
+        },
+        {
+          "input": "action",
+          "output": "status_id",
+          "match": "(?i)(SUCCESS|CREATED|RESOLVED|UNLOCKED|INSTALLED)",
+          "replace": "1"
+        },
+        {
+          "input": "action",
+          "output": "status_id",
+          "match": "(?i)(FAILED|DELETED|LOCKED|VIOLATION|BREACH|DETECTED)",
+          "replace": "2"
+        },
+        {
+          "input": "user_name",
+          "output": "observables",
+          "match": ".*",
+          "replace": "[{\"name\":\"user_name\",\"type\":\"User Name\",\"value\":\"$0\"},{\"name\":\"source_ip\",\"type\":\"IP Address\",\"value\":\"${source_ip}\"},{\"name\":\"computer_name\",\"type\":\"Hostname\",\"value\":\"${computer_name}\"}]"
+        }
+      ],
+      "halt": true
+    }
+  ]
+}

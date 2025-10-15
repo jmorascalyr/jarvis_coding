@@ -1,0 +1,717 @@
+{
+    "attributes": {
+        "dataset": "Endpoint",
+        "dataSource.vendor": "CrowdStrike",
+        "dataSource.name": "CrowdStrike Falcon",
+        "dataSource.category": "security"
+    },
+    
+    "patterns": {
+        "keyPattern": "[\\w]+",
+        "valuePattern": "[^=]*?(?=\\s\\w+=|$)"
+    },
+      
+    "formats": [
+        {
+            "format": "CEF:$version$\\|$deviceVendor$\\|$deviceProduct$\\|$deviceVersion$\\|$signatureID$\\|$name$\\|$severity$\\|$extension$",
+            "rewrites": [
+                {
+                    input: "deviceVendor",
+                    output: "metadata.product.vendor_name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "deviceProduct",
+                    output: "metadata.product.name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "deviceVersion",
+                    output: "metadata.product.version",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "name",
+                    output: "message",
+                    match: ".*",
+                    replace: "$0"
+                },
+                // OCSF severity mapping
+                {
+                    input: "severity",
+                    output: "severity_id",
+                    match: "^[0-3]$",
+                    replace: "2"  // Low -> Informational
+                },
+                {
+                    input: "severity",
+                    output: "severity_id",
+                    match: "^[4-6]$",
+                    replace: "3"  // Medium
+                },
+                {
+                    input: "severity",
+                    output: "severity_id",
+                    match: "^[7-8]$",
+                    replace: "4"  // High
+                },
+                {
+                    input: "severity",
+                    output: "severity_id",
+                    match: "^(9|10)$",
+                    replace: "5"  // Critical
+                },
+                {
+                    input: "severity",
+                    output: "severity",
+                    match: "^[0-3]$",
+                    replace: "Low"
+                },
+                {
+                    input: "severity",
+                    output: "severity",
+                    match: "^[4-6]$",
+                    replace: "Medium"
+                },
+                {
+                    input: "severity",
+                    output: "severity",
+                    match: "^[7-8]$",
+                    replace: "High"
+                },
+                {
+                    input: "severity",
+                    output: "severity",
+                    match: "^(9|10)$",
+                    replace: "Critical"
+                },
+                // Map signatureID to finding.uid
+                {
+                    input: "signatureID",
+                    output: "finding.uid",
+                    match: ".*",
+                    replace: "$0"
+                }
+            ]
+        },
+        // Parse CEF extension fields into ATTR_CEF
+        {
+            format: ".*\\|$ATTR_CEF$",
+            rewrites: [
+                {
+                    input: "ATTR_CEF",
+                    output: "ATTR_CEF",
+                    match: ".*",
+                    replace: "$0"
+                }
+            ]
+        }
+    ]
+    
+    // Parse CEF extension key-value pairs
+    parse: {
+        cef: {
+            type: "kvp",
+            value: "$ATTR_CEF$",
+            delimiters: " ",
+            kvpDelimiter: "=",
+            kvpPrefix: "",
+            escape: "\\\\",
+            rewrites: [
+                // OCSF Core Mappings
+                
+                // Time mappings
+                {
+                    input: "rt",
+                    output: "time",
+                    match: "^(\\d+)$",
+                    replace: "$1"
+                },
+                {
+                    input: "start",
+                    output: "start_time",
+                    match: "^(\\d+)$",
+                    replace: "$1"
+                },
+                {
+                    input: "end",
+                    output: "end_time",
+                    match: "^(\\d+)$",
+                    replace: "$1"
+                },
+                
+                // Actor/User mappings
+                {
+                    input: "duser",
+                    output: "actor.user.name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "duser",
+                    output: "user.name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "suid",
+                    output: "actor.user.uid",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "dntdom",
+                    output: "actor.user.domain",
+                    match: ".*",
+                    replace: "$0"
+                },
+                
+                // Device/Host mappings
+                {
+                    input: "dvchost",
+                    output: "device.hostname",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "dvchost",
+                    output: "device.name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "shost",
+                    output: "src_endpoint.hostname",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "dhost",
+                    output: "dst_endpoint.hostname",
+                    match: ".*",
+                    replace: "$0"
+                },
+                
+                // Network mappings
+                {
+                    input: "src",
+                    output: "src_endpoint.ip",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "dst",
+                    output: "dst_endpoint.ip",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "spt",
+                    output: "src_endpoint.port",
+                    match: "^(\\d+)$",
+                    replace: "$1"
+                },
+                {
+                    input: "dpt",
+                    output: "dst_endpoint.port",
+                    match: "^(\\d+)$",
+                    replace: "$1"
+                },
+                {
+                    input: "proto",
+                    output: "network_endpoint.protocol_name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "request",
+                    output: "dst_endpoint.domain",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "app",
+                    output: "app_name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                
+                // File mappings
+                {
+                    input: "fname",
+                    output: "file.name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "filePath",
+                    output: "file.path",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "fileHash",
+                    output: "file.hashes.sha256",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "oldFileHash",
+                    output: "file.hashes.sha1",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "fileHashMd5",
+                    output: "file.hashes.md5",
+                    match: ".*",
+                    replace: "$0"
+                },
+                
+                // Process mappings
+                {
+                    input: "deviceProcessName",
+                    output: "process.name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "deviceProcessId",
+                    output: "process.pid",
+                    match: "^(\\d+)$",
+                    replace: "$1"
+                },
+                {
+                    input: "cs1",
+                    output: "process.cmd_line",
+                    match: ".*",
+                    replace: "$0"
+                },
+                
+                // Event/Activity mappings
+                {
+                    input: "cs2",
+                    output: "activity_name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "act",
+                    output: "action",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "msg",
+                    output: "status_detail",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "externalId",
+                    output: "metadata.correlation_uid",
+                    match: ".*",
+                    replace: "$0"
+                },
+                
+                // Threat Intelligence mappings
+                {
+                    input: "cat",
+                    output: "category_name",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs3",
+                    output: "unmapped.cs3",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs3Label",
+                    output: "unmapped.cs3_label",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs4",
+                    output: "unmapped.cs4",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs4Label",
+                    output: "unmapped.cs4_label",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs5",
+                    output: "unmapped.cs5",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs5Label",
+                    output: "unmapped.cs5_label",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs6",
+                    output: "unmapped.cs6",
+                    match: ".*",
+                    replace: "$0"
+                },
+                {
+                    input: "cs6Label",
+                    output: "unmapped.cs6_label",
+                    match: ".*",
+                    replace: "$0"
+                },
+                
+                // Direction mapping
+                {
+                    input: "deviceDirection",
+                    output: "direction_id",
+                    match: "^0$",
+                    replace: "1"  // Inbound
+                },
+                {
+                    input: "deviceDirection",
+                    output: "direction_id",
+                    match: "^1$",
+                    replace: "2"  // Outbound
+                },
+                {
+                    input: "deviceDirection",
+                    output: "direction",
+                    match: "^0$",
+                    replace: "Inbound"
+                },
+                {
+                    input: "deviceDirection",
+                    output: "direction",
+                    match: "^1$",
+                    replace: "Outbound"
+                },
+                
+                // Count mappings
+                {
+                    input: "cnt",
+                    output: "count",
+                    match: "^(\\d+)$",
+                    replace: "$1"
+                }
+            ]
+        }
+    }
+    
+    // Additional OCSF rewrites based on parsed fields
+    rewrites: [
+        // Map cs3-cs6 based on their labels for threat intelligence
+        {
+            input: "unmapped.cs3_label",
+            output: "attacks.technique.uid",
+            match: "^TechniqueId$",
+            replace: "$unmapped.cs3$"
+        },
+        {
+            input: "unmapped.cs3_label",
+            output: "finding.types",
+            match: "^PatternDisposition$",
+            replace: "$unmapped.cs3$"
+        },
+        {
+            input: "unmapped.cs3_label",
+            output: "network_endpoint.connection_info.direction",
+            match: "^ConnectionDirection$",
+            replace: "$unmapped.cs3$"
+        },
+        {
+            input: "unmapped.cs3_label",
+            output: "malware.name",
+            match: "^RansomwareFamily$",
+            replace: "$unmapped.cs3$"
+        },
+        {
+            input: "unmapped.cs3_label",
+            output: "attacks.technique.name",
+            match: "^LateralMovementTechnique$",
+            replace: "$unmapped.cs3$"
+        },
+        
+        // cs4 mappings
+        {
+            input: "unmapped.cs4_label",
+            output: "malware.classification",
+            match: "^ThreatFamily$",
+            replace: "$unmapped.cs4$"
+        },
+        {
+            input: "unmapped.cs4_label",
+            output: "unmapped.credential_access_type",
+            match: "^CredentialAccessType$",
+            replace: "$unmapped.cs4$"
+        },
+        {
+            input: "unmapped.cs4_label",
+            output: "network_endpoint.connection_info.boundary",
+            match: "^RemoteAddressType$",
+            replace: "$unmapped.cs4$"
+        },
+        {
+            input: "unmapped.cs4_label",
+            output: "unmapped.ransom_note_created",
+            match: "^RansomNoteCreated$",
+            replace: "$unmapped.cs4$"
+        },
+        {
+            input: "unmapped.cs4_label",
+            output: "service.name",
+            match: "^ServiceName$",
+            replace: "$unmapped.cs4$"
+        },
+        
+        // cs5 mappings
+        {
+            input: "unmapped.cs5_label",
+            output: "malware.name",
+            match: "^ThreatName$",
+            replace: "$unmapped.cs5$"
+        },
+        {
+            input: "unmapped.cs5_label",
+            output: "attacks.technique.uid",
+            match: "^TechniqueId$",
+            replace: "$unmapped.cs5$"
+        },
+        {
+            input: "unmapped.cs5_label",
+            output: "share.name",
+            match: "^ShareName$",
+            replace: "$unmapped.cs5$"
+        },
+        
+        // cs6 mappings
+        {
+            input: "unmapped.cs6_label",
+            output: "attacks.technique.uid",
+            match: "^TechniqueId$",
+            replace: "$unmapped.cs6$"
+        },
+        
+        // OCSF Event Type Classification based on activity
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(ProcessRollup|Process).*",
+            replace: "1007"  // Process Activity
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(NetworkConnect|Connection).*",
+            replace: "4001"  // Network Activity
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(FileWritten|File).*",
+            replace: "1001"  // File System Activity
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(Registry).*",
+            replace: "201001"  // Windows Registry Activity
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(Credential|LSASS).*",
+            replace: "3002"  // Authentication Activity
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(Ransomware|Malware).*",
+            replace: "2001"  // Security Finding
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(PowerShell|Script|Command).*",
+            replace: "1007"  // Process Activity
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(LateralMovement|Remote).*",
+            replace: "4005"  // RDP Activity
+        },
+        {
+            input: "activity_name",
+            output: "class_uid",
+            match: ".*(Exfiltration|Data).*",
+            replace: "4003"  // DNS Activity
+        },
+        
+        // Set class names based on class_uid
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^1001$",
+            replace: "File System Activity"
+        },
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^1007$",
+            replace: "Process Activity"
+        },
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^2001$",
+            replace: "Security Finding"
+        },
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^3002$",
+            replace: "Authentication"
+        },
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^4001$",
+            replace: "Network Activity"
+        },
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^4003$",
+            replace: "DNS Activity"
+        },
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^4005$",
+            replace: "RDP Activity"
+        },
+        {
+            input: "class_uid",
+            output: "class_name",
+            match: "^201001$",
+            replace: "Windows Registry Activity"
+        },
+        
+        // Set activity_id based on action
+        {
+            input: "action",
+            output: "activity_id",
+            match: "^detected$",
+            replace: "2"  // Detect
+        },
+        {
+            input: "action",
+            output: "activity_id",
+            match: "^blocked$",
+            replace: "3"  // Block
+        },
+        {
+            input: "action",
+            output: "activity_id",
+            match: "^allowed$",
+            replace: "1"  // Allow
+        },
+        
+        // Observable extraction
+        {
+            input: "src_endpoint.ip",
+            output: "observables.ip",
+            match: ".*",
+            replace: "$0"
+        },
+        {
+            input: "dst_endpoint.ip",
+            output: "observables.ip",
+            match: ".*",
+            replace: "$0"
+        },
+        {
+            input: "file.hashes.sha256",
+            output: "observables.hash",
+            match: ".*",
+            replace: "$0"
+        },
+        {
+            input: "file.hashes.md5",
+            output: "observables.hash",
+            match: ".*",
+            replace: "$0"
+        },
+        {
+            input: "user.name",
+            output: "observables.user",
+            match: ".*",
+            replace: "$0"
+        },
+        {
+            input: "dst_endpoint.domain",
+            output: "observables.domain",
+            match: ".*",
+            replace: "$0"
+        },
+        {
+            input: "process.cmd_line",
+            output: "observables.cmd_line",
+            match: ".*",
+            replace: "$0"
+        },
+        
+        // Set status based on action
+        {
+            input: "action",
+            output: "status",
+            match: "^detected$",
+            replace: "Success"
+        },
+        {
+            input: "action",
+            output: "status_id",
+            match: "^detected$",
+            replace: "1"
+        },
+        
+        // Risk score based on severity
+        {
+            input: "severity_id",
+            output: "risk_score",
+            match: "^2$",
+            replace: "20"
+        },
+        {
+            input: "severity_id",
+            output: "risk_score",
+            match: "^3$",
+            replace: "50"
+        },
+        {
+            input: "severity_id",
+            output: "risk_score",
+            match: "^4$",
+            replace: "75"
+        },
+        {
+            input: "severity_id",
+            output: "risk_score",
+            match: "^5$",
+            replace: "95"
+        }
+    ]
+}

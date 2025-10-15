@@ -1,0 +1,331 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Palo Alto Networks",
+    "dataSource.name": "Palo Alto Prisma SASE",
+    "dataSource.category": "security",
+    "dataSource.technology": "firewall",
+    "source": "paloalto_prismasase"
+  },
+  
+  "patterns": {
+    "timestamp": "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3,6})?([+-]\\d{2}:\\d{2}|Z)?",
+    "ip_address": "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+    "port_number": "\\d{1,5}",
+    "event_type": "(TRAFFIC|THREAT|URL|DATA|TUNNEL|AUTH)",
+    "action": "(allow|deny|block|alert|success|failed|up|down)",
+    "severity": "(informational|low|medium|high|critical)",
+    "protocol": "(tcp|udp|icmp)",
+    "application": "[a-zA-Z0-9._-]+",
+    "hash": "[a-fA-F0-9]{64}",
+    "field_value": "[^\\s,}]+",
+    "quoted_string": "\"[^\"]*\"",
+    "url_pattern": "https?://[^\\s,}]+"
+  },
+  
+  "formats": [
+    {
+      "id": "paloalto_traffic_event",
+      "format": "\\{\"time_generated\":\"$timestamp$\",\"serial\":\"$field_value{name=serial}$\",\"type\":\"TRAFFIC\",\"subtype\":\"$field_value{name=subtype}$\",.*\"src\":\"$ip_address{name=src_ip}$\",\"dst\":\"$ip_address{name=dst_ip}$\",.*\"rule\":\"$field_value{name=rule_name}$\",\"srcuser\":\"$field_value{name=src_user}$\",.*\"app\":\"$application{name=app_name}$\",.*\"sport\":$port_number{name=src_port}$,\"dport\":$port_number{name=dst_port}$,.*\"proto\":\"$protocol$\",\"action\":\"$action$\".*",
+      "attributes": {
+        "class_uid": 4001,
+        "class_name": "Network Activity",
+        "category_uid": 4,
+        "category_name": "Network Activity",
+        "type_uid": 400101,
+        "activity_id": 1,
+        "activity_name": "Traffic"
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "serial",
+          "output": "device.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "src_ip",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "dst_ip",
+          "output": "dst_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "src_port",
+          "output": "src_endpoint.port",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "dst_port",
+          "output": "dst_endpoint.port",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "protocol",
+          "output": "connection_info.protocol_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "action",
+          "output": "disposition",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "action",
+          "output": "status_id",
+          "match": "allow",
+          "replace": "1"
+        },
+        {
+          "input": "action",
+          "output": "status_id",
+          "match": "deny|block",
+          "replace": "2"
+        },
+        {
+          "input": "rule_name",
+          "output": "metadata.rule_uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "app_name",
+          "output": "app_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "src_user",
+          "output": "actor.user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "src_ip",
+          "output": "observables",
+          "match": ".*",
+          "replace": "[{\"name\":\"src_ip\",\"type\":\"IP Address\",\"value\":\"$0\"},{\"name\":\"dst_ip\",\"type\":\"IP Address\",\"value\":\"${dst_ip}\"}]"
+        }
+      ],
+      "halt": true
+    },
+    {
+      "id": "paloalto_threat_event",
+      "format": "\\{\"time_generated\":\"$timestamp$\",\"serial\":\"$field_value{name=serial}$\",\"type\":\"THREAT\",\"subtype\":\"$field_value{name=subtype}$\",.*\"src\":\"$ip_address{name=src_ip}$\",\"dst\":\"$ip_address{name=dst_ip}$\",.*\"threat\":\"$field_value{name=threat_name}$\",\"tname\":\"$field_value{name=threat_name_alt}$\",.*\"severity\":\"$severity$\".*",
+      "attributes": {
+        "class_uid": 2001,
+        "class_name": "Security Control",
+        "category_uid": 2,
+        "category_name": "Findings",
+        "type_uid": 200101,
+        "activity_id": 1,
+        "activity_name": "Security Alert"
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "serial",
+          "output": "device.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "src_ip",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "dst_ip",
+          "output": "dst_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "threat_name",
+          "output": "malware.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "threat_name_alt",
+          "output": "finding.type",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "critical",
+          "replace": "5"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "high",
+          "replace": "4"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "medium",
+          "replace": "3"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "low",
+          "replace": "2"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "informational",
+          "replace": "1"
+        },
+        {
+          "input": "subtype",
+          "output": "type_name",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ],
+      "halt": true
+    },
+    {
+      "id": "paloalto_url_event",
+      "format": "\\{\"time_generated\":\"$timestamp$\",.*\"type\":\"URL\",\"subtype\":\"$field_value{name=subtype}$\",.*\"src\":\"$ip_address{name=src_ip}$\",\"dst\":\"$ip_address{name=dst_ip}$\",.*\"url\":\"$url_pattern{name=url}$\",\"category\":\"$field_value{name=category}$\".*",
+      "attributes": {
+        "class_uid": 4002,
+        "class_name": "HTTP Activity", 
+        "category_uid": 4,
+        "category_name": "Network Activity",
+        "type_uid": 400201,
+        "activity_id": 1,
+        "activity_name": "HTTP Request"
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "src_ip",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "dst_ip",
+          "output": "dst_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "url",
+          "output": "http_request.url.text",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "category",
+          "output": "http_request.url.categories",
+          "match": ".*",
+          "replace": "[\"$0\"]"
+        },
+        {
+          "input": "subtype",
+          "output": "disposition",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "subtype",
+          "output": "status_id",
+          "match": "allow",
+          "replace": "1"
+        },
+        {
+          "input": "subtype",
+          "output": "status_id",
+          "match": "block",
+          "replace": "2"
+        }
+      ],
+      "halt": true
+    },
+    {
+      "id": "paloalto_auth_event",
+      "format": "\\{\"time_generated\":\"$timestamp$\",.*\"type\":\"AUTH\",\"subtype\":\"$field_value{name=subtype}$\",.*\"srcuser\":\"$field_value{name=username}$\",.*\"action\":\"$action$\".*",
+      "attributes": {
+        "class_uid": 3002,
+        "class_name": "Authentication",
+        "category_uid": 3,
+        "category_name": "Identity & Access Management",
+        "type_uid": 300201,
+        "activity_id": 1,
+        "activity_name": "Logon"
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "username",
+          "output": "user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "action",
+          "output": "disposition",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "action",
+          "output": "status_id",
+          "match": "success",
+          "replace": "1"
+        },
+        {
+          "input": "action",
+          "output": "status_id",
+          "match": "failed",
+          "replace": "2"
+        },
+        {
+          "input": "subtype",
+          "output": "type_name",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ],
+      "halt": true
+    }
+  ]
+}

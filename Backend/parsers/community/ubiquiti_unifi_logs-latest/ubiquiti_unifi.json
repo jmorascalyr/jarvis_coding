@@ -1,0 +1,160 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Ubiquiti",
+    "dataSource.name": "UniFi",
+    "dataSource.category": "network",
+    "dataSource.technology": "wireless_networking",
+    "source": "ubiquiti_unifi"
+  },
+  
+  "patterns": {
+    "timestamp": "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?[+-]\\d{2}:\\d{2}",
+    "ip_address": "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+    "mac_address": "([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})",
+    "site_id": "site_\\d+",
+    "event_key": "EVT_[A-Z_]+",
+    "field_value": "[^\\s,]+",
+    "quoted_string": "\"[^\"]*\""
+  },
+  
+  "formats": [
+    {
+      "id": "ubiquiti_unifi_network",
+      "format": "$timestamp$ UniFi datetime=$timestamp{name=datetime}$ key=$event_key{name=key}$ siteId=$site_id{name=site_id}$ category=$quoted_string{name=category}$ severity=$quoted_string{name=severity}$ msg=$quoted_string{name=msg}$ admin=$quoted_string{name=admin}$ subsystem=$quoted_string{name=subsystem}$ model=$quoted_string{name=model}$ version=$quoted_string{name=version}$",
+      "attributes": {
+        "dataSource.app": "Ubiquiti UniFi Network",
+        "class_uid": 4001,
+        "class_name": "Network Activity",
+        "category_uid": 4,
+        "category_name": "Network Activity",
+        "type_uid": 400101,
+        "activity_id": 1,
+        "activity_name": "Network Traffic",
+        "severity_id": 2
+      },
+      "rewrites": [
+        {
+          "input": "datetime",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "key",
+          "output": "type_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "site_id",
+          "output": "metadata.tenant_uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "category",
+          "output": "category_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "msg",
+          "output": "message",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "admin",
+          "output": "actor.user.email_addr",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "subsystem",
+          "output": "metadata.product.feature.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "model",
+          "output": "device.hw_info.model",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "version",
+          "output": "device.os.version",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "key",
+          "output": "activity_id",
+          "match": "(?i)(Connected|Link_Up|Unblocked)",
+          "replace": "1"
+        },
+        {
+          "input": "key",
+          "output": "activity_id",
+          "match": "(?i)(Disconnected|Link_Down|Blocked|Alert)",
+          "replace": "2"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(alert)",
+          "replace": "4"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(warning)",
+          "replace": "3"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(info)",
+          "replace": "1"
+        },
+        {
+          "input": "key",
+          "output": "status_id",
+          "match": "(?i)(Connected|Link_Up|Unblocked)",
+          "replace": "1"
+        },
+        {
+          "input": "key",
+          "output": "status_id",
+          "match": "(?i)(Disconnected|Link_Down|Blocked|Alert)",
+          "replace": "2"
+        },
+        {
+          "input": "category",
+          "output": "class_uid",
+          "match": "(?i)(wireless)",
+          "replace": "4002"
+        },
+        {
+          "input": "category",
+          "output": "class_uid",
+          "match": "(?i)(security)",
+          "replace": "2001"
+        },
+        {
+          "input": "category",
+          "output": "class_uid",
+          "match": "(?i)(switching|routing)",
+          "replace": "4001"
+        },
+        {
+          "input": "site_id",
+          "output": "observables",
+          "match": ".*",
+          "replace": "[{\"name\":\"site_id\",\"type\":\"Site\",\"value\":\"$0\"},{\"name\":\"admin_email\",\"type\":\"Email Address\",\"value\":\"${admin}\"},{\"name\":\"device_model\",\"type\":\"Device\",\"value\":\"${model}\"}]"
+        }
+      ],
+      "halt": true
+    }
+  ]
+}

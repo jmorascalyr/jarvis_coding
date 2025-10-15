@@ -1,0 +1,219 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Zscaler",
+    "dataSource.name": "Zscaler Firewall",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "Zscaler",
+    "metadata.product.name": "Zscaler Internet Access",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.datetime",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 4001,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 6,
+              "field": "activity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": "Traffic",
+              "field": "activity_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 400106,
+              "field": "type_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client_ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src_port",
+              "to": "src_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.dest_ip",
+              "to": "dst_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.dest_port",
+              "to": "dst_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.user",
+              "to": "actor.user.email_addr"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.device_hostname",
+              "to": "device.hostname"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.device_owner",
+              "to": "device.owner.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.action",
+              "to": "disposition"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.policy",
+              "to": "policy.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.rule",
+              "to": "rule.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.app",
+              "to": "app_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.proto",
+              "to": "connection_info.protocol_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.inbound_bytes",
+              "to": "traffic.bytes_in"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.outbound_bytes",
+              "to": "traffic.bytes_out"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.duration",
+              "to": "duration"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client_country",
+              "to": "src_endpoint.location.country"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.dest_country",
+              "to": "dst_endpoint.location.country"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.locationname",
+              "to": "src_endpoint.location.city"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.department",
+              "to": "actor.user.groups"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "dst_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "actor.user.email_addr",
+        "type": "User"
+      },
+      {
+        "name": "device.hostname",
+        "type": "Hostname"
+      },
+      {
+        "name": "app_name",
+        "type": "Other"
+      }
+    ]
+  }
+}

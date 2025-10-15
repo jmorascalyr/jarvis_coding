@@ -1,0 +1,245 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Cisco",
+    "dataSource.name": "ASA",
+    "dataSource.category": "network",
+    "metadata.product.vendor_name": "Cisco",
+    "metadata.product.name": "ASA Firewall",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 4001,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.timestamp",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event_id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.message",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.action",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.source_ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.source_port",
+              "to": "src_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.destination_ip",
+              "to": "dst_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.destination_port",
+              "to": "dst_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.protocol",
+              "to": "connection_info.protocol_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.interface",
+              "to": "src_endpoint.interface_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.rule_name",
+              "to": "metadata.extensions.rule_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.connection_id",
+              "to": "connection_info.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.bytes_sent",
+              "to": "traffic.bytes_out"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.bytes_received",
+              "to": "traffic.bytes_in"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.packets_sent",
+              "to": "traffic.packets_out"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.packets_received",
+              "to": "traffic.packets_in"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.duration",
+              "to": "connection_info.duration"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.username",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.device_name",
+              "to": "device.hostname"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.severity",
+              "to": "severity"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.action = 'permit'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.action = 'deny'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.action = 'permit'"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "unmapped.action = 'deny'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.action = 'permit'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.action = 'deny'"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "dst_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "device.hostname",
+        "type": "Hostname"
+      }
+    ]
+  }
+}

@@ -1,0 +1,291 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Okta",
+    "dataSource.name": "Okta System Log",
+    "dataSource.category": "authentication",
+    "metadata.product.vendor_name": "Okta",
+    "metadata.product.name": "Okta System Log",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.published",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 3002,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Authentication",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Identity & Access Management",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.published",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.uuid",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventType",
+              "to": "type_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.displayMessage",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.actor.alternateId",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.actor.displayName",
+              "to": "user.full_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.actor.id",
+              "to": "user.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.ipAddress",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.geographicalContext.city",
+              "to": "src_endpoint.location.city"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.geographicalContext.state",
+              "to": "src_endpoint.location.region"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.geographicalContext.country",
+              "to": "src_endpoint.location.country"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.geographicalContext.postalCode",
+              "to": "src_endpoint.location.postal_code"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.geographicalContext.geolocation.lat",
+              "to": "src_endpoint.location.coordinates[0]"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.geographicalContext.geolocation.lon",
+              "to": "src_endpoint.location.coordinates[1]"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.userAgent.rawUserAgent",
+              "to": "http_request.user_agent"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.userAgent.os.family",
+              "to": "src_endpoint.os.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client.userAgent.browser.family",
+              "to": "http_request.user_agent"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.outcome.result",
+              "to": "status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.outcome.reason",
+              "to": "status_detail"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.transaction.type",
+              "to": "auth_protocol"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.transaction.id",
+              "to": "session.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.authenticationContext.externalSessionId",
+              "to": "session.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.debugContext.debugData.requestId",
+              "to": "metadata.correlation_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.debugContext.debugData.requestUri",
+              "to": "http_request.url.path"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.target[0].displayName",
+              "to": "dst_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.target[0].alternateId",
+              "to": "dst_endpoint.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.severity",
+              "to": "severity"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.outcome.result = 'SUCCESS'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.outcome.result = 'FAILURE'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.outcome.result = 'SUCCESS'"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "unmapped.outcome.result = 'FAILURE'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.outcome.result = 'SUCCESS'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.outcome.result = 'FAILURE'"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "http_request.user_agent",
+        "type": "Other"
+      },
+      {
+        "name": "session.uid",
+        "type": "Other"
+      },
+      {
+        "name": "dst_endpoint.name",
+        "type": "Other"
+      }
+    ]
+  }
+}

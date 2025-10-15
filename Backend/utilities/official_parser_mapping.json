@@ -1,0 +1,70 @@
+{
+  "Cisco Firewall Threat Defense": {
+    "current_generator": "cisco_firewall_threat_defense.py",
+    "current_parser": "cisco_firewall_threat_defense-latest",
+    "ocsf_class": "Network Activity (4001)",
+    "priority": "HIGH"
+  },
+  "Corelight": {
+    "current_generator": [
+      "corelight_conn.py",
+      "corelight_http.py",
+      "corelight_ssl.py",
+      "corelight_tunnel.py"
+    ],
+    "current_parser": [
+      "corelight_conn_logs-latest",
+      "corelight_http_logs-latest",
+      "corelight_ssl_logs-latest",
+      "corelight_tunnel_logs-latest"
+    ],
+    "ocsf_class": "Network Activity",
+    "priority": "HIGH"
+  },
+  "FortiGate": {
+    "current_generator": "fortinet_fortigate.py",
+    "current_parser": "fortinet_fortigate_fortimanager_logs-latest",
+    "ocsf_class": "Network Activity",
+    "priority": "HIGH"
+  },
+  "Palo Alto Networks Firewall": {
+    "current_generator": "paloalto_firewall.py",
+    "current_parser": "paloalto_alternate_logs-latest",
+    "ocsf_class": "Network Activity",
+    "priority": "HIGH"
+  },
+  "Prisma Access": {
+    "current_generator": "paloalto_prismasase.py",
+    "current_parser": "paloalto_prismasase_logs-latest",
+    "ocsf_class": "Network Activity",
+    "priority": "MEDIUM"
+  },
+  "Check Point Next Generation Firewall": {
+    "current_generator": "checkpoint.py",
+    "current_parser": "checkpoint_checkpoint_logs-latest",
+    "ocsf_class": "Network Activity",
+    "priority": "MEDIUM",
+    "action": "UPDATE_WITH_OFFICIAL"
+  },
+  "FortiManager": {
+    "current_generator": null,
+    "current_parser": null,
+    "ocsf_class": "System Activity",
+    "priority": "LOW",
+    "action": "CREATE_NEW"
+  },
+  "Infoblox DDI": {
+    "current_generator": null,
+    "current_parser": null,
+    "ocsf_class": "Network Activity",
+    "priority": "MEDIUM",
+    "action": "CREATE_NEW"
+  },
+  "Zscaler Private Access": {
+    "current_generator": null,
+    "current_parser": null,
+    "ocsf_class": "Network Activity",
+    "priority": "LOW",
+    "action": "CREATE_NEW"
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Microsoft",
+    "dataSource.name": "Defender for Office 365",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "Microsoft",
+    "metadata.product.name": "Microsoft Defender for Office 365",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.time",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 4003,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Email Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.time",
+              "to": "time"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.timestamp",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event_id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.action",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.action",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.sender_address",
+              "to": "email.from"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.recipient_address",
+              "to": "email.to[0]"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.subject",
+              "to": "email.subject"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.message_id",
+              "to": "email.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.sender_ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.threat_type",
+              "to": "malware.classification_ids[0]"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.threat_name",
+              "to": "malware.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.verdict",
+              "to": "disposition"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.threat_detection_url",
+              "to": "malware.detection_url"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.attachment_name",
+              "to": "email.attachments[0].name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.attachment_hash",
+              "to": "email.attachments[0].hash.value"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.attachment_size",
+              "to": "email.attachments[0].size"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.file_type",
+              "to": "email.attachments[0].type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.confidence_level",
+              "to": "confidence_id"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.organization",
+              "to": "metadata.tenant_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.detection_method",
+              "to": "metadata.extensions.detection_method"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.policy_name",
+              "to": "metadata.extensions.policy_name"
+            }
+          },
+          {
+            "constant": {
+              "value": "SHA256",
+              "field": "email.attachments[0].hash.type_id",
+              "predicate": "unmapped.attachment_hash is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.verdict = 'Clean'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.verdict = 'Blocked'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.verdict = 'Clean'"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "severity_id",
+              "predicate": "unmapped.verdict = 'Blocked'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "email.from",
+        "type": "Email Address"
+      },
+      {
+        "name": "email.to[0]",
+        "type": "Email Address"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "email.uid",
+        "type": "Other"
+      },
+      {
+        "name": "malware.name",
+        "type": "Other"
+      },
+      {
+        "name": "email.attachments[0].hash.value",
+        "type": "File Hash"
+      }
+    ]
+  }
+}

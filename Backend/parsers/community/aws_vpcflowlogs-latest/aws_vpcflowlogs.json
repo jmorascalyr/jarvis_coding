@@ -1,0 +1,315 @@
+{
+  "attributes": {
+    "dataSource.vendor": "AWS",
+    "dataSource.name": "VPC Flow Logs",
+    "dataSource.category": "network",
+    "metadata.product.vendor_name": "AWS",
+    "metadata.product.name": "AWS VPC Flow Logs",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.start",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.time",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 4001,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.start",
+              "to": "time"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.time",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "epochSecondsToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.flow_id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.log_status",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.srcaddr",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.dstaddr",
+              "to": "dst_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.srcport",
+              "to": "src_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.dstport",
+              "to": "dst_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.protocol",
+              "to": "connection_info.protocol_num"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.protocol_name",
+              "to": "connection_info.protocol_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.packets",
+              "to": "traffic.packets"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.bytes",
+              "to": "traffic.bytes"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.start",
+              "to": "start_time"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.end",
+              "to": "end_time"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.action",
+              "to": "disposition"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.flowlogstatus",
+              "to": "status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.account_id",
+              "to": "cloud.account_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.interface_id",
+              "to": "dst_endpoint.interface_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.vpc_id",
+              "to": "cloud.vpc_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.subnet_id",
+              "to": "cloud.subnet_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.instance_id",
+              "to": "cloud.instance_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.tcp_flags",
+              "to": "connection_info.tcp_flags"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.type",
+              "to": "type_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.pkt_srcaddr",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.pkt_dstaddr",
+              "to": "dst_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.region",
+              "to": "cloud.region"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.az_id",
+              "to": "cloud.zone"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.sublocation_type",
+              "to": "metadata.extensions.sublocation_type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.sublocation_id",
+              "to": "metadata.extensions.sublocation_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.action = 'ACCEPT'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.action = 'REJECT'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.action = 'ACCEPT'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.action = 'REJECT'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Success",
+              "field": "status",
+              "predicate": "unmapped.action = 'ACCEPT'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Failure",
+              "field": "status",
+              "predicate": "unmapped.action = 'REJECT'"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "dst_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "cloud.account_uid",
+        "type": "Other"
+      },
+      {
+        "name": "cloud.vpc_uid",
+        "type": "Other"
+      },
+      {
+        "name": "cloud.instance_uid",
+        "type": "Other"
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+name: "CrowdStrike Falcon"
+slug: "crowdstrike_falcon"
+description: "Parser for CrowdStrike Falcon endpoint events"
+productTags: ["endpoint", "edr", "crowdstrike", "falcon", "threat"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

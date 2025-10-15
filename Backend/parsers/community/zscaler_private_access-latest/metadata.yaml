@@ -1,0 +1,9 @@
+name: "Zscaler Private Access"
+slug: "zscaler_private_access"
+description: "Parser for Zscaler Private Access logs"
+productTags: ["zscaler", "private", "access", "ztna"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

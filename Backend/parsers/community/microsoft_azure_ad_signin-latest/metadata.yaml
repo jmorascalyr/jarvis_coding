@@ -1,0 +1,9 @@
+name: "Microsoft Azure AD SignIn"
+slug: "microsoft_azure_ad_signin"
+description: "Parser for Microsoft Azure AD SignIn logs"
+productTags: ["identity", "authentication", "signin", "microsoft"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

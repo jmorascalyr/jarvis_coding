@@ -1,0 +1,511 @@
+{
+  "attributes": {
+    "dataSource.category": "security",
+    "dataSource.name": "BeyondTrust Privilege Management SaaS Windows Edition",
+    "dataSource.vendor": "BeyondTrust",
+    "metadata.product.vendor_name": "BeyondTrust",
+    "metadata.product.name": "Privilege Management Windows",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$timestamp$\\s\\[INFO\\]\\:\\s$activity_id$,.*,$event_details$,$user_name$,$device_name$,$policy_group$,$app_group$,$reason$,$custom_token$,$hash_fingerprint$,$cert_issuer$,$process_pid$,$process_ppid$,.*,$app_desc$,$app_type$,$product_name$,$product_code$,$product_version$,$file_version$,$client_ip$,$client_name$,$file_owner$,$shell$,$token$,$event_type$,$authorizing_user$,$uac_level$,$com_clsid$,$com_appid$,$com_server_path$,$com_display_name$,$url$,$store_app_name$,$store_app_publisher$,$store_app_version$,$drive_type$,$service_name$,$service_display_name$,$challenge_status$",
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "activity_id",
+          "output": "activity_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_details",
+          "output": "message",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "user_name",
+          "output": "actor.user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "device_name",
+          "output": "device.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "policy_group",
+          "output": "policy.group",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "app_group",
+          "output": "app.group",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "reason",
+          "output": "reason",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "custom_token",
+          "output": "auth.token",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "hash_fingerprint",
+          "output": "fingerprint.value",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "cert_issuer",
+          "output": "certificate.issuer",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "process_pid",
+          "output": "process.pid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "process_ppid",
+          "output": "process.parent.pid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "app_desc",
+          "output": "process.file.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "app_type",
+          "output": "app.type",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "product_name",
+          "output": "product.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "product_version",
+          "output": "product.version",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "file_version",
+          "output": "process.file.version",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "client_ip",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "client_name",
+          "output": "src_endpoint.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "file_owner",
+          "output": "process.file.owner.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "shell",
+          "output": "process.parent.file.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_type",
+          "output": "disposition",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "authorizing_user",
+          "output": "authorizing_user",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "uac_level",
+          "output": "process.integrity_id",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "service_name",
+          "output": "service.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "challenge_status",
+          "output": "status_detail",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "activity_name = *",
+        "transformations": [
+          {
+            "constant": {
+              "value": 1007,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Process Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "System Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "activity_name = 'EPM_ALLOW' OR activity_name = 'EPM_EXECUTE' OR activity_name = 'EPM_ACCESS'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Launch",
+              "field": "activity_name",
+              "predicate": "activity_name = 'EPM_ALLOW' OR activity_name = 'EPM_EXECUTE' OR activity_name = 'EPM_ACCESS'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "activity_name = 'EPM_BLOCK'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Terminate",
+              "field": "activity_name",
+              "predicate": "activity_name = 'EPM_BLOCK'"
+            }
+          },
+          {
+            "constant": {
+              "value": 99,
+              "field": "activity_id",
+              "predicate": "activity_name = 'EPM_ELEVATE' OR activity_name = 'EPM_PROMPT' OR activity_name = 'EPM_AUDIT' OR activity_name = 'EPM_REMOVE' OR activity_name = 'EPM_INSTALL' OR activity_name = 'EPM_MODIFY'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Other",
+              "field": "activity_name",
+              "predicate": "activity_name = 'EPM_ELEVATE' OR activity_name = 'EPM_PROMPT' OR activity_name = 'EPM_AUDIT' OR activity_name = 'EPM_REMOVE' OR activity_name = 'EPM_INSTALL' OR activity_name = 'EPM_MODIFY'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "disposition_id",
+              "predicate": "disposition = 'Allow' OR activity_name = 'EPM_ALLOW'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Allowed",
+              "field": "disposition",
+              "predicate": "disposition = 'Allow' OR activity_name = 'EPM_ALLOW'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "disposition_id",
+              "predicate": "disposition = 'Block' OR activity_name = 'EPM_BLOCK'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Blocked",
+              "field": "disposition",
+              "predicate": "disposition = 'Block' OR activity_name = 'EPM_BLOCK'"
+            }
+          },
+          {
+            "constant": {
+              "value": 99,
+              "field": "disposition_id",
+              "predicate": "disposition = 'Elevate' OR disposition = 'Prompt' OR disposition = 'Audit'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Other",
+              "field": "disposition",
+              "predicate": "disposition = 'Elevate' OR disposition = 'Prompt' OR disposition = 'Audit'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "status_detail = 'Success' OR disposition = 'Allow'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Success",
+              "field": "status",
+              "predicate": "status_detail = 'Success' OR disposition = 'Allow'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "status_detail = 'Failed' OR status_detail = 'Denied' OR disposition = 'Block'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Failure",
+              "field": "status",
+              "predicate": "status_detail = 'Failed' OR status_detail = 'Denied' OR disposition = 'Block'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": "Informational",
+              "field": "severity"
+            }
+          },
+          {
+            "constant": {
+              "value": 100701,
+              "field": "type_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "actor.user.name",
+              "to": "actor.user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "device.name",
+              "to": "device.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "src_endpoint.ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "src_endpoint.name",
+              "to": "src_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.file.name",
+              "to": "process.file.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.pid",
+              "to": "process.pid"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.parent.pid",
+              "to": "process.parent.pid"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.parent.file.name",
+              "to": "process.parent.file.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.file.version",
+              "to": "process.file.version"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.file.owner.name",
+              "to": "process.file.owner.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.integrity_id",
+              "to": "process.integrity_id"
+            }
+          },
+          {
+            "copy": {
+              "from": "policy.group",
+              "to": "policy.group"
+            }
+          },
+          {
+            "copy": {
+              "from": "app.group",
+              "to": "app.group"
+            }
+          },
+          {
+            "copy": {
+              "from": "app.type",
+              "to": "app.type"
+            }
+          },
+          {
+            "copy": {
+              "from": "product.name",
+              "to": "product.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "product.version",
+              "to": "product.version"
+            }
+          },
+          {
+            "copy": {
+              "from": "service.name",
+              "to": "service.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "certificate.issuer",
+              "to": "certificate.issuer"
+            }
+          },
+          {
+            "copy": {
+              "from": "fingerprint.value",
+              "to": "fingerprint.value"
+            }
+          },
+          {
+            "copy": {
+              "from": "auth.token",
+              "to": "auth.token"
+            }
+          },
+          {
+            "copy": {
+              "from": "authorizing_user",
+              "to": "authorizing_user"
+            }
+          },
+          {
+            "copy": {
+              "from": "reason",
+              "to": "reason"
+            }
+          },
+          {
+            "copy": {
+              "from": "status_detail",
+              "to": "status_detail"
+            }
+          },
+          {
+            "copy": {
+              "from": "message",
+              "to": "message"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "actor.user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "device.name",
+        "type": "Other"
+      },
+      {
+        "name": "process.file.name",
+        "type": "Other"
+      },
+      {
+        "name": "fingerprint.value",
+        "type": "Other"
+      }
+    ]
+  }
+}

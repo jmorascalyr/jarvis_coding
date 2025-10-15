@@ -1,0 +1,9 @@
+name: "Palo Alto Firewall"
+slug: "paloalto_firewall"
+description: "Parser for Palo Alto Networks firewall logs"
+productTags: ["firewall", "paloalto", "network", "security"]
+logPattern: ".*"
+multiline: false
+parse: "csv"
+parseParameters:
+  messageField: "message"

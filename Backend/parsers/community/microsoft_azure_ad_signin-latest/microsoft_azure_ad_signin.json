@@ -1,0 +1,249 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Microsoft",
+    "dataSource.name": "Azure AD SignIn",
+    "dataSource.category": "authentication",
+    "metadata.product.vendor_name": "Microsoft",
+    "metadata.product.name": "Azure AD SignIn",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.createdDateTime",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 3002,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Authentication",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Identity & Access Management",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.createdDateTime",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userPrincipalName",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userId",
+              "to": "user.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userDisplayName",
+              "to": "user.full_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.ipAddress",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.clientAppUsed",
+              "to": "http_request.user_agent"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.deviceDetail.deviceId",
+              "to": "device.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.deviceDetail.displayName",
+              "to": "device.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.deviceDetail.operatingSystem",
+              "to": "device.os.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.city",
+              "to": "src_endpoint.location.city"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.state",
+              "to": "src_endpoint.location.region"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.countryOrRegion",
+              "to": "src_endpoint.location.country"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.status.errorCode",
+              "to": "status_code"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.status.failureReason",
+              "to": "status_detail"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.riskLevel",
+              "to": "risk_level"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.riskState",
+              "to": "risk_level_id"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.correlationId",
+              "to": "metadata.correlation_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resourceDisplayName",
+              "to": "dst_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resourceId",
+              "to": "dst_endpoint.uid"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.status.errorCode = '0'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.status.errorCode != '0'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.status.errorCode = '0'"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "unmapped.status.errorCode != '0'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.status.errorCode = '0'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.status.errorCode != '0'"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "device.uid",
+        "type": "Other"
+      },
+      {
+        "name": "user.uid",
+        "type": "User"
+      },
+      {
+        "name": "dst_endpoint.name",
+        "type": "Other"
+      }
+    ]
+  }
+}

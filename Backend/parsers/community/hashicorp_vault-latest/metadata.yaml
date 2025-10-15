@@ -1,0 +1,9 @@
+name: "HashiCorp Vault"
+slug: "hashicorp_vault"
+description: "Parser for HashiCorp Vault audit logs"
+productTags: ["secrets", "pki", "authentication", "hashicorp"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

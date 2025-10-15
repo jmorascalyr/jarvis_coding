@@ -1,0 +1,9 @@
+name: "SentinelOne Endpoint"
+slug: "sentinelone_endpoint"
+description: "Parser for SentinelOne EDR endpoint events"
+productTags: ["endpoint", "edr", "sentinelone", "process", "threat"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

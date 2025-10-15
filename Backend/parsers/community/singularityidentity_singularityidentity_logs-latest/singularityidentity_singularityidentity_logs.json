@@ -1,0 +1,467 @@
+{
+  "attributes": {
+    "dataSource.vendor": "SentinelOne",
+    "dataSource.name": "SentinelOne Identity",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "SentinelOne",
+    "metadata.product.name": "SentinelOne Identity",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.event\\.time",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event\\.id",
+          "output": "metadata.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event\\.type",
+          "output": "activity_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event\\.category",
+          "output": "category_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event\\.login\\.userName",
+          "output": "user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event\\.login\\.type",
+          "output": "logon_type",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event\\.login\\.loginIsSuccessful",
+          "output": "is_successful",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.endpoint\\.name",
+          "output": "device.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.endpoint\\.os",
+          "output": "device.os.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.src\\.ip\\.address",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.src\\.port\\.number",
+          "output": "src_endpoint.port",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.dst\\.ip\\.address",
+          "output": "dst_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.dst\\.port\\.number",
+          "output": "dst_endpoint.port",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.src\\.process\\.name",
+          "output": "process.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.src\\.process\\.pid",
+          "output": "process.pid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.src\\.process\\.uid",
+          "output": "process.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.agent\\.uuid",
+          "output": "agent.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.agent\\.version",
+          "output": "agent.version",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.winEventLog\\.id",
+          "output": "metadata.event_code",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.winEventLog\\.level",
+          "output": "severity_detail",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.winEventLog\\.description",
+          "output": "message",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.winEventLog\\.description\\.securityId",
+          "output": "user.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.indicator\\.category",
+          "output": "finding.title",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.indicator\\.description",
+          "output": "finding.desc",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "activity_name = *",
+        "transformations": [
+          {
+            "constant": {
+              "value": 3002,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Authentication",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Identity & Access Management",
+              "field": "category_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "activity_name = 'User Login'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Logon",
+              "field": "activity_name",
+              "predicate": "activity_name = 'User Login'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "activity_name = 'Failed Login'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Logoff",
+              "field": "activity_name",
+              "predicate": "activity_name = 'Failed Login'"
+            }
+          },
+          {
+            "constant": {
+              "value": 99,
+              "field": "activity_id",
+              "predicate": "activity_name = 'Privilege Escalation' OR activity_name = 'Account Lockout' OR activity_name = 'Password Change' OR activity_name = 'Group Membership Change' OR activity_name = 'Suspicious Login Pattern' OR activity_name = 'Service Account Activity' OR activity_name = 'Admin Console Access' OR activity_name = 'Kerberos Ticket Anomaly'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Other",
+              "field": "activity_name",
+              "predicate": "activity_name = 'Privilege Escalation' OR activity_name = 'Account Lockout' OR activity_name = 'Password Change' OR activity_name = 'Group Membership Change' OR activity_name = 'Suspicious Login Pattern' OR activity_name = 'Service Account Activity' OR activity_name = 'Admin Console Access' OR activity_name = 'Kerberos Ticket Anomaly'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "is_successful = 'true'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Success",
+              "field": "status",
+              "predicate": "is_successful = 'true'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "is_successful = 'false'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Failure",
+              "field": "status",
+              "predicate": "is_successful = 'false'"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "severity_id",
+              "predicate": "severity_detail = 'Error'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Critical",
+              "field": "severity",
+              "predicate": "severity_detail = 'Error'"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "severity_detail = 'Warning'"
+            }
+          },
+          {
+            "constant": {
+              "value": "High",
+              "field": "severity",
+              "predicate": "severity_detail = 'Warning'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "severity_detail = 'Information'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Informational",
+              "field": "severity",
+              "predicate": "severity_detail = 'Information'"
+            }
+          },
+          {
+            "constant": {
+              "value": 300201,
+              "field": "type_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "time",
+              "to": "time"
+            }
+          },
+          {
+            "copy": {
+              "from": "metadata.uid",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "user.name",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "user.uid",
+              "to": "user.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "device.name",
+              "to": "device.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "device.os.name",
+              "to": "device.os.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "src_endpoint.ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "src_endpoint.port",
+              "to": "src_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "dst_endpoint.ip",
+              "to": "dst_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "dst_endpoint.port",
+              "to": "dst_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.name",
+              "to": "process.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.pid",
+              "to": "process.pid"
+            }
+          },
+          {
+            "copy": {
+              "from": "process.uid",
+              "to": "process.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "agent.uid",
+              "to": "agent.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "agent.version",
+              "to": "agent.version"
+            }
+          },
+          {
+            "copy": {
+              "from": "metadata.event_code",
+              "to": "metadata.event_code"
+            }
+          },
+          {
+            "copy": {
+              "from": "logon_type",
+              "to": "logon_type"
+            }
+          },
+          {
+            "copy": {
+              "from": "is_successful",
+              "to": "is_successful"
+            }
+          },
+          {
+            "copy": {
+              "from": "finding.title",
+              "to": "finding.title"
+            }
+          },
+          {
+            "copy": {
+              "from": "finding.desc",
+              "to": "finding.desc"
+            }
+          },
+          {
+            "copy": {
+              "from": "message",
+              "to": "message"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "user.uid",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "dst_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "device.name",
+        "type": "Other"
+      },
+      {
+        "name": "process.name",
+        "type": "Other"
+      }
+    ]
+  }
+}

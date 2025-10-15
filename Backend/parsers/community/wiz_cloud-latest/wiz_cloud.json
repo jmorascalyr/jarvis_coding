@@ -1,0 +1,22 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Wiz",
+    "dataSource.name": "Wiz Cloud Security",
+    "dataSource.category": "security",
+    "dataSource.technology": "cloud_security",
+    "source": "wiz_cloud"
+  },
+  // specify a time zone if the timestamps in your log are not in GMT
+  // timezone: "GMT-0800"
+  
+  formats: [
+    {
+      id: "wiz",
+      format: "\\{\"Records\":\\[$=json{parse=dottedJson}{attrBlacklist=body}$"
+    },
+    {
+      id: "wiz",
+      format: ".*\"body\":\"$body.{parse=escapedJson}$"
+    }
+  ]
+}

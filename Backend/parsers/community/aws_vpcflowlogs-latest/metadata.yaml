@@ -1,0 +1,9 @@
+name: "AWS VPC Flow Logs"
+slug: "aws_vpcflowlogs"
+description: "Parser for AWS VPC Flow Logs"
+productTags: ["aws", "network", "vpc", "flow", "cloud"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

@@ -1,0 +1,9 @@
+name: "Microsoft Azure AD"
+slug: "microsoft_azuread"
+description: "Parser for Microsoft Azure Active Directory audit logs"
+productTags: ["identity", "authentication", "directory", "microsoft"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

@@ -1,0 +1,139 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Zscaler",
+    "dataSource.name": "Zscaler Private Access",
+    "dataSource.category": "network",
+    "metadata.product.vendor_name": "Zscaler",
+    "metadata.product.name": "Zscaler Private Access",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 4001,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.timestamp",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.session_id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.action",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.user",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.client_ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.app_name",
+              "to": "app_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.policy_name",
+              "to": "metadata.extensions.policy_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "app_name",
+        "type": "Other"
+      }
+    ]
+  }
+}

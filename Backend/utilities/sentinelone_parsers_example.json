@@ -1,0 +1,111 @@
+{
+  "parsers": [
+    {
+      "attributes": {
+        "dataSource.vendor": "Fortinet",
+        "dataSource.name": "FortiGate Firewall",
+        "dataSource.category": "security",
+        "metadata.version": "1.0.0",
+        "metadata.product.vendor_name": "Fortinet",
+        "metadata.product.name": "FortiGate",
+        "severity_id": 99
+      },
+      "formats": [
+        {
+          "format": ".*$_=identifier$=$_=quoteOrSpace{attrBlacklist=timestamp|time}$.*",
+          "repeat": true,
+          "skipNumericConversion": true,
+          "rewrites": [
+            {
+              "input": "eventtime",
+              "output": "timestamp",
+              "match": ".*",
+              "replace": "$0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "dataSource.vendor": "Cisco",
+        "dataSource.name": "Cisco Firewall Threat Defense",
+        "dataSource.category": "security",
+        "metadata.version": "1.0.0",
+        "metadata.product.vendor_name": "Cisco",
+        "metadata.product.name": "Firewall Threat Defense",
+        "class_uid": 4001,
+        "category_uid": 4
+      },
+      "formats": [
+        {
+          "format": "%{TIMESTAMP_ISO8601:timestamp}.*%{WORD:action}.*src=%{IP:src_ip}.*dst=%{IP:dst_ip}",
+          "attributes": {
+            "class_uid": 4001,
+            "category_uid": 4,
+            "activity_id": 1
+          }
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "dataSource.vendor": "AWS",
+        "dataSource.name": "AWS CloudTrail",
+        "dataSource.category": "cloud",
+        "metadata.version": "1.0.0",
+        "metadata.product.vendor_name": "Amazon Web Services",
+        "metadata.product.name": "CloudTrail"
+      },
+      "formats": [
+        {
+          "format": ".*${parse=json}$",
+          "attributes": {
+            "class_uid": 6003,
+            "category_uid": 6,
+            "activity_id": 99
+          }
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "dataSource.vendor": "Check Point",
+        "dataSource.name": "Check Point NGFW",
+        "dataSource.category": "security",
+        "metadata.version": "1.0.0",
+        "metadata.product.vendor_name": "Check Point",
+        "metadata.product.name": "Next Generation Firewall"
+      },
+      "formats": [
+        {
+          "format": ".*${parse=json}$",
+          "attributes": {
+            "class_uid": 4001,
+            "category_uid": 4
+          }
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "dataSource.vendor": "Palo Alto Networks",
+        "dataSource.name": "Palo Alto Networks Firewall",
+        "dataSource.category": "security",
+        "metadata.version": "1.0.0",
+        "metadata.product.vendor_name": "Palo Alto Networks",
+        "metadata.product.name": "PA Series Firewall"
+      },
+      "formats": [
+        {
+          "format": ".*,TRAFFIC,.*",
+          "attributes": {
+            "class_uid": 4001,
+            "category_uid": 4,
+            "activity_id": 1
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "attributes": {
+    "dataSource.vendor": "HashiCorp",
+    "dataSource.name": "HashiCorp Vault",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "HashiCorp",
+    "metadata.product.name": "HashiCorp Vault",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.time",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 6001,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Vault Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 6,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Application Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.time",
+              "to": "time"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.timestamp",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.type",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.operation",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.auth.display_name",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.auth.entity_id",
+              "to": "user.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.auth.token_type",
+              "to": "user.type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.client_ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.client_token",
+              "to": "session.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.path",
+              "to": "http_request.url.path"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.namespace.path",
+              "to": "http_request.url.path"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.response.data.accessor",
+              "to": "dst_endpoint.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.response.data.entity_id",
+              "to": "dst_endpoint.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.error",
+              "to": "status_detail"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.auth.policies",
+              "to": "metadata.extensions.policies"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.mount_type",
+              "to": "metadata.extensions.mount_type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.request.mount_point",
+              "to": "metadata.extensions.mount_point"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.response.mount_type",
+              "to": "metadata.extensions.mount_type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.response.secret",
+              "to": "metadata.extensions.secret"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.response.data.lease_id",
+              "to": "metadata.extensions.lease_id"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.response.data.lease_duration",
+              "to": "metadata.extensions.lease_duration"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.response.data.renewable",
+              "to": "metadata.extensions.renewable"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.error is null"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.error is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.error is null"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "unmapped.error is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.error is null"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.error is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": "Success",
+              "field": "status",
+              "predicate": "unmapped.error is null"
+            }
+          },
+          {
+            "constant": {
+              "value": "Failure",
+              "field": "status",
+              "predicate": "unmapped.error is not null"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "session.uid",
+        "type": "Other"
+      },
+      {
+        "name": "http_request.url.path",
+        "type": "Other"
+      },
+      {
+        "name": "metadata.extensions.lease_id",
+        "type": "Other"
+      }
+    ]
+  }
+}

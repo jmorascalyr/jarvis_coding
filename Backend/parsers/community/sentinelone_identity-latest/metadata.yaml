@@ -1,0 +1,9 @@
+name: "SentinelOne Identity"
+slug: "sentinelone_identity"
+description: "Parser for SentinelOne Ranger AD identity events"
+productTags: ["identity", "ad", "sentinelone", "ranger"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

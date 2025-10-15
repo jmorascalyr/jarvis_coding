@@ -1,0 +1,9 @@
+name: "Infoblox DDI"
+slug: "infoblox_ddi"
+description: "Parser for Infoblox DDI DNS/DHCP/IPAM logs"
+productTags: ["dns", "dhcp", "ipam", "infoblox"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

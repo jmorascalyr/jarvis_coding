@@ -1,0 +1,164 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Abnormal Security",
+    "dataSource.name": "Abnormal Security Email Security",
+    "dataSource.category": "email_security",
+    "dataSource.technology": "email_protection",
+    "source": "abnormal_security"
+  },
+  
+  "patterns": {},
+  
+  "formats": [
+    {
+      "id": "abnormal_security_json",
+      "format": ".*${parse=json}$",
+      "attributes": {
+        "dataSource.app": "Abnormal Security Email Protection",
+        "class_uid": 4009,
+        "class_name": "Email Activity",
+        "category_uid": 4,
+        "category_name": "Network Activity",
+        "type_uid": 400901,
+        "activity_id": 1,
+        "activity_name": "Email Send",
+        "severity_id": 3
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "sender_email",
+          "output": "email.from",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "recipient_email", 
+          "output": "email.to",
+          "match": ".*",
+          "replace": "[$0]"
+        },
+        {
+          "input": "subject",
+          "output": "email.subject",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_id",
+          "output": "email.message_uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "threat_type",
+          "output": "malware.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "remediation_action",
+          "output": "disposition",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "attack_vector",
+          "output": "email.delivery_action",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "confidence_score",
+          "output": "risk_score",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "impersonated_party",
+          "output": "actor.user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "messages_delivered",
+          "output": "email.delivered_to",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "remediation_action",
+          "output": "status_id",
+          "match": "(?i)(quarantined|deleted|moved to junk)",
+          "replace": "2"
+        },
+        {
+          "input": "remediation_action",
+          "output": "status_id",
+          "match": "(?i)(released|no action required)",
+          "replace": "1"
+        },
+        {
+          "input": "remediation_action",
+          "output": "status_id",
+          "match": "(?i)(under review)",
+          "replace": "99"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "high",
+          "replace": "4"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "medium",
+          "replace": "3"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "low",
+          "replace": "2"
+        },
+        {
+          "input": "remediation_action",
+          "output": "activity_id",
+          "match": "(?i)(quarantined|deleted)",
+          "replace": "2"
+        },
+        {
+          "input": "remediation_action",
+          "output": "activity_id",
+          "match": "(?i)(released|no action required)",
+          "replace": "1"
+        },
+        {
+          "input": "remediation_action",
+          "output": "activity_id",
+          "match": "(?i)(moved to junk)",
+          "replace": "3"
+        },
+        {
+          "input": "remediation_action",
+          "output": "activity_id",
+          "match": "(?i)(under review)",
+          "replace": "99"
+        },
+        {
+          "input": "sender_email",
+          "output": "observables",
+          "match": ".*",
+          "replace": "[{\"name\":\"sender_email\",\"type\":\"Email Address\",\"value\":\"$0\",\"type_id\":7},{\"name\":\"recipient_email\",\"type\":\"Email Address\",\"value\":\"${recipient_email}\",\"type_id\":7},{\"name\":\"threat_type\",\"type\":\"Other\",\"value\":\"${threat_type}\",\"type_id\":99}]"
+        }
+      ],
+      "halt": true
+    }
+  ]
+}

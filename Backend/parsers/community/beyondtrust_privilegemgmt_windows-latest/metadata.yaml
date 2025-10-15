@@ -1,0 +1,9 @@
+name: "BeyondTrust Privilege Management Windows"
+slug: "beyondtrust_privilegemgmt_windows"
+description: "Parser for BeyondTrust Privilege Management for Windows logs"
+productTags: ["privilege", "management", "beyondtrust", "windows"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

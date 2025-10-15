@@ -1,0 +1,327 @@
+{
+  "attributes": {
+    "dataSource.vendor": "Microsoft",
+    "dataSource.name": "Azure AD",
+    "dataSource.category": "authentication",
+    "metadata.product.vendor_name": "Microsoft",
+    "metadata.product.name": "Azure Active Directory",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.time",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.activityDateTime",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 3002,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Authentication",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Identity & Access Management",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.time",
+              "to": "time"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.activityDateTime",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.activityDisplayName",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.activity",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userPrincipalName",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.displayName",
+              "to": "user.full_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userId",
+              "to": "user.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.ipAddress",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.clientAppUsed",
+              "to": "http_request.user_agent"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userAgent",
+              "to": "http_request.user_agent"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.city",
+              "to": "src_endpoint.location.city"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.state",
+              "to": "src_endpoint.location.region"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.countryOrRegion",
+              "to": "src_endpoint.location.country"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.geoCoordinates.latitude",
+              "to": "src_endpoint.location.coordinates[0]"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.location.geoCoordinates.longitude",
+              "to": "src_endpoint.location.coordinates[1]"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.result",
+              "to": "status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resultReason",
+              "to": "status_detail"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.operationType",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.category",
+              "to": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.correlationId",
+              "to": "metadata.correlation_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resourceDisplayName",
+              "to": "dst_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resourceId",
+              "to": "dst_endpoint.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.targetResources[0].displayName",
+              "to": "dst_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.targetResources[0].id",
+              "to": "dst_endpoint.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.targetResources[0].userPrincipalName",
+              "to": "dst_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.authenticationDetails[0].authenticationMethod",
+              "to": "auth_protocol"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.authenticationDetails[0].succeeded",
+              "to": "status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.conditionalAccessStatus",
+              "to": "metadata.extensions.conditional_access_status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.isInteractive",
+              "to": "metadata.extensions.is_interactive"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.riskLevel",
+              "to": "risk_level"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.riskState",
+              "to": "risk_level_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.result = 'success'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.result = 'failure'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.result = 'success'"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "unmapped.result = 'failure'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.result = 'success'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.result = 'failure'"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "user.uid",
+        "type": "User"
+      },
+      {
+        "name": "dst_endpoint.name",
+        "type": "Other"
+      },
+      {
+        "name": "metadata.correlation_uid",
+        "type": "Other"
+      }
+    ]
+  }
+}

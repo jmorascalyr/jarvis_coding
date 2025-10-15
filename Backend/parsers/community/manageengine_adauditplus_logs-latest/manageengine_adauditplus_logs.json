@@ -1,0 +1,289 @@
+{
+  "attributes": {
+    "dataSource.vendor": "ManageEngine",
+    "dataSource.name": "ADauditPlus",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "ManageEngine",
+    "metadata.product.name": "ADauditPlus",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.user",
+          "output": "actor.user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.source_ip",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.device",
+          "output": "src_endpoint.device.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event_type",
+          "output": "activity_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.severity",
+          "output": "severity_detail",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.log_level",
+          "output": "log_level",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.event_id",
+          "output": "metadata.event_code",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.session_id",
+          "output": "session.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.message",
+          "output": "message",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.location",
+          "output": "src_endpoint.location.desc",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "unmapped.risk_score",
+          "output": "risk_score",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "activity_name = *",
+        "transformations": [
+          {
+            "constant": {
+              "value": 3001,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Account Change",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Identity & Access Management",
+              "field": "category_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 99,
+              "field": "activity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": "Other",
+              "field": "activity_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "severity_id",
+              "predicate": "severity_detail = 'critical'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Critical",
+              "field": "severity",
+              "predicate": "severity_detail = 'critical'"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "severity_detail = 'high'"
+            }
+          },
+          {
+            "constant": {
+              "value": "High",
+              "field": "severity",
+              "predicate": "severity_detail = 'high'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "severity_id",
+              "predicate": "severity_detail = 'medium'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Medium",
+              "field": "severity",
+              "predicate": "severity_detail = 'medium'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "severity_detail = 'low'"
+            }
+          },
+          {
+            "constant": {
+              "value": "Low",
+              "field": "severity",
+              "predicate": "severity_detail = 'low'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id"
+            }
+          },
+          {
+            "constant": {
+              "value": "Success",
+              "field": "status"
+            }
+          },
+          {
+            "constant": {
+              "value": 300199,
+              "field": "type_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "actor.user.name",
+              "to": "actor.user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "src_endpoint.ip",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "src_endpoint.device.name",
+              "to": "src_endpoint.device.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "src_endpoint.location.desc",
+              "to": "src_endpoint.location.desc"
+            }
+          },
+          {
+            "copy": {
+              "from": "session.uid",
+              "to": "session.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "metadata.event_code",
+              "to": "metadata.event_code"
+            }
+          },
+          {
+            "copy": {
+              "from": "log_level",
+              "to": "log_level"
+            }
+          },
+          {
+            "copy": {
+              "from": "severity_detail",
+              "to": "severity_detail"
+            }
+          },
+          {
+            "copy": {
+              "from": "risk_score",
+              "to": "risk_score"
+            }
+          },
+          {
+            "copy": {
+              "from": "message",
+              "to": "message"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "actor.user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "src_endpoint.device.name",
+        "type": "Other"
+      },
+      {
+        "name": "session.uid",
+        "type": "Other"
+      }
+    ]
+  }
+}

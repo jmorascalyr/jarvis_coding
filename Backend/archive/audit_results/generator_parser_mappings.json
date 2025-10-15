@@ -1,0 +1,52 @@
+{
+  "generator_parser_mappings": {
+    "description": "Critical generator-parser name mappings to fix alignment issues",
+    "version": "1.0.0",
+    "mappings": {
+      "okta_authentication": "okta_ocsf_logs-latest",
+      "crowdstrike_falcon": "crowdstrike_endpoint-latest", 
+      "sentinelone_endpoint": "singularityidentity_singularityidentity_logs-latest",
+      "microsoft_azure_ad_signin": "microsoft_azure_ad_logs-latest",
+      "paloalto_firewall": "paloalto_paloalto_logs-latest",
+      "microsoft_defender_email": "microsoft_eventhub_defender_email_logs-latest"
+    }
+  },
+  "format_fixes_needed": {
+    "description": "Generators that need format conversion to match parser expectations",
+    "conversions": {
+      "cisco_meraki": {
+        "current_format": "JSON",
+        "required_format": "SYSLOG",
+        "parser": "cisco_meraki-latest"
+      },
+      "cisco_meraki_flow": {
+        "current_format": "JSON", 
+        "required_format": "SYSLOG",
+        "parser": "cisco_meraki_flow_logs-latest"
+      },
+      "zscaler_firewall": {
+        "current_format": "CSV",
+        "required_format": "JSON",
+        "parser": "zscaler_firewall_logs-latest"
+      },
+      "cisco_ise": {
+        "current_format": "CSV",
+        "required_format": "SYSLOG",
+        "parser": "cisco_ise_logs-latest"
+      }
+    }
+  },
+  "verified_working_pairs": {
+    "description": "Generator-parser pairs that are already working correctly",
+    "pairs": [
+      {"generator": "fortinet_fortigate", "parser": "marketplace-fortinetfortigate-latest"},
+      {"generator": "checkpoint", "parser": "marketplace-checkpointfirewall-latest"},
+      {"generator": "cisco_firewall_threat_defense", "parser": "marketplace-ciscofirewallthreatdefense-latest"},
+      {"generator": "zscaler_private_access", "parser": "marketplace-zscalerprivateaccessjson-latest"},
+      {"generator": "corelight_conn", "parser": "marketplace-corelight-conn-latest"},
+      {"generator": "corelight_http", "parser": "marketplace-corelight-http-latest"},
+      {"generator": "corelight_ssl", "parser": "marketplace-corelight-ssl-latest"},
+      {"generator": "corelight_tunnel", "parser": "marketplace-corelight-tunnel-latest"}
+    ]
+  }
+}

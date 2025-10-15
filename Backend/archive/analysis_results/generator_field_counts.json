@@ -1,0 +1,504 @@
+[
+  {
+    "generator": "aws_guardduty",
+    "module": "aws_guardduty",
+    "function": "guardduty_log",
+    "field_count": 33,
+    "event_type": "dict",
+    "sample_keys": [
+      "schemaVersion",
+      "accountId",
+      "region",
+      "partition",
+      "id",
+      "arn",
+      "type",
+      "title",
+      "description",
+      "severity"
+    ],
+    "sample_size": 1399
+  },
+  {
+    "generator": "aws_cloudtrail",
+    "module": "aws_cloudtrail",
+    "function": "cloudtrail_log",
+    "field_count": 52,
+    "event_type": "dict",
+    "sample_keys": [
+      "eventCategory",
+      "eventName",
+      "eventSource",
+      "eventTime",
+      "eventVersion",
+      "eventID",
+      "eventType",
+      "awsRegion",
+      "readOnly",
+      "managementEvent"
+    ],
+    "sample_size": 2301
+  },
+  {
+    "generator": "aws_waf",
+    "module": "aws_waf",
+    "function": "aws_waf_log",
+    "field_count": 21,
+    "event_type": "dict",
+    "sample_keys": [
+      "timestamp",
+      "formatVersion",
+      "webaclId",
+      "ruleGroupId",
+      "terminatingRuleType",
+      "action",
+      "httpRequest",
+      "requestId"
+    ],
+    "sample_size": 681
+  },
+  {
+    "generator": "aws_vpcflowlogs",
+    "module": "aws_vpcflowlogs",
+    "function": "vpcflow_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 116
+  },
+  {
+    "generator": "aws_route53",
+    "module": "aws_route53",
+    "function": "aws_route53_log",
+    "field_count": 11,
+    "event_type": "dict",
+    "sample_keys": [
+      "timestamp",
+      "source",
+      "queryName",
+      "queryType",
+      "clientIp",
+      "edgeLocation",
+      "responseCode",
+      "resolverEndpointId",
+      "version",
+      "account"
+    ],
+    "sample_size": 307
+  },
+  {
+    "generator": "aws_vpc_dns",
+    "module": "aws_vpc_dns",
+    "function": "aws_vpc_dns_log",
+    "field_count": 28,
+    "event_type": "dict",
+    "sample_keys": [
+      "version",
+      "account-id",
+      "interface-id",
+      "srcaddr",
+      "dstaddr",
+      "srcport",
+      "dstport",
+      "protocol",
+      "packets",
+      "bytes"
+    ],
+    "sample_size": 660
+  },
+  {
+    "generator": "microsoft_365_defender",
+    "module": "microsoft_365_defender",
+    "function": "microsoft_365_defender_log",
+    "field_count": 12,
+    "event_type": "dict",
+    "sample_keys": [
+      "Timestamp",
+      "DeviceName",
+      "DeviceId",
+      "AccountName",
+      "AccountDomain",
+      "ActionType",
+      "RemoteUrl",
+      "RemoteIP",
+      "RemotePort",
+      "Protocol"
+    ],
+    "sample_size": 409
+  },
+  {
+    "generator": "microsoft_365_collaboration",
+    "module": "microsoft_365_collaboration",
+    "function": "microsoft_365_collaboration_log",
+    "field_count": 14,
+    "event_type": "dict",
+    "sample_keys": [
+      "TimeStamp",
+      "UserId",
+      "Operation",
+      "SiteUrl",
+      "ObjectId",
+      "FileName",
+      "Details",
+      "UserAgent",
+      "ClientIP",
+      "Workload"
+    ],
+    "sample_size": 608
+  },
+  {
+    "generator": "microsoft_azuread",
+    "module": "microsoft_azuread",
+    "function": "azuread_log",
+    "field_count": 16,
+    "event_type": "dict",
+    "sample_keys": [
+      "activityDateTime",
+      "correlationId",
+      "id",
+      "initiatedBy",
+      "targetResources",
+      "activityDisplayName",
+      "category",
+      "operationType",
+      "result",
+      "resultReason"
+    ],
+    "sample_size": 684
+  },
+  {
+    "generator": "okta_authentication",
+    "module": "okta_authentication",
+    "function": "okta_authentication_log",
+    "field_count": 39,
+    "event_type": "json_string",
+    "sample_keys": [
+      "uuid",
+      "published",
+      "eventType",
+      "version",
+      "severity",
+      "legacyEventType",
+      "displayMessage",
+      "actor",
+      "client",
+      "outcome"
+    ],
+    "sample_size": 1542
+  },
+  {
+    "generator": "cisco_fmc",
+    "module": "cisco_fmc",
+    "function": "cisco_fmc_log",
+    "field_count": 35,
+    "event_type": "dict",
+    "sample_keys": [
+      "timestamp",
+      "event_id",
+      "event_type",
+      "event_subtype",
+      "severity",
+      "action",
+      "device_name",
+      "device_ip",
+      "policy_name",
+      "rule_name"
+    ],
+    "sample_size": 997
+  },
+  {
+    "generator": "cisco_asa",
+    "module": "cisco_asa",
+    "function": "asa_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 173
+  },
+  {
+    "generator": "cisco_duo",
+    "module": "cisco_duo",
+    "function": "cisco_duo_log",
+    "field_count": 37,
+    "event_type": "dict",
+    "sample_keys": [
+      "timestamp",
+      "time",
+      "class_uid",
+      "class_name",
+      "category_uid",
+      "category_name",
+      "activity_id",
+      "activity_name",
+      "type_uid",
+      "severity_id"
+    ],
+    "sample_size": 982
+  },
+  {
+    "generator": "paloalto_firewall",
+    "module": "paloalto_firewall",
+    "function": "paloalto_firewall_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 345
+  },
+  {
+    "generator": "fortinet_fortigate",
+    "module": "fortinet_fortigate",
+    "function": "local_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 516
+  },
+  {
+    "generator": "crowdstrike_falcon",
+    "module": "crowdstrike_falcon",
+    "function": "crowdstrike_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 789
+  },
+  {
+    "generator": "sentinelone_endpoint",
+    "module": "sentinelone_endpoint",
+    "function": "sentinelone_endpoint_log",
+    "field_count": 99,
+    "event_type": "dict",
+    "sample_keys": [
+      "event.id",
+      "event.time",
+      "event.category",
+      "event.type",
+      "meta.event.name",
+      "endpoint.name",
+      "endpoint.os",
+      "endpoint.type",
+      "agent.uuid",
+      "agent.version"
+    ],
+    "sample_size": 4483
+  },
+  {
+    "generator": "sentinelone_identity",
+    "module": "sentinelone_identity",
+    "function": "sentinelone_identity_log",
+    "field_count": 38,
+    "event_type": "dict",
+    "sample_keys": [
+      "event.id",
+      "event.time",
+      "event.category",
+      "event.type",
+      "event.login.type",
+      "event.login.userName",
+      "event.login.loginIsSuccessful",
+      "endpoint.name",
+      "endpoint.os",
+      "endpoint.type"
+    ],
+    "sample_size": 1433
+  },
+  {
+    "generator": "proofpoint",
+    "module": "proofpoint",
+    "function": "proofpoint_log",
+    "field_count": 32,
+    "event_type": "dict",
+    "sample_keys": [
+      "GUID",
+      "QID",
+      "id",
+      "messageID",
+      "messageTime",
+      "messageSize",
+      "subject",
+      "sender",
+      "fromAddress",
+      "headerFrom"
+    ],
+    "sample_size": 1299
+  },
+  {
+    "generator": "mimecast",
+    "module": "mimecast",
+    "function": "mimecast_log",
+    "field_count": 19,
+    "event_type": "dict",
+    "sample_keys": [
+      "identifier",
+      "mimecastEvent"
+    ],
+    "sample_size": 666
+  },
+  {
+    "generator": "cloudflare_waf",
+    "module": "cloudflare_waf",
+    "function": "cloudflare_waf_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 1661
+  },
+  {
+    "generator": "zscaler",
+    "module": "zscaler",
+    "function": "zscaler_log",
+    "field_count": 33,
+    "event_type": "json_string",
+    "sample_keys": [
+      "datetime",
+      "protocol",
+      "action",
+      "requestmethod",
+      "urlsupercategory",
+      "urlcategory",
+      "urlclass",
+      "serverip",
+      "clientpublicIP",
+      "location"
+    ],
+    "sample_size": 923
+  },
+  {
+    "generator": "netskope",
+    "module": "netskope",
+    "function": "netskope_log",
+    "field_count": 65,
+    "event_type": "json_string",
+    "sample_keys": [
+      "_id",
+      "_event_id",
+      "_category_id",
+      "_category_tags",
+      "_correlation_id",
+      "_detection_name",
+      "_nshostname",
+      "_resource_name",
+      "_service_identifier",
+      "timestamp"
+    ],
+    "sample_size": 2147
+  },
+  {
+    "generator": "cyberark_pas",
+    "module": "cyberark_pas",
+    "function": "cyberark_pas_log",
+    "field_count": 36,
+    "event_type": "json_string",
+    "sample_keys": [
+      "policyName",
+      "policyCategory",
+      "eventType",
+      "sourceType",
+      "sourceName",
+      "userName",
+      "computerName",
+      "agentId",
+      "eventCount",
+      "agentEventCount"
+    ],
+    "sample_size": 1410
+  },
+  {
+    "generator": "hashicorp_vault",
+    "module": "hashicorp_vault",
+    "function": "hashicorp_vault_log",
+    "field_count": 31,
+    "event_type": "json_string",
+    "sample_keys": [
+      "time",
+      "type",
+      "auth",
+      "request",
+      "response",
+      "error",
+      "cluster_id",
+      "version",
+      "build_date",
+      "hostname"
+    ],
+    "sample_size": 1390
+  },
+  {
+    "generator": "beyondtrust_passwordsafe",
+    "module": "beyondtrust_passwordsafe",
+    "function": "beyondtrust_passwordsafe_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 1733
+  },
+  {
+    "generator": "jamf_protect",
+    "module": "jamf_protect",
+    "function": "jamf_protect_log",
+    "field_count": 1,
+    "event_type": "string",
+    "sample_keys": [],
+    "sample_size": 331
+  },
+  {
+    "generator": "linux_auth",
+    "module": "linux_auth",
+    "function": "linux_auth_log",
+    "field_count": 14,
+    "event_type": "dict",
+    "sample_keys": [
+      "timestamp",
+      "hostname",
+      "facility",
+      "severity",
+      "process_name",
+      "process_id",
+      "username",
+      "src_ip",
+      "src_port",
+      "auth_method"
+    ],
+    "sample_size": 396
+  },
+  {
+    "generator": "pingfederate",
+    "module": "pingfederate",
+    "function": "pingfederate_log",
+    "field_count": 13,
+    "event_type": "dict",
+    "sample_keys": [
+      "timestamp",
+      "log_level",
+      "logger_name",
+      "operation",
+      "username",
+      "client_ip",
+      "status",
+      "transaction_id",
+      "connector",
+      "prov_operation"
+    ],
+    "sample_size": 476
+  },
+  {
+    "generator": "pingone_mfa",
+    "module": "pingone_mfa",
+    "function": "pingone_mfa_log",
+    "field_count": 10,
+    "event_type": "dict",
+    "sample_keys": [
+      "timestamp",
+      "dataSource",
+      "recordedAt",
+      "user",
+      "source.ip",
+      "action.type",
+      "factor",
+      "result.status",
+      "description",
+      "sessionId"
+    ],
+    "sample_size": 357
+  }
+]

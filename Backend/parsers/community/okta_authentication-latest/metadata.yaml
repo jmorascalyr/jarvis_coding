@@ -1,0 +1,9 @@
+name: "Okta Authentication"
+slug: "okta_authentication"
+description: "Parser for Okta System Log authentication events"
+productTags: ["identity", "sso", "mfa", "authentication"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

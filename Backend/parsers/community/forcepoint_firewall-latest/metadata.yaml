@@ -1,0 +1,9 @@
+name: "Forcepoint Firewall"
+slug: "forcepoint_firewall"
+description: "Parser for Forcepoint Firewall logs"
+productTags: ["firewall", "forcepoint", "network", "security"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

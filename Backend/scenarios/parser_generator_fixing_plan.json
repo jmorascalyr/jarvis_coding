@@ -1,0 +1,191 @@
+{
+  "phase_1_critical_fixes": [
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Aws Route53",
+      "current_format": "Syslog",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/cloud_infrastructure/aws_route53.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Aws Vpc Dns",
+      "current_format": "Key-Value",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/cloud_infrastructure/aws_vpc_dns.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Cisco Duo",
+      "current_format": "Key-Value",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_duo.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Cisco Fmc",
+      "current_format": "Syslog",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_fmc.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Cisco Ironport",
+      "current_format": "Syslog",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_ironport.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Cisco Isa3000",
+      "current_format": "Key-Value",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_isa3000.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Cisco Meraki Flow",
+      "current_format": "JSON",
+      "target_format": "Syslog",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_meraki_flow.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Cisco Networks",
+      "current_format": "Syslog",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/network_security/cisco_networks.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Cloudflare General",
+      "current_format": "Key-Value",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/web_security/cloudflare_general.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Google Workspace",
+      "current_format": "Syslog",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/cloud_infrastructure/google_workspace.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Microsoft 365 Collaboration",
+      "current_format": "Key-Value",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/microsoft_365_collaboration.py",
+      "priority": "CRITICAL"
+    },
+    {
+      "action": "fix_format_mismatch",
+      "parser": "Microsoft 365 Defender",
+      "current_format": "Key-Value",
+      "target_format": "JSON",
+      "generator_path": "/Users/nathanial.smalley/projects/jarvis_coding/event_generators/identity_access/microsoft_365_defender.py",
+      "priority": "CRITICAL"
+    }
+  ],
+  "phase_2_medium_fixes": [],
+  "phase_3_improvements": [
+    {
+      "action": "add_star_trek_integration",
+      "generator": "aws_waf",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_duo",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_ios",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_ironport",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_isa3000",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_ise",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_meraki",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_meraki_flow",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cisco_networks",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cloudflare_general",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "cyberark_conjur",
+      "priority": "MEDIUM"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "google_workspace",
+      "priority": "HIGH"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "zscaler_dns_firewall",
+      "priority": "MEDIUM"
+    },
+    {
+      "action": "add_star_trek_integration",
+      "generator": "zscaler_firewall",
+      "priority": "MEDIUM"
+    }
+  ],
+  "phase_4_automation": [
+    {
+      "action": "create_format_validator",
+      "description": "Validate generator output matches parser expectations"
+    },
+    {
+      "action": "create_automated_tests",
+      "description": "End-to-end parser-generator compatibility tests"
+    },
+    {
+      "action": "add_ci_validation",
+      "description": "Prevent format mismatches in CI/CD"
+    },
+    {
+      "action": "create_generator_templates",
+      "description": "Templates for creating new generators"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "azure_ad_sample": {
+    "timestamp": "2025-08-20T20:56:34.208058Z",
+    "scenario": "data_breach",
+    "scenario_name": "\ud83d\udea8 Klingon APT - Full Enterprise Breach",
+    "platform": "identity",
+    "product": "microsoft_azure_ad_signin",
+    "event_index": 3,
+    "malicious": true,
+    "starfleet_target": "jean.picard@starfleet.corp",
+    "raw_event": {
+      "records": [
+        {
+          "time": "2025-08-20T20:47:17.065629Z",
+          "resourceId": "/tenants/15bd354a-fc6b-42b7-aa64-52d0651f5c84/providers/Microsoft.aadiam",
+          "operationName": "Sign-in activity",
+          "operationVersion": "1.0",
+          "category": "SignInLogs",
+          "tenantId": "3a974468-3298-486b-9712-a4473b8d8513",
+          "resultType": "50126",
+          "resultSignature": "Error_50058",
+          "resultDescription": "Sign-in failure: 50058",
+          "durationMs": 2157,
+          "callerIpAddress": "10.171.24.189",
+          "correlationId": "946d7934-7208-4918-97ba-b9a24529758e",
+          "identity": "john.doe@company.com",
+          "Level": 3,
+          "location": "Romulus",
+          "properties": {
+            "id": "6a5d4ca1-bdea-44b3-a1db-b2b304c6af02",
+            "createdDateTime": "2025-08-20T20:46:42.065629Z",
+            "userDisplayName": "John Doe",
+            "userPrincipalName": "john.doe@company.com",
+            "userId": "aaf78732-d8a1-4fe7-a58e-88f33a8d1a86",
+            "appId": "fb78d390-0c51-40cd-8e17-fdbfab77341b",
+            "appDisplayName": "Microsoft Exchange REST API Based Powershell",
+            "resourceDisplayName": "Microsoft Exchange REST API Based Powershell",
+            "resourceId": "fb78d390-0c51-40cd-8e17-fdbfab77341b",
+            "clientAppUsed": "IMAP4",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "conditionalAccessStatus": "failure",
+            "originalRequestId": "8967d2c7-f6d3-4ab2-b1e1-54e8e6162958",
+            "isInteractive": true,
+            "tokenIssuerName": "External IdP",
+            "tokenIssuerType": "AzureAD",
+            "processingTimeInMilliseconds": 501,
+            "networkLocationDetails": [],
+            "signInEventTypes": [
+              "nonInteractiveUser"
+            ],
+            "servicePrincipalId": null,
+            "servicePrincipalName": null,
+            "statusCode": 50058,
+            "statusMessage": "Sign-in error 50058",
+            "uniqueTokenIdentifier": "1ce05be5-bceb-4561-a9d4-194a3aadd4d3",
+            "requestId": "91cec051-16bd-43a5-80af-4f2bac7af838",
+            "authenticationProtocol": "oAuth2",
+            "incomingTokenType": "unknownFutureValue",
+            "flaggedForReview": false,
+            "isTenantRestricted": false,
+            "autonomousSystemNumber": 77324,
+            "crossTenantAccessType": "serviceProvider",
+            "homeTenantId": "f36fa7dd-9d81-408b-a8cb-e3ecc6145d8a",
+            "riskDetail": "none",
+            "riskLevelAggregated": "none",
+            "riskLevelDuringSignIn": "none",
+            "riskState": "confirmedSafe",
+            "authenticationContextClassReferences": [],
+            "authenticationDetails": [
+              {
+                "authenticationStepDateTime": "2025-08-20T20:47:06.065679Z",
+                "authenticationMethod": "Software OATH token",
+                "authenticationMethodDetail": "Software OATH token",
+                "succeeded": true,
+                "authenticationStepRequirement": "primaryAuthentication",
+                "authenticationStepResultDetail": "methodSucceeded"
+              }
+            ],
+            "authenticationRequirementPolicies": [],
+            "authenticationStrengths": null,
+            "deviceDetail": {
+              "deviceId": "5ad230c2-1b9a-4006-881a-ee2990215723",
+              "displayName": "DEVICE-681",
+              "operatingSystem": "Windows 10",
+              "browser": "Edge",
+              "isManaged": true,
+              "isCompliant": true,
+              "trustType": "Unknown"
+            },
+            "location": {
+              "city": "Tokyo",
+              "state": "Tokyo",
+              "countryOrRegion": "Japan",
+              "geoCoordinates": {
+                "latitude": 35.69762935609776,
+                "longitude": 139.62858787841168
+              }
+            },
+            "ipAddress": "10.171.24.189",
+            "ipAddressFromResourceProvider": "10.171.24.189",
+            "appliedConditionalAccessPolicies": [],
+            "status": {
+              "errorCode": 50058,
+              "failureReason": "Other",
+              "additionalDetails": "Sign-in error code: 50058"
+            }
+          },
+          "ipAddress": "185.220.101.42",
+          "userPrincipalName": "jean.picard@starfleet.corp",
+          "riskLevelAggregated": "high"
+        }
+      ]
+    },
+    "attr_fields": {
+      "dataSource.vendor": "Microsoft",
+      "dataSource.name": "Azure Eventhub Signin",
+      "dataSource.category": "security",
+      "metadata.product.vendor_name": "Microsoft",
+      "metadata.product.name": "Microsoft Azure AD",
+      "metadata.version": "1.0.0"
+    },
+    "marketplace_parser": null
+  },
+  "cyberark_sample": {
+    "timestamp": "2025-08-20T21:54:25.636630Z",
+    "scenario": "data_breach",
+    "scenario_name": "\ud83d\udea8 Klingon APT - Full Enterprise Breach",
+    "platform": "privileged",
+    "product": "cyberark_pas",
+    "event_index": 12,
+    "malicious": true,
+    "starfleet_target": "jean.picard@starfleet.corp",
+    "raw_event": "{\"policyName\": \"Network Access Control\", \"policyCategory\": \"network_control\", \"eventType\": \"Elevation Requested\", \"sourceType\": \"Network\", \"sourceName\": \"firefox.exe\", \"userName\": \"john.doe\", \"computerName\": \"WORKSTATION-005\", \"agentId\": \"002febe13b1fced2\", \"eventCount\": 37, \"agentEventCount\": 13, \"skippedCount\": 8, \"firstEventDate\": \"2025-08-20T18:47:17.066117Z\", \"lastEventDate\": \"2025-08-20T20:47:17.066117Z\", \"arrivalTime\": \"2025-08-20T20:47:17.066126Z\", \"modificationTime\": \"2025-08-20T20:47:17.066128Z\", \"operatingSystemType\": \"Windows\", \"userIsAdmin\": \"true\", \"processCommandLine\": \"firefox.exe --no-sandbox\", \"workingDirectory\": \"C:\\\\Program Files\\\\Mozilla Firefox\", \"interpreter\": \"none\", \"justification\": \"Need to run diagnostics\", \"justificationEmail\": \"john.doe@company.com\", \"runAsUsername\": \"john.doe\", \"sourceWSName\": \"WORKSTATION-005\", \"sourceWSIp\": \"10.19.146.74\", \"originUserUID\": \"S-1-5-21-866451860-878119380-3215-7495\", \"displayName\": \"John Doe\", \"owner\": \"LOCAL\\\\john.doe\", \"action\": \"access_granted\", \"vault\": \"starfleet_classified\", \"user\": \"jean.picard@starfleet.corp\", \"safe\": \"warp_core_codes\", \"risk_score\": 85}",
+    "attr_fields": {
+      "dataSource.vendor": "CyberArk",
+      "dataSource.name": "CyberArk Endpoint Privileged Manager(EPM)",
+      "dataSource.category": "security",
+      "metadata.product.vendor_name": "CyberArk",
+      "metadata.product.name": "CyberArk PAS",
+      "metadata.version": "1.0.0"
+    },
+    "marketplace_parser": null
+  }
+}

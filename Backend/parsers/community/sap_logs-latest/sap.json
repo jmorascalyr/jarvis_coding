@@ -1,0 +1,184 @@
+{
+  "attributes": {
+    "dataSource.vendor": "SAP",
+    "dataSource.name": "SAP",
+    "dataSource.category": "application",
+    "dataSource.technology": "erp",
+    "source": "sap"
+  },
+  
+  "patterns": {
+    "timestamp": "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?[+-]\\d{2}:\\d{2}",
+    "ip_address": "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+    "sap_user": "USER\\d{3}",
+    "session_id": "\\d{6}",
+    "transaction_code": "[A-Z0-9_-]+",
+    "field_value": "[^\\s,]+",
+    "quoted_string": "\"[^\"]*\""
+  },
+  
+  "formats": [
+    {
+      "id": "sap_application_activity",
+      "format": "$timestamp$ SAP eventType=$quoted_string{name=event_type}$ severity=$quoted_string{name=severity}$ systemId=$quoted_string{name=system_id}$ client=$quoted_string{name=client}$ user=$sap_user{name=user}$ sessionId=$session_id{name=session_id}$ terminal=$quoted_string{name=terminal}$ server=$quoted_string{name=server}$ ipAddress=$ip_address{name=ip_address}$ program=$quoted_string{name=program}$ transactionCode=$transaction_code{name=transaction_code}$ language=$quoted_string{name=language}$ message=$quoted_string{name=message}$",
+      "attributes": {
+        "dataSource.app": "SAP ERP Application",
+        "class_uid": 1001,
+        "class_name": "System Activity",
+        "category_uid": 1,
+        "category_name": "System Activity",
+        "type_uid": 100101,
+        "activity_id": 1,
+        "activity_name": "Create",
+        "severity_id": 2
+      },
+      "rewrites": [
+        {
+          "input": "timestamp",
+          "output": "time",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "user",
+          "output": "actor.user.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "ip_address",
+          "output": "src_endpoint.ip",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "terminal",
+          "output": "src_endpoint.hostname",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "server",
+          "output": "dst_endpoint.hostname",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "session_id",
+          "output": "session.uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "system_id",
+          "output": "metadata.product.name",
+          "match": ".*",
+          "replace": "SAP $0"
+        },
+        {
+          "input": "client",
+          "output": "metadata.tenant_uid",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "program",
+          "output": "process.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "transaction_code",
+          "output": "metadata.extension.name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "language",
+          "output": "metadata.extension.value",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "message",
+          "output": "message",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_type",
+          "output": "type_name",
+          "match": ".*",
+          "replace": "$0"
+        },
+        {
+          "input": "event_type",
+          "output": "activity_id",
+          "match": "(?i)(LOGON_SUCCESS|TRANSACTION_START|RFC_CALL|ROLE_ASSIGNMENT)",
+          "replace": "1"
+        },
+        {
+          "input": "event_type",
+          "output": "activity_id",
+          "match": "(?i)(TABLE_ACCESS|TRANSACTION_END)",
+          "replace": "2"
+        },
+        {
+          "input": "event_type",
+          "output": "activity_id",
+          "match": "(?i)(USER_MASTER_CHANGE|SYSTEM_CHANGE)",
+          "replace": "3"
+        },
+        {
+          "input": "event_type",
+          "output": "activity_id",
+          "match": "(?i)(LOGON_FAILED|AUTHORIZATION_CHECK)",
+          "replace": "4"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(CRITICAL)",
+          "replace": "5"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(HIGH)",
+          "replace": "4"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(WARNING)",
+          "replace": "3"
+        },
+        {
+          "input": "severity",
+          "output": "severity_id",
+          "match": "(?i)(INFO)",
+          "replace": "1"
+        },
+        {
+          "input": "event_type",
+          "output": "status_id",
+          "match": "(?i)(SUCCESS|START|ASSIGNMENT|CHANGE)",
+          "replace": "1"
+        },
+        {
+          "input": "event_type",
+          "output": "status_id",
+          "match": "(?i)(FAILED|CHECK|CRITICAL)",
+          "replace": "2"
+        },
+        {
+          "input": "user",
+          "output": "observables",
+          "match": ".*",
+          "replace": "[{\"name\":\"sap_user\",\"type\":\"User Name\",\"value\":\"$0\"},{\"name\":\"source_ip\",\"type\":\"IP Address\",\"value\":\"${ip_address}\"},{\"name\":\"sap_system\",\"type\":\"System\",\"value\":\"${system_id}\"},{\"name\":\"sap_client\",\"type\":\"Client\",\"value\":\"${client}\"}]"
+        }
+      ],
+      "halt": true
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+name: "Microsoft Defender Email"
+slug: "microsoft_defender_email"
+description: "Parser for Microsoft Defender for Office 365 email security events"
+productTags: ["email", "security", "defender", "microsoft"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

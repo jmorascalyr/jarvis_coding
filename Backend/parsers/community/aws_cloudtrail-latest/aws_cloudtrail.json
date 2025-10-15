@@ -1,0 +1,327 @@
+{
+  "attributes": {
+    "dataSource.vendor": "AWS",
+    "dataSource.name": "CloudTrail",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "AWS",
+    "metadata.product.name": "AWS CloudTrail",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.eventTime",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 4002,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "HTTP Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 4,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Network Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventTime",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventId",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventName",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventName",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventSource",
+              "to": "http_request.url.hostname"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userIdentity.type",
+              "to": "user.type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userIdentity.principalId",
+              "to": "user.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userIdentity.arn",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userIdentity.accountId",
+              "to": "user.account_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userIdentity.userName",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.sourceIPAddress",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.userAgent",
+              "to": "http_request.user_agent"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.awsRegion",
+              "to": "cloud.region"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.errorCode",
+              "to": "http_response.code"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.errorMessage",
+              "to": "status_detail"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.requestParameters",
+              "to": "http_request.body"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.responseElements",
+              "to": "http_response.body"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.requestId",
+              "to": "metadata.correlation_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventType",
+              "to": "type_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.recipientAccountId",
+              "to": "cloud.account_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.serviceEventDetails",
+              "to": "metadata.extensions.service_details"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.sharedEventID",
+              "to": "metadata.extensions.shared_event_id"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.vpcEndpointId",
+              "to": "dst_endpoint.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resources[0].accountId",
+              "to": "cloud.account_uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resources[0].type",
+              "to": "dst_endpoint.type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.resources[0].ARN",
+              "to": "dst_endpoint.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.apiVersion",
+              "to": "metadata.extensions.api_version"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.managementEvent",
+              "to": "metadata.extensions.management_event"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.readOnly",
+              "to": "metadata.extensions.read_only"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.eventCategory",
+              "to": "category_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.errorCode is null"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.errorCode is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id",
+              "predicate": "unmapped.errorCode is null"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "severity_id",
+              "predicate": "unmapped.errorCode is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id",
+              "predicate": "unmapped.errorCode is null"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "status_id",
+              "predicate": "unmapped.errorCode is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": "Success",
+              "field": "status",
+              "predicate": "unmapped.errorCode is null"
+            }
+          },
+          {
+            "constant": {
+              "value": "Failure",
+              "field": "status",
+              "predicate": "unmapped.errorCode is not null"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "user.uid",
+        "type": "User"
+      },
+      {
+        "name": "cloud.account_uid",
+        "type": "Other"
+      },
+      {
+        "name": "dst_endpoint.name",
+        "type": "Other"
+      },
+      {
+        "name": "metadata.correlation_uid",
+        "type": "Other"
+      }
+    ]
+  }
+}

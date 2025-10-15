@@ -1,0 +1,465 @@
+{
+  "attributes": {
+    "dataSource.vendor": "SentinelOne",
+    "dataSource.name": "SentinelOne",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "SentinelOne",
+    "metadata.product.name": "EDR",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.event\\.time",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 1001,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Process Activity",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "System Activity",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event\\.time",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "epochMillisecondsToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event\\.id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event\\.type",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event\\.category",
+              "to": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.meta\\.event\\.name",
+              "to": "activity_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.endpoint\\.name",
+              "to": "device.hostname"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.endpoint\\.os",
+              "to": "device.os.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.endpoint\\.type",
+              "to": "device.type"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.agent\\.uuid",
+              "to": "device.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.agent\\.version",
+              "to": "device.agent_list[0].version"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.site\\.id",
+              "to": "device.location.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.site\\.name",
+              "to": "device.location.desc"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.account\\.id",
+              "to": "device.org.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.account\\.name",
+              "to": "device.org.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.os\\.name",
+              "to": "device.os.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.name",
+              "to": "process.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.pid",
+              "to": "process.pid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.uid",
+              "to": "process.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.user",
+              "to": "process.user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.cmdline",
+              "to": "process.cmd_line"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.displayName",
+              "to": "process.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.image\\.path",
+              "to": "process.file.path"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.image\\.sha1",
+              "to": "process.file.hashes[0].value"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.image\\.sha256",
+              "to": "process.file.hashes[1].value"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.image\\.size",
+              "to": "process.file.size"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.parent\\.name",
+              "to": "process.parent_process.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.parent\\.pid",
+              "to": "process.parent_process.pid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.parent\\.uid",
+              "to": "process.parent_process.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.parent\\.cmdline",
+              "to": "process.parent_process.cmd_line"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.parent\\.image\\.path",
+              "to": "process.parent_process.file.path"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.parent\\.image\\.sha1",
+              "to": "process.parent_process.file.hashes[0].value"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.process\\.parent\\.image\\.sha256",
+              "to": "process.parent_process.file.hashes[1].value"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.tgt\\.process\\.uid",
+              "to": "actor.process.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.tgt\\.process\\.cmdline",
+              "to": "actor.process.cmd_line"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.tgt\\.process\\.user",
+              "to": "actor.user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.tgt\\.file\\.path",
+              "to": "file.path"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.tgt\\.file\\.size",
+              "to": "file.size"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.ip\\.address",
+              "to": "src_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.src\\.port\\.number",
+              "to": "src_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.dst\\.ip\\.address",
+              "to": "dst_endpoint.ip"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.dst\\.port\\.number",
+              "to": "dst_endpoint.port"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event\\.network\\.direction",
+              "to": "connection_info.direction"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event\\.network\\.connectionStatus",
+              "to": "connection_info.status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event\\.network\\.protocolName",
+              "to": "connection_info.protocol_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.indicator\\.category",
+              "to": "finding.title"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.indicator\\.name",
+              "to": "finding.desc"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.indicator\\.description",
+              "to": "finding.message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.registry\\.keyPath",
+              "to": "registry.key"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.registry\\.value",
+              "to": "registry.value"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.cmdScript\\.content",
+              "to": "process.cmd_line"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.threadId",
+              "to": "process.tid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.session",
+              "to": "process.session.uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "SHA1",
+              "field": "process.file.hashes[0].type_id",
+              "predicate": "unmapped.src\\.process\\.image\\.sha1 is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": "SHA256",
+              "field": "process.file.hashes[1].type_id",
+              "predicate": "unmapped.src\\.process\\.image\\.sha256 is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": "SHA1",
+              "field": "process.parent_process.file.hashes[0].type_id",
+              "predicate": "unmapped.src\\.process\\.parent\\.image\\.sha1 is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": "SHA256",
+              "field": "process.parent_process.file.hashes[1].type_id",
+              "predicate": "unmapped.src\\.process\\.parent\\.image\\.sha256 is not null"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "device.hostname",
+        "type": "Hostname"
+      },
+      {
+        "name": "process.name",
+        "type": "Process Name"
+      },
+      {
+        "name": "process.user.name",
+        "type": "User"
+      },
+      {
+        "name": "process.file.path",
+        "type": "File Name"
+      },
+      {
+        "name": "process.file.hashes[0].value",
+        "type": "File Hash"
+      },
+      {
+        "name": "process.file.hashes[1].value",
+        "type": "File Hash"
+      },
+      {
+        "name": "src_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "dst_endpoint.ip",
+        "type": "IP Address"
+      },
+      {
+        "name": "file.path",
+        "type": "File Name"
+      },
+      {
+        "name": "registry.key",
+        "type": "Other"
+      }
+    ]
+  }
+}

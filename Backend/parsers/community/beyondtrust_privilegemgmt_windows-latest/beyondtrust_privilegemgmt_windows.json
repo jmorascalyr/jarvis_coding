@@ -1,0 +1,163 @@
+{
+  "attributes": {
+    "dataSource.vendor": "BeyondTrust",
+    "dataSource.name": "BeyondTrust Privilege Management Windows",
+    "dataSource.category": "security",
+    "metadata.product.vendor_name": "BeyondTrust",
+    "metadata.product.name": "BeyondTrust Privilege Management for Windows",
+    "metadata.version": "1.0.0"
+  },
+  "formats": [
+    {
+      "format": "$unmapped.{parse=json}$",
+      "rewrites": [
+        {
+          "input": "unmapped.timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
+        }
+      ]
+    }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {
+            "constant": {
+              "value": 3007,
+              "field": "class_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Authorization",
+              "field": "class_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 3,
+              "field": "category_uid"
+            }
+          },
+          {
+            "constant": {
+              "value": "Identity & Access Management",
+              "field": "category_name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.timestamp",
+              "to": "time"
+            }
+          },
+          {
+            "cast": {
+              "field": "time",
+              "type": "iso8601TimestampToEpochSec"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.event_id",
+              "to": "metadata.uid"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.action",
+              "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.user_name",
+              "to": "user.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.computer_name",
+              "to": "device.hostname"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.process_name",
+              "to": "process.name"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.process_path",
+              "to": "process.file.path"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.decision",
+              "to": "status"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.rule_name",
+              "to": "metadata.extensions.rule_name"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "activity_id",
+              "predicate": "unmapped.decision = 'Allow'"
+            }
+          },
+          {
+            "constant": {
+              "value": 2,
+              "field": "activity_id",
+              "predicate": "unmapped.decision = 'Block'"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "severity_id"
+            }
+          },
+          {
+            "constant": {
+              "value": 1,
+              "field": "status_id"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "observables": {
+    "fields": [
+      {
+        "name": "user.name",
+        "type": "User"
+      },
+      {
+        "name": "device.hostname",
+        "type": "Hostname"
+      },
+      {
+        "name": "process.name",
+        "type": "Process Name"
+      },
+      {
+        "name": "process.file.path",
+        "type": "File Name"
+      }
+    ]
+  }
+}

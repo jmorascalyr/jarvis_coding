@@ -1,0 +1,1 @@
+# Configuration module for SentinelOne Query Framework

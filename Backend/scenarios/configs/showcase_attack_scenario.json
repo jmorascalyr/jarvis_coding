@@ -1,0 +1,2111 @@
+{
+  "scenario_name": "Enterprise Multi-Platform Attack Campaign",
+  "description": "Sophisticated attack demonstrating SentinelOne AI-SIEM cross-platform correlation",
+  "data_sources": [
+    "Fortinet Fortigate (DMZ Firewalls)",
+    "Microsoft Windows EventLog (Corp Servers)",
+    "Imperva SecureSphere (Database Audit)",
+    "AWS CloudTrail (Cloud Infrastructure)",
+    "Okta Authentication",
+    "Microsoft Azure AD",
+    "Cisco Duo MFA",
+    "Zscaler Web Security",
+    "Proofpoint Email Security",
+    "CrowdStrike Falcon EDR",
+    "HashiCorp Vault (Secrets)",
+    "Harness CI/CD",
+    "PingOne MFA",
+    "PingProtect Fraud Detection"
+  ],
+  "attack_phases": [
+    "1. DMZ Reconnaissance (Fortigate)",
+    "2. Identity Attacks (Okta, Azure AD, Duo, PingOne)",
+    "3. Email Vector (Proofpoint)",
+    "4. Web Exploitation (Zscaler)",
+    "5. Endpoint Compromise (CrowdStrike)",
+    "6. Lateral Movement (Windows)",
+    "7. Database Access (Imperva)",
+    "8. Cloud Persistence (AWS)",
+    "9. Secrets Theft (Vault)",
+    "10. CI/CD Compromise (Harness)",
+    "11. Fraud Detection (PingProtect)"
+  ],
+  "campaign_start": "2025-08-11T06:06:15.222638+00:00",
+  "total_events": 49,
+  "events": [
+    {
+      "source": "fortinet_fortigate",
+      "phase": "reconnaissance",
+      "timestamp": "2025-08-11T06:06:15.222638+00:00",
+      "event": "devname=FortiGate-40F devid=FGT40FTK23099XSK logid=0000000013 identifier=3750 type=traffic subtype=forward level=notice vd=root srcip=192.168.1.121 dstip=8.8.8.8 srcport=56789 dstport=443 srcintf=lan srcintfrole=lan dstintf=wan dstintfrole=wan srccountry=Reserved dstcountry=United States sessionid=11109805 proto=6 action=accept policyid=1 policytype=policy policyname=\"LAN to WAN\" trandisp=snat transip=70.48.255.88 transport=56789 duration=120 sentbyte=1228 rcvdbyte=0 sentpkt=10 rcvdpkt=0 appcat=unscanned devtype=Phone srchwvendor=Apple srcfamily=iPhone osname=iOS srcmac=b7:20:4e:6f:43:2c dstmac=ac:7d:84:a2:a6:2d tz=-0400 date=2025-08-11 time=06:06:15 eventtime=0001754892375222658"
+    },
+    {
+      "source": "fortinet_fortigate",
+      "phase": "reconnaissance",
+      "timestamp": "2025-08-11T06:08:15.222638+00:00",
+      "event": "devname=FortiGate-40F devid=FGT40FTK23099XSK logid=0000000013 identifier=3750 type=traffic subtype=forward level=notice vd=root srcip=192.168.1.121 dstip=8.8.8.8 srcport=56789 dstport=443 srcintf=lan srcintfrole=lan dstintf=wan dstintfrole=wan srccountry=Reserved dstcountry=United States sessionid=11109805 proto=6 action=accept policyid=1 policytype=policy policyname=\"LAN to WAN\" trandisp=snat transip=70.48.255.88 transport=56789 duration=120 sentbyte=1228 rcvdbyte=0 sentpkt=10 rcvdpkt=0 appcat=unscanned devtype=Phone srchwvendor=Apple srcfamily=iPhone osname=iOS srcmac=b7:20:4e:6f:43:2c dstmac=ac:7d:84:a2:a6:2d tz=-0400 date=2025-08-11 time=06:06:15 eventtime=0001754892375222683"
+    },
+    {
+      "source": "fortinet_fortigate",
+      "phase": "reconnaissance",
+      "timestamp": "2025-08-11T06:10:15.222638+00:00",
+      "event": "devname=FortiGate-40F devid=FGT40FTK23099XSK logid=0000000013 identifier=3750 type=traffic subtype=forward level=notice vd=root srcip=192.168.1.121 dstip=8.8.8.8 srcport=56789 dstport=443 srcintf=lan srcintfrole=lan dstintf=wan dstintfrole=wan srccountry=Reserved dstcountry=United States sessionid=11109805 proto=6 action=accept policyid=1 policytype=policy policyname=\"LAN to WAN\" trandisp=snat transip=70.48.255.88 transport=56789 duration=120 sentbyte=1228 rcvdbyte=0 sentpkt=10 rcvdpkt=0 appcat=unscanned devtype=Phone srchwvendor=Apple srcfamily=iPhone osname=iOS srcmac=b7:20:4e:6f:43:2c dstmac=ac:7d:84:a2:a6:2d tz=-0400 date=2025-08-11 time=06:06:15 eventtime=0001754892375222697"
+    },
+    {
+      "source": "okta_authentication",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:16:15.222638+00:00",
+      "event": {
+        "activity_id": 99,
+        "activity_name": "OIDC token revocation request",
+        "actor.user.email_addr": "f65a8ce137c0",
+        "actor.user.name": "Okta Dashboard",
+        "actor.user.type_id": 99,
+        "actor.user.uid": "okta.9c6fe2fe-4a9b-41e8-a895-fcde5d48c2d2",
+        "category_name": "Uncategorized",
+        "category_uid": 0,
+        "class_name": "Base Event",
+        "class_uid": 0,
+        "dataSource.category": "security",
+        "dataSource.name": "Okta",
+        "dataSource.vendor": "Okta",
+        "device.risk_level": "Other",
+        "device.risk_level_id": 99,
+        "event.type": "OIDC token revocation request",
+        "metadata.correlation_uid": "e6d0d2e9042148d58ff6f14c7f2c7d2d",
+        "metadata.original_time": "2025-08-11T06:06:15.222707Z",
+        "metadata.product.name": "Okta",
+        "metadata.product.vendor_name": "Okta",
+        "metadata.uid": "49f262de-7679-11f0-971e-dab9b3ae458d",
+        "metadata.version": "1.0.0",
+        "sca:RetentionType": "SDL",
+        "severity_id": 99,
+        "status": "FAILURE",
+        "status_detail": "invalid_token",
+        "status_id": 2,
+        "timestamp": "1754892375222706944",
+        "type_name": "Base Event: Other",
+        "type_uid": 99,
+        "unmapped.actor.type": "PublicClientApp",
+        "unmapped.authenticationContext.authenticationStep": 0,
+        "unmapped.authenticationContext.externalSessionId": "unknown",
+        "unmapped.authenticationContext.rootSessionId": "unknown",
+        "unmapped.client.device": "Computer",
+        "unmapped.client.geographicalContext.city": "Jersey City",
+        "unmapped.client.geographicalContext.country": "United States",
+        "unmapped.client.geographicalContext.geolocation.lat": 40.731,
+        "unmapped.client.geographicalContext.geolocation.lon": -74.0771,
+        "unmapped.client.geographicalContext.postalCode": "07395",
+        "unmapped.client.geographicalContext.state": "New Jersey",
+        "unmapped.client.ipAddress": "205.52.28.251",
+        "unmapped.client.userAgent.browser": "CHROME",
+        "unmapped.client.userAgent.os": "Windows 10",
+        "unmapped.client.userAgent.rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "unmapped.debugContext.debugData.dtHash": "37738a9fd0f64c6d9f90e27112d22e21",
+        "unmapped.debugContext.debugData.requestId": "e6d0d2e9042148d58ff6f14c7f2c7d2d",
+        "unmapped.debugContext.debugData.requestUri": "/oauth2/v1/revoke",
+        "unmapped.debugContext.debugData.threatSuspected": "false",
+        "unmapped.debugContext.debugData.url": "/oauth2/v1/revoke?",
+        "unmapped.displayMessage": "OIDC token revocation request",
+        "unmapped.eventType": "app.oauth2.token.revoke",
+        "unmapped.legacyEventType": "app.oauth2.token.revoke_failure",
+        "unmapped.request.ipChain": "[{\"ip\":\"232.217.193.37\",\"geographicalContext\":{\"country\":\"United States\",\"city\":\"Jersey City\",\"postalCode\":\"07395\",\"state\":\"New Jersey\",\"geolocation\":{\"lon\":-74.0771,\"lat\":40.731}},\"version\":\"V4\"}]",
+        "unmapped.securityContext.asNumber": 174,
+        "unmapped.securityContext.asOrg": "private customer",
+        "unmapped.securityContext.domain": ".",
+        "unmapped.securityContext.isProxy": false,
+        "unmapped.securityContext.isp": "cogent communications",
+        "unmapped.severity": "WARN",
+        "unmapped.transaction.type": "WEB",
+        "unmapped.version": "0"
+      }
+    },
+    {
+      "source": "okta_authentication",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:17:15.222638+00:00",
+      "event": {
+        "activity_id": 99,
+        "activity_name": "OIDC token revocation request",
+        "actor.user.email_addr": "d4ee0a86099c",
+        "actor.user.name": "Okta Dashboard",
+        "actor.user.type_id": 99,
+        "actor.user.uid": "okta.735c4c86-59bb-4db7-9865-a8d70e99a1e4",
+        "category_name": "Uncategorized",
+        "category_uid": 0,
+        "class_name": "Base Event",
+        "class_uid": 0,
+        "dataSource.category": "security",
+        "dataSource.name": "Okta",
+        "dataSource.vendor": "Okta",
+        "device.risk_level": "Other",
+        "device.risk_level_id": 99,
+        "event.type": "OIDC token revocation request",
+        "metadata.correlation_uid": "f56c3670e262402a9956ac7558486df3",
+        "metadata.original_time": "2025-08-11T06:06:15.222780Z",
+        "metadata.product.name": "Okta",
+        "metadata.product.vendor_name": "Okta",
+        "metadata.uid": "49f26450-7679-11f0-971e-dab9b3ae458d",
+        "metadata.version": "1.0.0",
+        "sca:RetentionType": "SDL",
+        "severity_id": 99,
+        "status": "FAILURE",
+        "status_detail": "invalid_token",
+        "status_id": 2,
+        "timestamp": "1754892375222779904",
+        "type_name": "Base Event: Other",
+        "type_uid": 99,
+        "unmapped.actor.type": "PublicClientApp",
+        "unmapped.authenticationContext.authenticationStep": 0,
+        "unmapped.authenticationContext.externalSessionId": "unknown",
+        "unmapped.authenticationContext.rootSessionId": "unknown",
+        "unmapped.client.device": "Computer",
+        "unmapped.client.geographicalContext.city": "Jersey City",
+        "unmapped.client.geographicalContext.country": "United States",
+        "unmapped.client.geographicalContext.geolocation.lat": 40.731,
+        "unmapped.client.geographicalContext.geolocation.lon": -74.0771,
+        "unmapped.client.geographicalContext.postalCode": "07395",
+        "unmapped.client.geographicalContext.state": "New Jersey",
+        "unmapped.client.ipAddress": "138.62.88.119",
+        "unmapped.client.userAgent.browser": "CHROME",
+        "unmapped.client.userAgent.os": "Windows 10",
+        "unmapped.client.userAgent.rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "unmapped.debugContext.debugData.dtHash": "ba94ac75b5164d3c8730f351b029f0c2",
+        "unmapped.debugContext.debugData.requestId": "f56c3670e262402a9956ac7558486df3",
+        "unmapped.debugContext.debugData.requestUri": "/oauth2/v1/revoke",
+        "unmapped.debugContext.debugData.threatSuspected": "false",
+        "unmapped.debugContext.debugData.url": "/oauth2/v1/revoke?",
+        "unmapped.displayMessage": "OIDC token revocation request",
+        "unmapped.eventType": "app.oauth2.token.revoke",
+        "unmapped.legacyEventType": "app.oauth2.token.revoke_failure",
+        "unmapped.request.ipChain": "[{\"ip\":\"35.179.201.47\",\"geographicalContext\":{\"country\":\"United States\",\"city\":\"Jersey City\",\"postalCode\":\"07395\",\"state\":\"New Jersey\",\"geolocation\":{\"lon\":-74.0771,\"lat\":40.731}},\"version\":\"V4\"}]",
+        "unmapped.securityContext.asNumber": 174,
+        "unmapped.securityContext.asOrg": "private customer",
+        "unmapped.securityContext.domain": ".",
+        "unmapped.securityContext.isProxy": false,
+        "unmapped.securityContext.isp": "cogent communications",
+        "unmapped.severity": "WARN",
+        "unmapped.transaction.type": "WEB",
+        "unmapped.version": "0"
+      }
+    },
+    {
+      "source": "okta_authentication",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:18:15.222638+00:00",
+      "event": {
+        "activity_id": 99,
+        "activity_name": "OIDC token revocation request",
+        "actor.user.email_addr": "94350e6f8b1c",
+        "actor.user.name": "Okta Dashboard",
+        "actor.user.type_id": 99,
+        "actor.user.uid": "okta.6842943d-6a91-47af-803c-4574ab290368",
+        "category_name": "Uncategorized",
+        "category_uid": 0,
+        "class_name": "Base Event",
+        "class_uid": 0,
+        "dataSource.category": "security",
+        "dataSource.name": "Okta",
+        "dataSource.vendor": "Okta",
+        "device.risk_level": "Other",
+        "device.risk_level_id": 99,
+        "event.type": "OIDC token revocation request",
+        "metadata.correlation_uid": "cd212da2bab64b62b16e6cf4db794d73",
+        "metadata.original_time": "2025-08-11T06:06:15.222803Z",
+        "metadata.product.name": "Okta",
+        "metadata.product.vendor_name": "Okta",
+        "metadata.uid": "49f26518-7679-11f0-971e-dab9b3ae458d",
+        "metadata.version": "1.0.0",
+        "sca:RetentionType": "SDL",
+        "severity_id": 99,
+        "status": "FAILURE",
+        "status_detail": "invalid_token",
+        "status_id": 2,
+        "timestamp": "1754892375222803200",
+        "type_name": "Base Event: Other",
+        "type_uid": 99,
+        "unmapped.actor.type": "PublicClientApp",
+        "unmapped.authenticationContext.authenticationStep": 0,
+        "unmapped.authenticationContext.externalSessionId": "unknown",
+        "unmapped.authenticationContext.rootSessionId": "unknown",
+        "unmapped.client.device": "Computer",
+        "unmapped.client.geographicalContext.city": "Jersey City",
+        "unmapped.client.geographicalContext.country": "United States",
+        "unmapped.client.geographicalContext.geolocation.lat": 40.731,
+        "unmapped.client.geographicalContext.geolocation.lon": -74.0771,
+        "unmapped.client.geographicalContext.postalCode": "07395",
+        "unmapped.client.geographicalContext.state": "New Jersey",
+        "unmapped.client.ipAddress": "174.110.184.119",
+        "unmapped.client.userAgent.browser": "CHROME",
+        "unmapped.client.userAgent.os": "Windows 10",
+        "unmapped.client.userAgent.rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "unmapped.debugContext.debugData.dtHash": "3b585e6dda0d48a18c84c0b921793a1f",
+        "unmapped.debugContext.debugData.requestId": "cd212da2bab64b62b16e6cf4db794d73",
+        "unmapped.debugContext.debugData.requestUri": "/oauth2/v1/revoke",
+        "unmapped.debugContext.debugData.threatSuspected": "false",
+        "unmapped.debugContext.debugData.url": "/oauth2/v1/revoke?",
+        "unmapped.displayMessage": "OIDC token revocation request",
+        "unmapped.eventType": "app.oauth2.token.revoke",
+        "unmapped.legacyEventType": "app.oauth2.token.revoke_failure",
+        "unmapped.request.ipChain": "[{\"ip\":\"18.179.136.161\",\"geographicalContext\":{\"country\":\"United States\",\"city\":\"Jersey City\",\"postalCode\":\"07395\",\"state\":\"New Jersey\",\"geolocation\":{\"lon\":-74.0771,\"lat\":40.731}},\"version\":\"V4\"}]",
+        "unmapped.securityContext.asNumber": 174,
+        "unmapped.securityContext.asOrg": "private customer",
+        "unmapped.securityContext.domain": ".",
+        "unmapped.securityContext.isProxy": false,
+        "unmapped.securityContext.isp": "cogent communications",
+        "unmapped.severity": "WARN",
+        "unmapped.transaction.type": "WEB",
+        "unmapped.version": "0"
+      }
+    },
+    {
+      "source": "okta_authentication",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:19:15.222638+00:00",
+      "event": {
+        "activity_id": 99,
+        "activity_name": "OIDC token revocation request",
+        "actor.user.email_addr": "beddd8a65fa6",
+        "actor.user.name": "Okta Dashboard",
+        "actor.user.type_id": 99,
+        "actor.user.uid": "okta.93b6ac03-7a31-4f35-8d45-15c1f8ce0dda",
+        "category_name": "Uncategorized",
+        "category_uid": 0,
+        "class_name": "Base Event",
+        "class_uid": 0,
+        "dataSource.category": "security",
+        "dataSource.name": "Okta",
+        "dataSource.vendor": "Okta",
+        "device.risk_level": "Other",
+        "device.risk_level_id": 99,
+        "event.type": "OIDC token revocation request",
+        "metadata.correlation_uid": "14d1e3493df64c128a8890e07e9e9ece",
+        "metadata.original_time": "2025-08-11T06:06:15.222821Z",
+        "metadata.product.name": "Okta",
+        "metadata.product.vendor_name": "Okta",
+        "metadata.uid": "49f265cc-7679-11f0-971e-dab9b3ae458d",
+        "metadata.version": "1.0.0",
+        "sca:RetentionType": "SDL",
+        "severity_id": 99,
+        "status": "FAILURE",
+        "status_detail": "invalid_token",
+        "status_id": 2,
+        "timestamp": "1754892375222821120",
+        "type_name": "Base Event: Other",
+        "type_uid": 99,
+        "unmapped.actor.type": "PublicClientApp",
+        "unmapped.authenticationContext.authenticationStep": 0,
+        "unmapped.authenticationContext.externalSessionId": "unknown",
+        "unmapped.authenticationContext.rootSessionId": "unknown",
+        "unmapped.client.device": "Computer",
+        "unmapped.client.geographicalContext.city": "Jersey City",
+        "unmapped.client.geographicalContext.country": "United States",
+        "unmapped.client.geographicalContext.geolocation.lat": 40.731,
+        "unmapped.client.geographicalContext.geolocation.lon": -74.0771,
+        "unmapped.client.geographicalContext.postalCode": "07395",
+        "unmapped.client.geographicalContext.state": "New Jersey",
+        "unmapped.client.ipAddress": "174.248.154.50",
+        "unmapped.client.userAgent.browser": "CHROME",
+        "unmapped.client.userAgent.os": "Windows 10",
+        "unmapped.client.userAgent.rawUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "unmapped.debugContext.debugData.dtHash": "f4da532006d0497cb5590fadb1e1a6be",
+        "unmapped.debugContext.debugData.requestId": "14d1e3493df64c128a8890e07e9e9ece",
+        "unmapped.debugContext.debugData.requestUri": "/oauth2/v1/revoke",
+        "unmapped.debugContext.debugData.threatSuspected": "false",
+        "unmapped.debugContext.debugData.url": "/oauth2/v1/revoke?",
+        "unmapped.displayMessage": "OIDC token revocation request",
+        "unmapped.eventType": "app.oauth2.token.revoke",
+        "unmapped.legacyEventType": "app.oauth2.token.revoke_failure",
+        "unmapped.request.ipChain": "[{\"ip\":\"122.58.245.22\",\"geographicalContext\":{\"country\":\"United States\",\"city\":\"Jersey City\",\"postalCode\":\"07395\",\"state\":\"New Jersey\",\"geolocation\":{\"lon\":-74.0771,\"lat\":40.731}},\"version\":\"V4\"}]",
+        "unmapped.securityContext.asNumber": 174,
+        "unmapped.securityContext.asOrg": "private customer",
+        "unmapped.securityContext.domain": ".",
+        "unmapped.securityContext.isProxy": false,
+        "unmapped.securityContext.isp": "cogent communications",
+        "unmapped.severity": "WARN",
+        "unmapped.transaction.type": "WEB",
+        "unmapped.version": "0"
+      }
+    },
+    {
+      "source": "microsoft_azuread",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:21:15.222638+00:00",
+      "event": {
+        "activityDateTime": "2025-08-11T00:32:41+00:00",
+        "correlationId": "a2203694-ac66-4532-bc7e-4b6d264d6232",
+        "id": "3b68f7bb-d6ee-4121-8213-a40c969e59bc",
+        "initiatedBy": {},
+        "targetResources": [
+          {
+            "displayName": "bedrock\u2011exfil\u2011sp",
+            "id": "f5c3602f-a253-405c-a651-a375fb08df82",
+            "type": "ServicePrincipal",
+            "modifiedProperties": [],
+            "userPrincipalName": null
+          }
+        ],
+        "activityDisplayName": "Add service principal credentials",
+        "category": "ApplicationManagement",
+        "operationType": "AddServicePrincipal",
+        "result": "success",
+        "resultReason": "CredentialAdded",
+        "targetType": "ServicePrincipal",
+        "targetDisplay": "bedrock\u2011exfil\u2011sp",
+        "initiatedByUserId": "deadbeef-dead-beef-dead-beefdeadbeef",
+        "initiatedByUserIpAddress": "185.199.108.153",
+        "initiatedByUserUserPrincipalName": "haxorsaurus@evilcorp.xyz",
+        "eventCategory": "Insight",
+        "recipientAccountId": "000000000000"
+      }
+    },
+    {
+      "source": "microsoft_azuread",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:23:15.222638+00:00",
+      "event": {
+        "activityDateTime": "2025-08-10T21:51:27+00:00",
+        "correlationId": "c636f53e-457b-4aca-a4cb-569a24a527a2",
+        "id": "1f3fed1c-cd3c-4b6d-92f4-0671eb078805",
+        "initiatedBy": {},
+        "targetResources": [
+          {
+            "displayName": "Alex Rivera",
+            "id": "8f9bad4d-5df2-4ad1-908a-18706a294a94",
+            "type": "User",
+            "modifiedProperties": [],
+            "userPrincipalName": null
+          }
+        ],
+        "activityDisplayName": "User signed in",
+        "category": "SignInLogs",
+        "operationType": "SignIn",
+        "result": "success",
+        "resultReason": "SignInSucceeded",
+        "initiatedByUserId": "4231c2dc-53bc-4428-83fd-38a9f7e3e415",
+        "initiatedByUserIpAddress": "81.17.5.101",
+        "initiatedByUserUserPrincipalName": "alex@example.com",
+        "eventCategory": "Audit"
+      }
+    },
+    {
+      "source": "microsoft_azuread",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:25:15.222638+00:00",
+      "event": {
+        "activityDateTime": "2025-08-11T01:38:06+00:00",
+        "correlationId": "6cfcdbf2-8809-4c90-a23d-6e451656e193",
+        "id": "0fdea707-e49b-49fb-949f-9227951f92e8",
+        "initiatedBy": {},
+        "targetResources": [
+          {
+            "displayName": "Jean Thompson",
+            "id": "9c9509ec-c45e-4e1d-9612-41260231845e",
+            "type": "User",
+            "modifiedProperties": [],
+            "userPrincipalName": null
+          }
+        ],
+        "activityDisplayName": "User signed in",
+        "category": "SignInLogs",
+        "operationType": "SignIn",
+        "result": "success",
+        "resultReason": "SignInSucceeded",
+        "initiatedByUserId": "a812de4e-d47c-4f55-9a46-0f6e6e8b1dea",
+        "initiatedByUserIpAddress": "80.91.32.22",
+        "initiatedByUserUserPrincipalName": "jean@example.com",
+        "eventCategory": "Audit"
+      }
+    },
+    {
+      "source": "cisco_duo",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:26:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T06:06:15Z",
+        "time": 1754892375222,
+        "class_uid": "3002",
+        "class_name": "Authentication",
+        "category_uid": "3",
+        "category_name": "Identity & Access Management",
+        "activity_id": "1",
+        "activity_name": "Logon",
+        "type_uid": "300201",
+        "severity_id": 1,
+        "status_id": 1,
+        "user": {
+          "name": "admin",
+          "account_uid": "admin",
+          "account_type": "User"
+        },
+        "src_endpoint": {
+          "ip": "203.0.113.180",
+          "location": {
+            "desc": "Denver, US",
+            "city": "Denver",
+            "country": "US"
+          }
+        },
+        "auth_protocol": "passcode",
+        "auth_protocol_id": 2,
+        "status": "SUCCESS",
+        "message": "TOTP passcode verified successfully",
+        "mfa_factors": [
+          {
+            "factor_type": "passcode",
+            "factor_result": "SUCCESS",
+            "factor_desc": "TOTP token"
+          }
+        ],
+        "metadata": {
+          "version": "1.0.0",
+          "product": {
+            "vendor_name": "Cisco",
+            "name": "Cisco Duo Security"
+          }
+        },
+        "observables": [
+          {
+            "name": "user",
+            "type": "User",
+            "value": "admin"
+          },
+          {
+            "name": "src_ip",
+            "type": "IP Address",
+            "value": "203.0.113.180"
+          },
+          {
+            "name": "auth_factor",
+            "type": "Other",
+            "value": "passcode"
+          }
+        ],
+        "dataSource.vendor": "Cisco",
+        "dataSource.name": "Cisco Duo Security",
+        "dataSource.category": "security",
+        "metadata.product.vendor_name": "Cisco",
+        "metadata.product.name": "Cisco Duo Security",
+        "metadata.version": "1.0.0"
+      }
+    },
+    {
+      "source": "cisco_duo",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:29:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T06:06:15Z",
+        "time": 1754892375222,
+        "class_uid": "3002",
+        "class_name": "Authentication",
+        "category_uid": "3",
+        "category_name": "Identity & Access Management",
+        "activity_id": "1",
+        "activity_name": "Logon",
+        "type_uid": "300201",
+        "severity_id": 1,
+        "status_id": 1,
+        "user": {
+          "name": "service_account",
+          "account_uid": "service_account",
+          "account_type": "User"
+        },
+        "src_endpoint": {
+          "ip": "192.0.2.160",
+          "location": {
+            "desc": "Chicago, US",
+            "city": "Chicago",
+            "country": "US"
+          }
+        },
+        "auth_protocol": "push",
+        "auth_protocol_id": 4,
+        "status": "SUCCESS",
+        "message": "User approved push notification",
+        "mfa_factors": [
+          {
+            "factor_type": "push",
+            "factor_result": "SUCCESS",
+            "factor_desc": "Push notification"
+          }
+        ],
+        "metadata": {
+          "version": "1.0.0",
+          "product": {
+            "vendor_name": "Cisco",
+            "name": "Cisco Duo Security"
+          }
+        },
+        "observables": [
+          {
+            "name": "user",
+            "type": "User",
+            "value": "service_account"
+          },
+          {
+            "name": "src_ip",
+            "type": "IP Address",
+            "value": "192.0.2.160"
+          },
+          {
+            "name": "auth_factor",
+            "type": "Other",
+            "value": "push"
+          }
+        ],
+        "dataSource.vendor": "Cisco",
+        "dataSource.name": "Cisco Duo Security",
+        "dataSource.category": "security",
+        "metadata.product.vendor_name": "Cisco",
+        "metadata.product.name": "Cisco Duo Security",
+        "metadata.version": "1.0.0"
+      }
+    },
+    {
+      "source": "pingone_mfa",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:31:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T05:45:15.222913Z",
+        "dataSource": "PingOneMFA",
+        "recordedAt": "2025-08-11T05:45:15.222913Z",
+        "user": "jane.doe@example.com",
+        "source.ip": "198.51.100.45",
+        "action.type": "MFA.AUTHENTICATE",
+        "factor": "TOTP",
+        "result.status": "FAILURE",
+        "description": "Invalid time-based OTP",
+        "sessionId": "80d06ff8-0e2f-4bf3-b0ff-76db974f3f89",
+        "dataSource.vendor": "Ping Identity",
+        "dataSource.name": "PingOne MFA",
+        "dataSource.category": "security"
+      }
+    },
+    {
+      "source": "pingone_mfa",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:33:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T05:58:15.222923Z",
+        "dataSource": "PingOneMFA",
+        "recordedAt": "2025-08-11T05:58:15.222923Z",
+        "user": "service@example.com",
+        "source.ip": "198.51.100.148",
+        "action.type": "MFA.AUTHENTICATE",
+        "factor": "PUSH",
+        "result.status": "SUCCESS",
+        "description": "User approved push notification",
+        "sessionId": "f62b3667-3379-445b-83aa-a554acb2e6b4",
+        "dataSource.vendor": "Ping Identity",
+        "dataSource.name": "PingOne MFA",
+        "dataSource.category": "security"
+      }
+    },
+    {
+      "source": "proofpoint",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:36:15.222638+00:00",
+      "event": {
+        "GUID": "5e7c1b00-b811-448e-b636-b58e10ccbc21",
+        "QID": "Q282420",
+        "id": "5ce3199a-9cde-482f-8d37-2a81ae348202",
+        "messageID": "<c8426cc3-a5c2-42a8-bf75-05c7015d56f1@yahoo.com>",
+        "messageTime": "2025-08-11T06:04:35.222Z",
+        "messageSize": 399292,
+        "subject": "Your receipt from Amazon",
+        "sender": "admin@yahoo.com",
+        "fromAddress": [
+          "admin@yahoo.com"
+        ],
+        "headerFrom": "\"Frank Garcia\" <admin@yahoo.com>",
+        "senderIP": "13.30.40.12",
+        "recipient": [
+          "security@gmail.com"
+        ],
+        "toAddresses": [
+          "security@gmail.com"
+        ],
+        "ccAddresses": [],
+        "replyToAddress": [
+          "admin@yahoo.com"
+        ],
+        "headerReplyTo": "admin@yahoo.com",
+        "completelyRewritten": "true",
+        "cluster": "proofpoint-cluster-6",
+        "policyRoutes": [
+          "deliver"
+        ],
+        "modulesRun": [
+          "dkimv",
+          "urldefense",
+          "av"
+        ],
+        "spamScore": 7,
+        "phishScore": 8,
+        "malwareScore": 0,
+        "impostorScore": 7,
+        "messageParts": [
+          {
+            "disposition": "inline",
+            "contentType": "text/plain",
+            "oContentType": "text/plain",
+            "isUnsupported": false
+          }
+        ],
+        "spf": "neutral",
+        "dkimv": "pass",
+        "dmarc": "fail",
+        "xmailer": "Microsoft Outlook 16.0"
+      }
+    },
+    {
+      "source": "proofpoint",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:37:15.222638+00:00",
+      "event": {
+        "GUID": "c0aea449-bc7d-4f8d-b97a-0133ef3f3437",
+        "QID": "Q334415",
+        "id": "c19d033e-adbb-4da9-b194-548fcab0ff6b",
+        "messageID": "<9f62df3b-906d-45bc-a304-fbc4f3b66353@company.com>",
+        "messageTime": "2025-08-11T06:03:03.222Z",
+        "messageSize": 802794,
+        "subject": "GitHub: New pull request",
+        "sender": "diana.brown@company.com",
+        "fromAddress": [
+          "diana.brown@company.com"
+        ],
+        "headerFrom": "\"Charlie Rodriguez\" <diana.brown@company.com>",
+        "senderIP": "10.7.136.43",
+        "recipient": [
+          "jane.rodriguez@gmail.com"
+        ],
+        "toAddresses": [
+          "jane.rodriguez@gmail.com"
+        ],
+        "ccAddresses": [],
+        "replyToAddress": [
+          "diana.brown@company.com"
+        ],
+        "headerReplyTo": "diana.brown@company.com",
+        "completelyRewritten": "true",
+        "cluster": "proofpoint-cluster-8",
+        "policyRoutes": [
+          "deliver"
+        ],
+        "modulesRun": [
+          "impostor",
+          "spf",
+          "spam",
+          "dmarc",
+          "attachment_defense",
+          "urldefense",
+          "dkimv",
+          "av"
+        ],
+        "spamScore": 15,
+        "phishScore": 4,
+        "malwareScore": 0,
+        "impostorScore": 9,
+        "messageParts": [
+          {
+            "disposition": "inline",
+            "contentType": "text/plain",
+            "oContentType": "text/plain",
+            "isUnsupported": false
+          }
+        ],
+        "spf": "none",
+        "dkimv": "fail",
+        "dmarc": "fail",
+        "xmailer": "SwiftMailer"
+      }
+    },
+    {
+      "source": "proofpoint",
+      "phase": "initial_access",
+      "timestamp": "2025-08-11T06:38:15.222638+00:00",
+      "event": {
+        "GUID": "f43b7264-ffa1-493c-9140-678d58acd55f",
+        "QID": "Q733417",
+        "id": "4c9129a1-16ab-4e3b-9272-aedd06a9d096",
+        "messageID": "<4db93ec1-3b39-4a7a-a83a-b8f2722f335d@gmail.com>",
+        "messageTime": "2025-08-11T06:03:57.223Z",
+        "messageSize": 884803,
+        "subject": "Fax received",
+        "sender": "billing@gmail.com",
+        "fromAddress": [
+          "billing@gmail.com"
+        ],
+        "headerFrom": "\"Diana Martinez\" <billing@gmail.com>",
+        "senderIP": "10.242.114.230",
+        "recipient": [
+          "support@corporate.com"
+        ],
+        "toAddresses": [
+          "support@corporate.com"
+        ],
+        "ccAddresses": [],
+        "replyToAddress": [
+          "billing@gmail.com"
+        ],
+        "headerReplyTo": "billing@gmail.com",
+        "completelyRewritten": "false",
+        "cluster": "proofpoint-cluster-2",
+        "policyRoutes": [
+          "block"
+        ],
+        "modulesRun": [
+          "dkimv",
+          "dmarc",
+          "av",
+          "impostor",
+          "spf"
+        ],
+        "spamScore": 54,
+        "phishScore": 0,
+        "malwareScore": 96,
+        "impostorScore": 0,
+        "threatsInfo": [
+          {
+            "threat": "FormBook",
+            "threatType": "malware",
+            "threatID": "bdfc706e-3aa5-4032-af15-610b8d9d8ac4",
+            "threatStatus": "active",
+            "classification": "malware",
+            "threatTime": "2025-08-11T06:03:57.223Z"
+          }
+        ],
+        "messageParts": [
+          {
+            "disposition": "attached",
+            "sha256": "042a90ba0d9c45c5a355d4681b681ea73bd44005510f4ddaa7cbd75aa1198d78",
+            "md5": "0e2fac58ce114b85933371d227490c2d",
+            "filename": "payment_details.xlsx",
+            "contentType": "application/octet-stream",
+            "sandboxStatus": "threat"
+          },
+          {
+            "disposition": "inline",
+            "contentType": "text/html",
+            "oContentType": "text/html",
+            "isUnsupported": false,
+            "urls": [
+              {
+                "url": "http://phishing-site-16.com/click?id=3e77fb90-7ddf-41ea-a4c2-6b6d617d964f",
+                "isRewritten": true,
+                "threatStatus": "malicious"
+              }
+            ]
+          }
+        ],
+        "spf": "pass",
+        "dkimv": "fail",
+        "dmarc": "none",
+        "xmailer": "Unknown",
+        "campaignId": "campaign_bb6a9283"
+      }
+    },
+    {
+      "source": "zscaler",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:41:15.222638+00:00",
+      "event": {
+        "datetime": "2025-08-11T06:06:15Z",
+        "protocol": "HTTPS",
+        "action": "Allowed",
+        "requestmethod": "GET",
+        "urlsupercategory": "Security",
+        "urlcategory": "Phishing",
+        "urlclass": "Credential Phishing",
+        "serverip": "142.123.145.247",
+        "clientpublicIP": "60.86.154.55",
+        "location": "US\u2011West",
+        "devicehostname": "laptop\u2011demo",
+        "deviceowner": "jsmith",
+        "department": "Engineering",
+        "requestsize": 512,
+        "responsesize": 2048,
+        "clienttranstime": 45,
+        "servertranstime": 92,
+        "reason": "Blocked",
+        "appname": "Unknown",
+        "appclass": "Unknown",
+        "contenttype": "text/html",
+        "useragent": "Mozilla/5.0 Demo",
+        "refererURL": "https://www.bing.com",
+        "filetype": "html",
+        "threatname": "Eicar-Test-Signature",
+        "bwthrottle": "",
+        "dlpdictionaries": "",
+        "dlpengine": "ML DLP",
+        "fileclass": "Archive",
+        "threatclass": "",
+        "unscannabletype": "Password protected",
+        "url": "https://phish-login.ru/index.html",
+        "transactionsize": 2560
+      }
+    },
+    {
+      "source": "zscaler",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:42:15.222638+00:00",
+      "event": {
+        "datetime": "2025-08-11T06:06:15Z",
+        "protocol": "FTP",
+        "action": "Allowed",
+        "requestmethod": "RETR",
+        "urlsupercategory": "Security",
+        "urlcategory": "Spyware",
+        "urlclass": "Spyware / Keylogger",
+        "serverip": "142.123.145.247",
+        "clientpublicIP": "60.86.154.55",
+        "location": "US\u2011West",
+        "devicehostname": "laptop\u2011demo",
+        "deviceowner": "jsmith",
+        "department": "Engineering",
+        "requestsize": 512,
+        "responsesize": 2048,
+        "clienttranstime": 45,
+        "servertranstime": 92,
+        "reason": "Blocked",
+        "appname": "Unknown",
+        "appclass": "Unknown",
+        "contenttype": "application/octet-stream",
+        "useragent": "Mozilla/5.0 Demo",
+        "refererURL": "",
+        "filetype": "html",
+        "threatname": "Eicar-Test-Signature",
+        "bwthrottle": "",
+        "dlpdictionaries": "",
+        "dlpengine": "ML DLP",
+        "fileclass": "Document",
+        "threatclass": "Ransomware",
+        "unscannabletype": "Password protected",
+        "url": "ftp://spyware.example.com/steal.dat",
+        "transactionsize": 2560
+      }
+    },
+    {
+      "source": "zscaler",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:43:15.222638+00:00",
+      "event": {
+        "datetime": "2025-08-11T06:06:15Z",
+        "protocol": "FTP",
+        "action": "Allowed",
+        "requestmethod": "RETR",
+        "urlsupercategory": "Technology",
+        "urlcategory": "Technology",
+        "urlclass": "Information Technology",
+        "serverip": "142.123.145.247",
+        "clientpublicIP": "60.86.154.55",
+        "location": "US\u2011West",
+        "devicehostname": "laptop\u2011demo",
+        "deviceowner": "jsmith",
+        "department": "Engineering",
+        "requestsize": 512,
+        "responsesize": 2048,
+        "clienttranstime": 45,
+        "servertranstime": 92,
+        "reason": "Allowed",
+        "appname": "Google Search",
+        "appclass": "Web Search",
+        "contenttype": "text/html",
+        "useragent": "Mozilla/5.0 Demo",
+        "refererURL": "",
+        "filetype": "html",
+        "threatname": "Phishing.Site",
+        "bwthrottle": "",
+        "dlpdictionaries": "",
+        "dlpengine": "ML DLP",
+        "fileclass": "Script",
+        "threatclass": "Phishing",
+        "unscannabletype": "Password protected",
+        "url": "ftp://files.example.241.245.146.90/sample.bin",
+        "transactionsize": 2560
+      }
+    },
+    {
+      "source": "zscaler",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:44:15.222638+00:00",
+      "event": {
+        "datetime": "2025-08-11T06:06:15Z",
+        "protocol": "HTTPS",
+        "action": "Allowed",
+        "requestmethod": "GET",
+        "urlsupercategory": "Technology",
+        "urlcategory": "Search Engines",
+        "urlclass": "Information Technology",
+        "serverip": "142.123.145.247",
+        "clientpublicIP": "60.86.154.55",
+        "location": "US\u2011West",
+        "devicehostname": "laptop\u2011demo",
+        "deviceowner": "jsmith",
+        "department": "Engineering",
+        "requestsize": 512,
+        "responsesize": 2048,
+        "clienttranstime": 45,
+        "servertranstime": 92,
+        "reason": "Allowed",
+        "appname": "Google Search",
+        "appclass": "Web Search",
+        "contenttype": "text/html",
+        "useragent": "Mozilla/5.0 Demo",
+        "refererURL": "https://www.bing.com",
+        "filetype": "html",
+        "threatname": "Eicar-Test-Signature",
+        "bwthrottle": "",
+        "dlpdictionaries": "",
+        "dlpengine": "Exact Data Match",
+        "fileclass": "Archive",
+        "threatclass": "Phishing",
+        "unscannabletype": "Unsupported format",
+        "url": "https://safe.example.com/815/index.html",
+        "transactionsize": 2560
+      }
+    },
+    {
+      "source": "crowdstrike_falcon",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:46:15.222638+00:00",
+      "event": "CEF:0|CrowdStrike|Falcon|6.35.15406.0|3507|Credential Theft Attempt|10|rt=1754892375223 start=1754891926504 end=0 dvchost=LAPTOP-XYZ789 duser=Administrator suid=S-1-5-21-650491044-774037138-5560-1490 externalId=ldt:61650d90012e4e5e:410286878141 msg=Suspicious activity detected: Credential Theft Attempt fname=rundll32.exe filePath=C:\\\\Windows\\\\Temp\\\\ cs1=powershell.exe /c f1a717c4 cs1Label=CommandLine fileHash=81abfc91aae71d5a9f880cb399f50d0a12d66a6b2e9e8ff9662b7f9a4509c604 oldFileHash=665dedc6a831b2002310fdd42966311d4db2a2ec fileHashMd5=a398f67447678d453e9fcbeef829bc1f dntdom=INTERNAL src=10.127.202.16 dst=10.12.0.221 dpt=3389 proto=UDP spt=61171 deviceDirection=1 cs2=CredentialDumpTool cs2Label=EventSimpleName deviceProcessId=8261 deviceProcessName=wscript.exe act=detected cat=Credential Dumping cs3=T1003 cs3Label=TechniqueId cs4=LSASS Memory cs4Label=CredentialAccessType"
+    },
+    {
+      "source": "crowdstrike_falcon",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:48:15.222638+00:00",
+      "event": "CEF:0|CrowdStrike|Falcon|6.35.15406.0|5110|Ransomware Activity Detected|10|rt=1754892375223 start=1754890946963 end=0 dvchost=WORKSTATION-005 duser=bjones suid=S-1-5-21-784422962-959993970-5422-2799 externalId=ldt:e07e4dbaa82b1f3d:994306856734 msg=Suspicious activity detected: Ransomware Activity Detected fname=wscript.exe filePath=C:\\\\Windows\\\\System32\\\\ cs1=powershell.exe -Command 49a2efd9 cs1Label=CommandLine fileHash=54696212583cc92b7858ff7c3803c979f71a236d6aa8e128d92247690b2273d7 oldFileHash=ec214d3dfa37b96f353a0c1278529efef9496192 fileHashMd5=3af2fb3ff29ba93ea4be35b179e89d3a dntdom=LOCAL src=10.151.15.177 dst=10.207.14.210 dpt=8443 proto=UDP spt=60527 deviceDirection=1 cs2=RansomwareDetected cs2Label=EventSimpleName deviceProcessId=8571 deviceProcessName=wscript.exe act=detected cs3=Conti cs3Label=RansomwareFamily cnt=772 cs4=true cs4Label=RansomNoteCreated cat=Data Encrypted for Impact cs5=T1486 cs5Label=TechniqueId"
+    },
+    {
+      "source": "crowdstrike_falcon",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:50:15.222638+00:00",
+      "event": "CEF:0|CrowdStrike|Falcon|6.35.15406.0|7733|Data Exfiltration Attempt|10|rt=1754892375223 start=1754891346362 end=0 dvchost=DESKTOP-ABC123 duser=cwilliams suid=S-1-5-21-783200418-903787100-9050-8215 externalId=ldt:69abce48402df69a:584703814724 msg=Suspicious activity detected: Data Exfiltration Attempt fname=wmic.exe filePath=C:\\\\Windows\\\\System32\\\\ cs1=cmd.exe -enc d5b2badf cs1Label=CommandLine fileHash=16f10b3a705811f52217c52d165f38d90d858f4dd48f313de1b94d303d934bc9 oldFileHash=8fa262427b95a0a52e315049b8828cd12a6981ee fileHashMd5=fc1cedadcfb88d2108cb44f85cf6d1a9 dntdom=CORP src=10.192.53.70 dst=10.70.4.58 dpt=8080 proto=TCP spt=62012 deviceDirection=1 cs2=DataExfiltration cs2Label=EventSimpleName deviceProcessId=3616 deviceProcessName=wmic.exe act=detected"
+    },
+    {
+      "source": "crowdstrike_falcon",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:52:15.222638+00:00",
+      "event": "CEF:0|CrowdStrike|Falcon|6.35.15406.0|5358|Ransomware Activity Detected|10|rt=1754892375223 start=1754889132061 end=0 dvchost=DEV-MACHINE-02 duser=admin suid=S-1-5-21-858890245-357462989-4358-1841 externalId=ldt:d1405bf32df21c44:982233253138 msg=Suspicious activity detected: Ransomware Activity Detected fname=regsvr32.exe filePath=C:\\\\Users\\\\admin\\\\Downloads\\\\ cs1=mshta.exe -enc 6c2391c5 cs1Label=CommandLine fileHash=97a25024a7e6e46abdf9a18fefb835b7fbcb2e681a095e5ed30a89bfb1e90d05 oldFileHash=9d52f90aaeec8ec4b009c1c81f339e4376a16772 fileHashMd5=9ed1dde358795c3424edf6aed1ad3cc5 dntdom=INTERNAL src=10.199.84.131 dst=10.58.64.192 dpt=8443 proto=TCP spt=53628 deviceDirection=1 cs2=RansomwareDetected cs2Label=EventSimpleName deviceProcessId=9523 deviceProcessName=mshta.exe act=detected cs3=Conti cs3Label=RansomwareFamily cnt=83 cs4=true cs4Label=RansomNoteCreated cat=Data Encrypted for Impact cs5=T1486 cs5Label=TechniqueId"
+    },
+    {
+      "source": "crowdstrike_falcon",
+      "phase": "execution",
+      "timestamp": "2025-08-11T06:54:15.222638+00:00",
+      "event": "CEF:0|CrowdStrike|Falcon|6.35.15406.0|5438|Malware Detected|10|rt=1754892375223 start=1754888917524 end=0 dvchost=LAPTOP-XYZ789 duser=emiller suid=S-1-5-21-404584800-341144420-3212-1828 externalId=ldt:7e5a57afb863dd81:252799886481 msg=Suspicious activity detected: Malware Detected fname=rundll32.exe filePath=C:\\\\Windows\\\\System32\\\\ cs1=C:\\\\Users\\\\Public\\\\backdoor.exe -connect 192.168.1.100:4444 cs1Label=CommandLine fileHash=fa6eeb04e673f83a43ad5121e34ea5f910a575462ca7f76d88568d5cd8214a38 oldFileHash=1b4230a76c3aefeed33e1c536e5308648f548b4a fileHashMd5=c3730df6e33644b12b7c599568b02ab8 dntdom=CORP src=10.223.160.218 dst=10.203.157.190 dpt=8443 proto=TCP spt=52606 deviceDirection=1 cs2=ProcessRollup2 cs2Label=EventSimpleName deviceProcessId=2994 deviceProcessName=powershell.exe act=detected cs3=Prevention, process killed. cs3Label=PatternDisposition cs4=REvil cs4Label=ThreatFamily cs5=BEAR/CobaltStrike cs5Label=ThreatName cat=Malicious File cs6=T1204.002 cs6Label=TechniqueId"
+    },
+    {
+      "source": "microsoft_windows_eventlog",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T06:56:15.222638+00:00",
+      "event": {
+        "TimeCreated": "2025-08-10T20:19:15.223242+00:00",
+        "EventID": 1000,
+        "LogName": "Application",
+        "Level": "Error",
+        "Task": "Application Error",
+        "Keywords": "Error",
+        "Computer": "WKS-4721.company.local",
+        "EventRecordID": 5361720,
+        "ProcessID": 3825,
+        "ThreadID": 1945,
+        "Channel": "Application",
+        "Message": "Application Error event occurred on WKS-4721",
+        "dataSource.vendor": "Microsoft",
+        "dataSource.name": "Windows Event Log",
+        "dataSource.category": "security",
+        "ApplicationName": "explorer.exe",
+        "ApplicationVersion": "4.6.9.1377",
+        "ApplicationPath": "C:\\Program Files\\explorer.exe",
+        "ModuleName": "user32.dll",
+        "ModuleVersion": "6.2.9.1984",
+        "ExceptionCode": "0xc0000005",
+        "FaultingModuleOffset": "0x181c0",
+        "Source": "Service Control Manager",
+        "OpcodeName": "Stop",
+        "TaskName": "Application Error",
+        "ActivityID": "{058674a4-0968-1c57-0e1e-00af2aefef4a}",
+        "RelatedActivityID": "{00f1469e-1399-173e-03f8-008a36c40bc4}",
+        "UserID": "S-1-5-21-5153847952-8778876067-1133802984-1041"
+      }
+    },
+    {
+      "source": "microsoft_windows_eventlog",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T06:58:15.222638+00:00",
+      "event": {
+        "TimeCreated": "2025-08-11T03:57:15.223267+00:00",
+        "EventID": 2,
+        "LogName": "Application",
+        "Level": "Information",
+        "Task": "Application Start",
+        "Keywords": "Information",
+        "Computer": "WKS-4445.company.local",
+        "EventRecordID": 1853299,
+        "ProcessID": 7545,
+        "ThreadID": 3073,
+        "Channel": "Application",
+        "Message": "Application Start event occurred on WKS-4445",
+        "dataSource.vendor": "Microsoft",
+        "dataSource.name": "Windows Event Log",
+        "dataSource.category": "security",
+        "Source": "Application Error",
+        "OpcodeName": "Start",
+        "TaskName": "Application Start",
+        "ActivityID": "{019d69e1-16fd-0e11-1d07-00954c8da314}",
+        "RelatedActivityID": "{03c10797-1840-0c2b-130b-00a35286eced}",
+        "UserID": "S-1-5-21-3002931926-3916703429-3776495613-4863"
+      }
+    },
+    {
+      "source": "microsoft_windows_eventlog",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:00:15.222638+00:00",
+      "event": {
+        "TimeCreated": "2025-08-10T17:33:15.223282+00:00",
+        "EventID": 1102,
+        "LogName": "Security",
+        "Level": "Information",
+        "Task": "Audit Log Cleared",
+        "Keywords": "Audit Success",
+        "Computer": "WKS-7736.company.local",
+        "EventRecordID": 5196637,
+        "ProcessID": 5923,
+        "ThreadID": 1812,
+        "Channel": "Security",
+        "Message": "Audit Log Cleared event occurred on WKS-7736",
+        "dataSource.vendor": "Microsoft",
+        "dataSource.name": "Windows Event Log",
+        "dataSource.category": "security",
+        "SubjectUserSid": "S-1-5-21-6903567610-9121028269-9951043833-2244",
+        "SubjectUserName": "admin",
+        "SubjectDomainName": "COMPANY",
+        "Source": "Application Error",
+        "OpcodeName": "Info",
+        "TaskName": "Audit Log Cleared",
+        "ActivityID": "{00e537e4-21c5-25c8-04f1-00317f4e31f5}",
+        "RelatedActivityID": "{034c5e4c-17c7-07f2-0d47-00da9f0b465e}",
+        "UserID": "S-1-5-21-4301937680-2320201622-8847206811-3606"
+      }
+    },
+    {
+      "source": "microsoft_windows_eventlog",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:02:15.222638+00:00",
+      "event": {
+        "TimeCreated": "2025-08-10T08:15:15.223304+00:00",
+        "EventID": 1002,
+        "LogName": "Application",
+        "Level": "Information",
+        "Task": "Application Recovery",
+        "Keywords": "Information",
+        "Computer": "WKS-3280.company.local",
+        "EventRecordID": 4235302,
+        "ProcessID": 3935,
+        "ThreadID": 6301,
+        "Channel": "Application",
+        "Message": "Application Recovery event occurred on WKS-3280",
+        "dataSource.vendor": "Microsoft",
+        "dataSource.name": "Windows Event Log",
+        "dataSource.category": "security",
+        "Source": "Service Control Manager",
+        "OpcodeName": "Info",
+        "TaskName": "Application Recovery",
+        "ActivityID": "{0418ef6f-2174-2600-0ba1-003609d94231}",
+        "RelatedActivityID": "{00ac7329-191e-1277-0ab9-00ba9cd330fa}",
+        "UserID": "S-1-5-21-8496920216-8818570534-4298819292-2205"
+      }
+    },
+    {
+      "source": "microsoft_windows_eventlog",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:04:15.222638+00:00",
+      "event": {
+        "TimeCreated": "2025-08-11T01:28:15.223318+00:00",
+        "EventID": 4720,
+        "LogName": "Security",
+        "Level": "Information",
+        "Task": "User Account Created",
+        "Keywords": "Audit Success",
+        "Computer": "WKS-8316.company.local",
+        "EventRecordID": 2729949,
+        "ProcessID": 4531,
+        "ThreadID": 7457,
+        "Channel": "Security",
+        "Message": "User Account Created event occurred on WKS-8316",
+        "dataSource.vendor": "Microsoft",
+        "dataSource.name": "Windows Event Log",
+        "dataSource.category": "security",
+        "TargetUserName": "user088",
+        "TargetDomainName": "COMPANY",
+        "TargetSid": "S-1-5-21-4759849921-8952949635-5676497032-7005",
+        "SubjectUserSid": "S-1-5-21-6719261228-8953604278-7704702125-1296",
+        "SubjectUserName": "domainadmin",
+        "SubjectDomainName": "COMPANY",
+        "PrivilegeList": "SeSecurityPrivilege\nSeTakeOwnershipPrivilege",
+        "Source": "Service Control Manager",
+        "OpcodeName": "Start",
+        "TaskName": "User Account Created",
+        "ActivityID": "{035d45cd-06b4-0a64-257f-0064d8c9f0f2}",
+        "RelatedActivityID": "{050257f3-0c29-1943-254e-0062d592b3b0}",
+        "UserID": "S-1-5-21-1091223698-4404900252-2990203760-2914"
+      }
+    },
+    {
+      "source": "microsoft_windows_eventlog",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:06:15.222638+00:00",
+      "event": {
+        "TimeCreated": "2025-08-10T14:28:15.223336+00:00",
+        "EventID": 4624,
+        "LogName": "Security",
+        "Level": "Information",
+        "Task": "Successful Logon",
+        "Keywords": "Audit Success",
+        "Computer": "WKS-5109.company.local",
+        "EventRecordID": 5696074,
+        "ProcessID": 1236,
+        "ThreadID": 1419,
+        "Channel": "Security",
+        "Message": "Successful Logon event occurred on WKS-5109",
+        "dataSource.vendor": "Microsoft",
+        "dataSource.name": "Windows Event Log",
+        "dataSource.category": "security",
+        "SubjectUserSid": "S-1-5-21-8049349611-4773549720-6881043591-3647",
+        "SubjectUserName": "user014",
+        "SubjectDomainName": "COMPANY",
+        "SubjectLogonId": "0x6149e",
+        "TargetUserSid": "S-1-5-21-1249339115-9318622392-2525059540-5713",
+        "TargetUserName": "user014",
+        "TargetDomainName": "COMPANY",
+        "TargetLogonId": "0x5d266",
+        "LogonType": 7,
+        "LogonProcessName": "Negotiate",
+        "AuthenticationPackageName": "Negotiate",
+        "WorkstationName": "WKS-5109",
+        "LogonGuid": "{0393ebd7-16aa-139b-0c2d-0070e3f52bd9}",
+        "TransmittedServices": "-",
+        "LmPackageName": "-",
+        "KeyLength": 0,
+        "ProcessName": "C:\\Windows\\System32\\svchost.exe",
+        "IpAddress": "127.0.0.1",
+        "IpPort": 0,
+        "Source": "Microsoft-Windows-Security-Auditing",
+        "OpcodeName": "Info",
+        "TaskName": "Successful Logon",
+        "ActivityID": "{03989a93-05b1-22b5-1cc0-00af7223c9c8}",
+        "RelatedActivityID": "{01d8db96-1e60-153e-2386-0046be46295a}",
+        "UserID": "S-1-5-21-4420537106-2816683503-3452574390-8222"
+      }
+    },
+    {
+      "source": "imperva_waf",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:06:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T04:38:15.223363+00:00",
+        "eventId": "imp_3642234654",
+        "clientIP": "99.177.52.138",
+        "serverIP": "10.89.73.170",
+        "httpMethod": "HEAD",
+        "uri": "/api/v1/users",
+        "userAgent": "python-requests/2.25.1",
+        "referer": "",
+        "host": "example.com",
+        "protocol": "HTTP/2.0",
+        "responseCode": 404,
+        "responseSize": 7535,
+        "requestSize": 8300,
+        "processingTime": 577,
+        "action": "Pass",
+        "attackType": "Path Traversal",
+        "violationCategory": "Security",
+        "severity": "Informational",
+        "policyName": "policy_1",
+        "ruleName": "rule_884",
+        "ruleId": 16303,
+        "confidenceLevel": 4,
+        "riskScore": 7,
+        "sessionId": "sess_568057166",
+        "sourceCountry": "DE",
+        "sourceASN": 84749,
+        "destinationPort": 443,
+        "sourcePort": 46639,
+        "applicationName": "Admin Portal",
+        "siteName": "site_3",
+        "serverGroup": "group_3",
+        "dataSource.vendor": "Imperva",
+        "dataSource.name": "Imperva WAF",
+        "dataSource.category": "security"
+      }
+    },
+    {
+      "source": "imperva_waf",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:09:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-10T09:32:15.223381+00:00",
+        "eventId": "imp_7668752769",
+        "clientIP": "88.244.106.160",
+        "serverIP": "10.242.40.130",
+        "httpMethod": "DELETE",
+        "uri": "/login",
+        "userAgent": "sqlmap/1.4.7",
+        "referer": "https://malicious-site.com/",
+        "host": "www.example.com",
+        "protocol": "HTTP/1.1",
+        "responseCode": 200,
+        "responseSize": 37816,
+        "requestSize": 5717,
+        "processingTime": 177,
+        "action": "Redirect",
+        "attackType": "SQL Injection",
+        "violationCategory": "Protocol",
+        "severity": "High",
+        "policyName": "policy_2",
+        "ruleName": "rule_879",
+        "ruleId": 48748,
+        "confidenceLevel": 1,
+        "riskScore": 93,
+        "sessionId": "sess_819565919",
+        "sourceCountry": "JP",
+        "sourceASN": 78893,
+        "destinationPort": 80,
+        "sourcePort": 33830,
+        "applicationName": "WebApp1",
+        "siteName": "site_2",
+        "serverGroup": "group_1",
+        "dataSource.vendor": "Imperva",
+        "dataSource.name": "Imperva WAF",
+        "dataSource.category": "security",
+        "sqlPattern": "DROP TABLE",
+        "dbType": "PostgreSQL"
+      }
+    },
+    {
+      "source": "imperva_waf",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:12:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T02:20:15.223399+00:00",
+        "eventId": "imp_6239978036",
+        "clientIP": "137.31.243.78",
+        "serverIP": "10.231.56.204",
+        "httpMethod": "POST",
+        "uri": "/../../../etc/passwd",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
+        "referer": "https://malicious-site.com/",
+        "host": "api.example.com",
+        "protocol": "HTTP/1.1",
+        "responseCode": 503,
+        "responseSize": 25897,
+        "requestSize": 2632,
+        "processingTime": 421,
+        "action": "Redirect",
+        "attackType": "Buffer Overflow",
+        "violationCategory": "Protocol",
+        "severity": "Medium",
+        "policyName": "policy_9",
+        "ruleName": "rule_658",
+        "ruleId": 23416,
+        "confidenceLevel": 4,
+        "riskScore": 95,
+        "sessionId": "sess_712657390",
+        "sourceCountry": "BR",
+        "sourceASN": 3883,
+        "destinationPort": 8443,
+        "sourcePort": 44604,
+        "applicationName": "Customer Portal",
+        "siteName": "site_3",
+        "serverGroup": "group_2",
+        "dataSource.vendor": "Imperva",
+        "dataSource.name": "Imperva WAF",
+        "dataSource.category": "security"
+      }
+    },
+    {
+      "source": "imperva_waf",
+      "phase": "lateral_movement",
+      "timestamp": "2025-08-11T07:15:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-10T09:02:15.223413+00:00",
+        "eventId": "imp_8720773215",
+        "clientIP": "62.204.132.43",
+        "serverIP": "10.142.71.79",
+        "httpMethod": "GET",
+        "uri": "/admin/config.php",
+        "userAgent": "sqlmap/1.4.7",
+        "referer": "https://malicious-site.com/",
+        "host": "example.com",
+        "protocol": "HTTP/2.0",
+        "responseCode": 404,
+        "responseSize": 23318,
+        "requestSize": 7048,
+        "processingTime": 865,
+        "action": "Alert",
+        "attackType": "Cross Site Scripting",
+        "violationCategory": "Compliance",
+        "severity": "Low",
+        "policyName": "policy_10",
+        "ruleName": "rule_847",
+        "ruleId": 84811,
+        "confidenceLevel": 4,
+        "riskScore": 91,
+        "sessionId": "sess_622171779",
+        "sourceCountry": "GB",
+        "sourceASN": 47952,
+        "destinationPort": 80,
+        "sourcePort": 53299,
+        "applicationName": "WebApp1",
+        "siteName": "site_4",
+        "serverGroup": "group_1",
+        "dataSource.vendor": "Imperva",
+        "dataSource.name": "Imperva WAF",
+        "dataSource.category": "security",
+        "xssPattern": "<svg onload=alert(1)>"
+      }
+    },
+    {
+      "source": "aws_cloudtrail",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:16:15.222638+00:00",
+      "event": {
+        "eventCategory": "Insight",
+        "eventName": "BatchGetItem",
+        "eventSource": "dynamodb.amazonaws.com",
+        "eventTime": "2025-08-11T06:06:15Z",
+        "eventVersion": "1.09",
+        "eventID": "d04197c1-8e11-4823-bbe1-d7bd440a536d",
+        "eventType": "AwsApiCall",
+        "awsRegion": "eu-central-1",
+        "readOnly": false,
+        "managementEvent": true,
+        "recipientAccountId": "210987654321",
+        "sourceIPAddress": "52.170.121.130",
+        "userAgent": "aws-cli/2.15.9 Python/3.11.4 Linux/5.10",
+        "tlsDetails": {
+          "tlsVersion": "TLSv1.2",
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "dynamodb.amazonaws.com"
+        },
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAHAXOR2448",
+          "arn": "arn:aws:iam::210987654321:user/Haxorsaurus",
+          "accountId": "210987654321",
+          "accessKeyId": "AKIACB1A98C3956E4551",
+          "userName": "Haxorsaurus",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROAEXAMPLE",
+              "arn": "arn:aws:iam::123456789012:role/demo-role",
+              "userName": "demo-role",
+              "accountId": "123456789012"
+            },
+            "attributes": {
+              "creationDate": "2025-08-11T06:01:15Z",
+              "mfaAuthenticated": "false"
+            }
+          }
+        },
+        "requestID": "eabed76d-9dfa-4aee-939c-fb59f329c509",
+        "requestParameters": {
+          "durationSeconds": 900,
+          "roleArn": "arn:aws:iam::123456789012:role/demo-role",
+          "roleSessionName": "demo-session",
+          "externalId": "db0e0158-c5dd-472b-b66d-f2548c5ea9c7",
+          "requestItems": {
+            "JeanPrivateTable": {
+              "Keys": [
+                {
+                  "id": {
+                    "S": "ALL"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "responseElements": {
+          "assumedRoleUser": {
+            "assumedRoleId": "AROAEXAMPLE:demo-session",
+            "arn": "arn:aws:sts::123456789012:assumed-role/demo-role/demo-session"
+          },
+          "credentials": {
+            "accessKeyId": "ASIA71ABF60106D444A7",
+            "sessionToken": "IQoJb3JpZ2luX2VjEJ7//////////wEaCXVzLWVhc3QtMSJHMEUCIQD...",
+            "expiration": "2025-08-11T07:06:15Z"
+          },
+          "sourceIdentity": "demo"
+        },
+        "sharedEventID": "bee6d6db-3388-4180-acec-e3287b565418",
+        "vpcEndpointId": "vpce-0c29b5e63e",
+        "resources": [
+          {
+            "accountId": "123456789012",
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::demo-bucket"
+          }
+        ],
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES256-GCM-SHA384",
+          "bytesTransferredIn": 0,
+          "bytesTransferredOut": 1024,
+          "AuthenticationMethod": "AuthHeader",
+          "x-amz-id-2": "593a15be8c40452fb2485259f5bfa953"
+        },
+        "message": "BatchGetItem on dynamodb.amazonaws.com"
+      }
+    },
+    {
+      "source": "aws_cloudtrail",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:18:15.222638+00:00",
+      "event": {
+        "eventCategory": "Insight",
+        "eventName": "CreateApp",
+        "eventSource": "sagemaker.amazonaws.com",
+        "eventTime": "2025-08-11T06:06:15Z",
+        "eventVersion": "1.09",
+        "eventID": "fec4ce5e-28dd-4a8f-9ff1-8d9b7442a28b",
+        "eventType": "AwsApiCall",
+        "awsRegion": "us-east-1",
+        "readOnly": true,
+        "managementEvent": true,
+        "recipientAccountId": "210987654321",
+        "sourceIPAddress": "203.165.141.148",
+        "userAgent": "aws-cli/2.15.9 Python/3.11.4 Linux/5.10",
+        "tlsDetails": {
+          "tlsVersion": "TLSv1.3",
+          "cipherSuite": "ECDHE-RSA-AES256-GCM-SHA384",
+          "clientProvidedHostHeader": "sagemaker.amazonaws.com"
+        },
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAHAXOR1997",
+          "arn": "arn:aws:iam::210987654321:user/Haxorsaurus",
+          "accountId": "210987654321",
+          "accessKeyId": "AKIA07F4B51D1C054BEA",
+          "userName": "Haxorsaurus",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROAEXAMPLE",
+              "arn": "arn:aws:iam::123456789012:role/demo-role",
+              "userName": "demo-role",
+              "accountId": "123456789012"
+            },
+            "attributes": {
+              "creationDate": "2025-08-11T06:01:15Z",
+              "mfaAuthenticated": "false"
+            }
+          }
+        },
+        "requestID": "7e8141c8-79c4-417a-9af8-77de5f26c9d1",
+        "requestParameters": {
+          "durationSeconds": 900,
+          "roleArn": "arn:aws:iam::123456789012:role/demo-role",
+          "roleSessionName": "demo-session",
+          "externalId": "298f6101-b0d8-4fc4-8c8f-f44e2b9a1139",
+          "appName": "jean-data-exfil",
+          "domainId": "d-abc123",
+          "userProfileName": "haxorsaurus-profile"
+        },
+        "responseElements": {
+          "assumedRoleUser": {
+            "assumedRoleId": "AROAEXAMPLE:demo-session",
+            "arn": "arn:aws:sts::123456789012:assumed-role/demo-role/demo-session"
+          },
+          "credentials": {
+            "accessKeyId": "ASIAD58788D19C5947A9",
+            "sessionToken": "IQoJb3JpZ2luX2VjEJ7//////////wEaCXVzLWVhc3QtMSJHMEUCIQD...",
+            "expiration": "2025-08-11T07:06:15Z"
+          },
+          "sourceIdentity": "demo"
+        },
+        "sharedEventID": "7c92d7f0-e183-4948-8944-0ca8c203f267",
+        "vpcEndpointId": "vpce-013cffe0d2",
+        "resources": [
+          {
+            "accountId": "123456789012",
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::demo-bucket"
+          }
+        ],
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "bytesTransferredIn": 0,
+          "bytesTransferredOut": 1024,
+          "AuthenticationMethod": "AuthHeader",
+          "x-amz-id-2": "cfe081d1415c43b58e02793c16e1f712"
+        },
+        "message": "CreateApp on sagemaker.amazonaws.com"
+      }
+    },
+    {
+      "source": "aws_cloudtrail",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:20:15.222638+00:00",
+      "event": {
+        "eventCategory": "Insight",
+        "eventName": "AssumeRole",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2025-08-11T06:06:15Z",
+        "eventVersion": "1.09",
+        "eventID": "5212e5a7-b8c5-4dcd-9ca2-6196fe8bcad2",
+        "eventType": "AwsApiCall",
+        "awsRegion": "eu-central-1",
+        "readOnly": false,
+        "managementEvent": true,
+        "recipientAccountId": "210987654321",
+        "sourceIPAddress": "172.246.178.75",
+        "userAgent": "aws-cli/2.15.9 Python/3.11.4 Linux/5.10",
+        "tlsDetails": {
+          "tlsVersion": "TLSv1.2",
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "sts.amazonaws.com"
+        },
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAHAXOR3225",
+          "arn": "arn:aws:iam::210987654321:user/Haxorsaurus",
+          "accountId": "210987654321",
+          "accessKeyId": "AKIA5E7C8184F475485E",
+          "userName": "Haxorsaurus",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROAEXAMPLE",
+              "arn": "arn:aws:iam::123456789012:role/demo-role",
+              "userName": "demo-role",
+              "accountId": "123456789012"
+            },
+            "attributes": {
+              "creationDate": "2025-08-11T06:01:15Z",
+              "mfaAuthenticated": "false"
+            }
+          }
+        },
+        "requestID": "829074e9-f778-4b6f-8f15-61fbc1f4b43d",
+        "requestParameters": {
+          "durationSeconds": 900,
+          "roleArn": "arn:aws:iam::123456789012:role/demo-role",
+          "roleSessionName": "demo-session",
+          "externalId": "ba394e8c-3d6c-4ffe-a487-00d42acb69fc"
+        },
+        "responseElements": {
+          "assumedRoleUser": {
+            "assumedRoleId": "AROAEXAMPLE:demo-session",
+            "arn": "arn:aws:sts::123456789012:assumed-role/demo-role/demo-session"
+          },
+          "credentials": {
+            "accessKeyId": "ASIA9A5E4751E9A74199",
+            "sessionToken": "IQoJb3JpZ2luX2VjEJ7//////////wEaCXVzLWVhc3QtMSJHMEUCIQD...",
+            "expiration": "2025-08-11T07:06:15Z"
+          },
+          "sourceIdentity": "demo"
+        },
+        "sharedEventID": "976c8fee-2568-4d32-8560-2cbe58a9a1e9",
+        "vpcEndpointId": "vpce-064ee998ae",
+        "resources": [
+          {
+            "accountId": "123456789012",
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::demo-bucket"
+          }
+        ],
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "bytesTransferredIn": 0,
+          "bytesTransferredOut": 1024,
+          "AuthenticationMethod": "AuthHeader",
+          "x-amz-id-2": "984e7364cba345969eb876159289bc08"
+        },
+        "message": "AssumeRole on sts.amazonaws.com"
+      }
+    },
+    {
+      "source": "aws_cloudtrail",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:22:15.222638+00:00",
+      "event": {
+        "eventCategory": "Data",
+        "eventName": "CreateLogGroup",
+        "eventSource": "logs.amazonaws.com",
+        "eventTime": "2025-08-11T06:06:15Z",
+        "eventVersion": "1.09",
+        "eventID": "47b179ee-e468-4b18-9f68-f1664f1f3f95",
+        "eventType": "AwsApiCall",
+        "awsRegion": "ap-southeast-2",
+        "readOnly": true,
+        "managementEvent": true,
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "54.132.219.192",
+        "userAgent": "aws-cli/2.15.9 Python/3.11.4 Linux/5.10",
+        "tlsDetails": {
+          "tlsVersion": "TLSv1.3",
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "logs.amazonaws.com"
+        },
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAEXAMPLE8441",
+          "arn": "arn:aws:iam::123456789012:user/demo",
+          "accountId": "123456789012",
+          "accessKeyId": "AKIA60E7B0D6A73B456E",
+          "userName": "demo",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROAEXAMPLE",
+              "arn": "arn:aws:iam::123456789012:role/demo-role",
+              "userName": "demo-role",
+              "accountId": "123456789012"
+            },
+            "attributes": {
+              "creationDate": "2025-08-11T06:01:15Z",
+              "mfaAuthenticated": "false"
+            }
+          }
+        },
+        "requestID": "5cea3c28-e47d-4cbc-a42d-688e08bc8312",
+        "requestParameters": {
+          "durationSeconds": 900,
+          "roleArn": "arn:aws:iam::123456789012:role/demo-role",
+          "roleSessionName": "demo-session",
+          "externalId": "edace341-9a55-4e3c-b4ca-bca392f23dba"
+        },
+        "responseElements": {
+          "assumedRoleUser": {
+            "assumedRoleId": "AROAEXAMPLE:demo-session",
+            "arn": "arn:aws:sts::123456789012:assumed-role/demo-role/demo-session"
+          },
+          "credentials": {
+            "accessKeyId": "ASIAD10CA2D5F1924A86",
+            "sessionToken": "IQoJb3JpZ2luX2VjEJ7//////////wEaCXVzLWVhc3QtMSJHMEUCIQD...",
+            "expiration": "2025-08-11T07:06:15Z"
+          },
+          "sourceIdentity": "demo"
+        },
+        "sharedEventID": "d51f537b-1667-40f0-bfa2-9dd789ab0aa2",
+        "vpcEndpointId": "vpce-09c0b7dcf4",
+        "resources": [
+          {
+            "accountId": "123456789012",
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::demo-bucket"
+          }
+        ],
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "bytesTransferredIn": 0,
+          "bytesTransferredOut": 1024,
+          "AuthenticationMethod": "AuthHeader",
+          "x-amz-id-2": "0deae47b03ae42bf85b7036cd58c004c"
+        },
+        "message": "CreateLogGroup on logs.amazonaws.com"
+      }
+    },
+    {
+      "source": "aws_cloudtrail",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:24:15.222638+00:00",
+      "event": {
+        "eventCategory": "Insight",
+        "eventName": "AssumeRole",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2025-08-11T06:06:15Z",
+        "eventVersion": "1.09",
+        "eventID": "d6417521-2856-4b6f-8a84-672829236c79",
+        "eventType": "AwsApiCall",
+        "awsRegion": "us-west-2",
+        "readOnly": false,
+        "managementEvent": true,
+        "recipientAccountId": "210987654321",
+        "sourceIPAddress": "254.144.27.53",
+        "userAgent": "aws-cli/2.15.9 Python/3.11.4 Linux/5.10",
+        "tlsDetails": {
+          "tlsVersion": "TLSv1.3",
+          "cipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "clientProvidedHostHeader": "sts.amazonaws.com"
+        },
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAHAXOR6030",
+          "arn": "arn:aws:iam::210987654321:user/Haxorsaurus",
+          "accountId": "210987654321",
+          "accessKeyId": "AKIA4824ABFE99BE47C0",
+          "userName": "Haxorsaurus",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROAEXAMPLE",
+              "arn": "arn:aws:iam::123456789012:role/demo-role",
+              "userName": "demo-role",
+              "accountId": "123456789012"
+            },
+            "attributes": {
+              "creationDate": "2025-08-11T06:01:15Z",
+              "mfaAuthenticated": "false"
+            }
+          }
+        },
+        "requestID": "2316c255-561c-40ad-a46c-53cce384db67",
+        "requestParameters": {
+          "durationSeconds": 900,
+          "roleArn": "arn:aws:iam::123456789012:role/demo-role",
+          "roleSessionName": "demo-session",
+          "externalId": "31412690-3083-47c9-a2e8-3229f2647608"
+        },
+        "responseElements": {
+          "assumedRoleUser": {
+            "assumedRoleId": "AROAEXAMPLE:demo-session",
+            "arn": "arn:aws:sts::123456789012:assumed-role/demo-role/demo-session"
+          },
+          "credentials": {
+            "accessKeyId": "ASIA488421F485AF44F0",
+            "sessionToken": "IQoJb3JpZ2luX2VjEJ7//////////wEaCXVzLWVhc3QtMSJHMEUCIQD...",
+            "expiration": "2025-08-11T07:06:15Z"
+          },
+          "sourceIdentity": "demo"
+        },
+        "sharedEventID": "871676e3-953d-4a0e-b2ac-0415316bd8a9",
+        "vpcEndpointId": "vpce-04e4699898",
+        "resources": [
+          {
+            "accountId": "123456789012",
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::demo-bucket"
+          }
+        ],
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES256-GCM-SHA384",
+          "bytesTransferredIn": 0,
+          "bytesTransferredOut": 1024,
+          "AuthenticationMethod": "AuthHeader",
+          "x-amz-id-2": "03a169bf4d304b2dae639031afd142b3"
+        },
+        "message": "AssumeRole on sts.amazonaws.com"
+      }
+    },
+    {
+      "source": "hashicorp_vault",
+      "phase": "credential_access",
+      "timestamp": "2025-08-11T07:26:15.222638+00:00",
+      "event": {
+        "time": "2025-08-11T06:03:03.223606Z",
+        "type": "response",
+        "auth": {
+          "client_token": "hvs.ff3bf4fac7924fe39742c25f03e2fff1",
+          "accessor": "acc_30912ec7d4fc4cad",
+          "display_name": "backup-service",
+          "policies": [
+            "app-server",
+            "monitoring",
+            "database-admin"
+          ],
+          "token_policies": [
+            "monitoring",
+            "app-server"
+          ],
+          "metadata": {
+            "username": null,
+            "service": "backup-service"
+          },
+          "entity_id": "a381999b-2772-4962-9e92-8d1a7b205b37",
+          "token_type": "batch",
+          "token_ttl": 54588,
+          "token_issue_time": "2025-08-11T06:03:03.223606Z"
+        },
+        "request": {
+          "id": "6e86d685-7a30-497c-a0e2-0546a17b75a7",
+          "operation": "token_renew",
+          "mount_type": "azure",
+          "client_token": "hvs.81f847b5dab143a7946f54971127e4c7",
+          "client_token_accessor": "acc_0b5d10a036954f00",
+          "namespace": {
+            "id": "root",
+            "path": ""
+          },
+          "path": "auth/token/renew",
+          "data": {
+            "ttl": "18h",
+            "policies": [
+              "monitoring",
+              "app-server"
+            ],
+            "renewable": true
+          },
+          "policy_override": false,
+          "remote_address": "10.252.81.71",
+          "wrap_ttl": 0,
+          "headers": {
+            "user-agent": [
+              "consul-template/0.29.0"
+            ],
+            "content-type": [
+              "application/json"
+            ],
+            "x-forwarded-for": [
+              "10.51.191.225"
+            ]
+          }
+        },
+        "response": {
+          "mount_type": "gcp",
+          "data": {},
+          "status_code": 204,
+          "duration": 171,
+          "headers": {
+            "cache-control": [
+              "no-store"
+            ],
+            "content-type": [
+              "application/json"
+            ],
+            "x-vault-request-id": [
+              "6e86d685-7a30-497c-a0e2-0546a17b75a7"
+            ]
+          }
+        },
+        "error": "",
+        "cluster_id": "83af2c17-30e3-44d4-b02f-d2249e80acb0",
+        "version": "1.12.0",
+        "build_date": "2023-10-20T09:15:00Z",
+        "hostname": "vault-3.company.com",
+        "node_id": "node_c890bdfb"
+      }
+    },
+    {
+      "source": "hashicorp_vault",
+      "phase": "credential_access",
+      "timestamp": "2025-08-11T07:29:15.222638+00:00",
+      "event": {
+        "time": "2025-08-11T06:03:25.223647Z",
+        "type": "response",
+        "auth": {
+          "client_token": "hvs.e59655fb3c9b48ddae088e77b61ef8e0",
+          "accessor": "acc_af54035eee3b4c5f",
+          "display_name": "monitoring",
+          "policies": [
+            "ci-cd",
+            "admin",
+            "secret-writer"
+          ],
+          "token_policies": [
+            "monitoring"
+          ],
+          "metadata": {
+            "username": null,
+            "service": "monitoring"
+          },
+          "entity_id": "68a51245-a72d-406c-9583-809e7026c9c9",
+          "token_type": "recovery",
+          "token_ttl": 3921,
+          "token_issue_time": "2025-08-11T06:03:25.223647Z"
+        },
+        "request": {
+          "id": "346108d6-49d8-44a1-b00f-f0542bd19444",
+          "operation": "snapshot",
+          "mount_type": "transit",
+          "client_token": "hvs.e02779224a2d476a82f6516428030bee",
+          "client_token_accessor": "acc_0452d3989aef4998",
+          "namespace": {
+            "id": "root",
+            "path": ""
+          },
+          "path": "sys/auth",
+          "data": {},
+          "policy_override": false,
+          "remote_address": "10.98.200.85",
+          "wrap_ttl": 0,
+          "headers": {
+            "user-agent": [
+              "consul-template/0.29.0"
+            ],
+            "content-type": [
+              "application/json"
+            ],
+            "x-forwarded-for": [
+              "10.101.66.62"
+            ]
+          }
+        },
+        "response": {
+          "mount_type": "azure",
+          "data": null,
+          "status_code": 403,
+          "duration": 749,
+          "headers": {
+            "cache-control": [
+              "no-store"
+            ],
+            "content-type": [
+              "application/json"
+            ],
+            "x-vault-request-id": [
+              "346108d6-49d8-44a1-b00f-f0542bd19444"
+            ]
+          }
+        },
+        "error": "permission denied",
+        "cluster_id": "e4681a91-8506-4649-8804-3aa7dcefad72",
+        "version": "1.12.0",
+        "build_date": "2023-10-20T09:15:00Z",
+        "hostname": "vault-2.company.com",
+        "node_id": "node_5e01ccce"
+      }
+    },
+    {
+      "source": "hashicorp_vault",
+      "phase": "credential_access",
+      "timestamp": "2025-08-11T07:32:15.222638+00:00",
+      "event": {
+        "time": "2025-08-11T06:05:44.223682Z",
+        "type": "request",
+        "auth": {
+          "client_token": "hvs.ba6d0af974a34750af34569121205124",
+          "accessor": "acc_73eec4a80e734335",
+          "display_name": "backup-service",
+          "policies": [
+            "database-admin"
+          ],
+          "token_policies": [
+            "database-admin"
+          ],
+          "metadata": {
+            "username": null,
+            "service": "backup-service"
+          },
+          "entity_id": "39e83b00-5823-4cb5-a387-cba61169f598",
+          "token_type": "batch",
+          "token_ttl": 85416,
+          "token_issue_time": "2025-08-11T06:05:44.223682Z"
+        },
+        "request": {
+          "id": "fb6ebc6d-87e8-4d47-b786-c12fc2639ac8",
+          "operation": "rotate",
+          "mount_type": "nomad",
+          "client_token": "hvs.10a42670a06b47d9aa6a74ab82e55cee",
+          "client_token_accessor": "acc_6e7b826cd51447c8",
+          "namespace": {
+            "id": "root",
+            "path": ""
+          },
+          "path": "aws/creds/s3-readonly",
+          "data": {},
+          "policy_override": false,
+          "remote_address": "10.142.47.189",
+          "wrap_ttl": 0,
+          "headers": {
+            "user-agent": [
+              "terraform/1.3.0"
+            ],
+            "content-type": [
+              "application/json"
+            ],
+            "x-forwarded-for": [
+              "10.131.10.62"
+            ]
+          }
+        },
+        "response": null,
+        "error": "",
+        "cluster_id": "3dc6bf2d-0218-4931-a612-e73ae3a2f693",
+        "version": "1.12.0",
+        "build_date": "2023-10-20T09:15:00Z",
+        "hostname": "vault-3.company.com",
+        "node_id": "node_c072205a"
+      }
+    },
+    {
+      "source": "harness_ci",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:36:15.222638+00:00",
+      "event": {
+        "raw": "2025-08-10T11:51:15Z Harness pipelineId=\"pipeline-123\" executionId=\"exec-101\" status=\"SUCCEEDED\" trigger=\"manual\" initiator=\"devuser\" message=\"Pipeline execution started\"",
+        "vendor": "harness",
+        "product": "ci",
+        "log_type": "pipeline_event"
+      }
+    },
+    {
+      "source": "harness_ci",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:40:15.222638+00:00",
+      "event": {
+        "raw": "2025-08-10T15:58:15Z Harness pipelineId=\"pipeline-789\" executionId=\"exec-404\" status=\"SUCCEEDED\" trigger=\"git_push\" initiator=\"ci-bot\" message=\"Tests passed\"",
+        "vendor": "harness",
+        "product": "ci",
+        "log_type": "pipeline_event"
+      }
+    },
+    {
+      "source": "harness_ci",
+      "phase": "persistence",
+      "timestamp": "2025-08-11T07:44:15.222638+00:00",
+      "event": {
+        "raw": "2025-08-10T19:23:15Z Harness pipelineId=\"pipeline-456\" executionId=\"exec-404\" status=\"SUCCEEDED\" trigger=\"pull_request\" initiator=\"admin\" message=\"Deployment successful\"",
+        "vendor": "harness",
+        "product": "ci",
+        "log_type": "pipeline_event"
+      }
+    },
+    {
+      "source": "pingprotect",
+      "phase": "detection",
+      "timestamp": "2025-08-11T07:46:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T05:49:15.223730Z",
+        "dataSource": "PingProtect",
+        "recordedAt": "2025-08-11T05:49:15.223730.000Z",
+        "actors.client.id": "mobile-app",
+        "actors.user.id": "e268c7fd-1eeb-4206-aee2-d58c3caa4171",
+        "source.ip": "203.0.113.29",
+        "action.type": "MFA.CHALLENGE",
+        "dataSource.vendor": "Ping Identity",
+        "dataSource.name": "PingProtect",
+        "dataSource.category": "security",
+        "action.description": "MFA push challenge",
+        "result.status": "SUCCESS",
+        "result.description": "User approved push notification"
+      }
+    },
+    {
+      "source": "pingprotect",
+      "phase": "detection",
+      "timestamp": "2025-08-11T07:51:15.222638+00:00",
+      "event": {
+        "timestamp": "2025-08-11T05:59:15.223735Z",
+        "dataSource": "PingProtect",
+        "recordedAt": "2025-08-11T05:59:15.223735.000Z",
+        "actors.client.id": "auth-service",
+        "actors.user.id": "d1a90caf-0004-4d7e-9a7f-684cfdd6028e",
+        "source.ip": "212.36.185.182",
+        "action.type": "ROLE_ASSIGNMENT.DELETED",
+        "dataSource.vendor": "Ping Identity",
+        "dataSource.name": "PingProtect",
+        "dataSource.category": "security",
+        "action.description": "Role Assignment Deleted",
+        "resources.application.id": "2482bccc-905f-46b0-9034-0185557fc93e",
+        "result.status": "FAILURE",
+        "result.description": "Failed to delete role assignment - insufficient permissions"
+      }
+    }
+  ],
+  "correlation_opportunities": [
+    "\ud83d\udd17 Cross-platform user behavior analysis",
+    "\ud83d\udd17 Attack progression timeline correlation",
+    "\ud83d\udd17 Infrastructure traversal mapping",
+    "\ud83d\udd17 Credential reuse detection",
+    "\ud83d\udd17 Multi-stage attack reconstruction",
+    "\ud83d\udd17 Threat hunting across data sources"
+  ]
+}

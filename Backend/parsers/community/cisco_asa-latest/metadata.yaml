@@ -1,0 +1,9 @@
+name: "Cisco ASA"
+slug: "cisco_asa"
+description: "Parser for Cisco ASA Firewall logs"
+productTags: ["firewall", "cisco", "asa", "network"]
+logPattern: ".*"
+multiline: false
+parse: "json"
+parseParameters:
+  messageField: "message"

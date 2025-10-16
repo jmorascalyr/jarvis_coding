@@ -27,7 +27,7 @@ services:
       - ./Backend/event_generators:/app/event_generators:ro
       - ./Backend/parsers:/app/parsers:ro
       - ./Backend/scenarios:/app/scenarios:ro
-      - ./Backend/api/data:/app/data
+      - api_data:/app/data
     restart: unless-stopped
     networks:
       - jarvis-network
@@ -63,5 +63,6 @@ networks:
     driver: bridge
 
 volumes:
+  api_data:
   postgres_data:
   redis_data:

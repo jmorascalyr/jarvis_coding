@@ -41,6 +41,9 @@ RUN ln -s /app/event_generators /event_generators \
  && ln -s /app/parsers /parsers \
  && ln -s /app/scenarios /scenarios
 
+# Create data directory for database
+RUN mkdir -p /app/data
+
 # Create non-root user
 RUN useradd -m -u 1000 jarvis && \
     chown -R jarvis:jarvis /app

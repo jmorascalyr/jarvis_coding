@@ -9,6 +9,7 @@ pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
 python-dotenv
+cryptography
 
 # Database
 sqlalchemy

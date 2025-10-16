@@ -108,55 +108,45 @@
             <div class="card p-0">
                 <nav class="flex flex-col">
                     <button type="button" data-target="generate-section" class="tab-btn px-4 py-3 text-left hover:bg-[#2f2848] border-b border-[#3c325c] font-semibold active">Generate Events</button>
-                    <button type="button" data-target="scenarios-section" class="tab-btn px-4 py-3 text-left hover:bg-[#2f2848] border-b border-[#3c325c]">Generate Scenarios (Coming Soon)</button>
+                    <button type="button" data-target="scenarios-section" class="tab-btn px-4 py-3 text-left hover:bg-[#2f2848] border-b border-[#3c325c]">Generate Scenarios</button>
                     <button type="button" data-target="settings-section" class="tab-btn px-4 py-3 text-left hover:bg-[#2f2848]">Settings</button>
                 </nav>
-            </div>
-            <div class="card space-y-4">
-                <h3 class="text-xl font-bold text-[#f3e8ff]">Destination</h3>
-                <div class="input-group">
-                    <label for="destination-select" class="text-sm font-semibold text-[#c8b3e8]">Select Destination</label>
-                    <select id="destination-select" name="destination-select">
-                        <option value="" disabled selected>Loading...</option>
-                    </select>
-                </div>
-                <p class="text-xs text-[#b8a0d2]">Manage or add destinations in Settings → Destinations</p>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <div class="md:col-span-9 space-y-6">
+        <div class="md:col-span-6 space-y-6">
             <div id="generate-section" class="card space-y-8">
                 <div class="text-center">
                     <h1 class="text-4xl font-extrabold tracking-tight">Synthetic Log Generator</h1>
-                    <p class="mt-2 text-lg text-[#b8a0d2]">Pick a script, set volume and rate, then Start. Destination selection is in the sidebar.</p>
+                    <p class="mt-2 text-lg text-[#b8a0d2]">Pick a script, set volume and rate, choose a destination, then Start.</p>
                 </div>
                 
                 <form id="log-form" class="space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="input-group">
-                    <label for="script" class="text-sm font-semibold text-[#c8b3e8]">Log Source</label>
-                    <select id="script" name="script" required>
-                        <option value="" disabled selected>Loading scripts...</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label for="log-count" class="text-sm font-semibold text-[#c8b3e8]">Number of logs</label>
-                    <input type="number" id="log-count" name="log-count" value="10" min="1" required>
-                </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="input-group">
+                            <label for="script" class="text-sm font-semibold text-[#c8b3e8]">Log Source</label>
+                            <select id="script" name="script" required>
+                                <option value="" disabled selected>Loading scripts...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="log-count" class="text-sm font-semibold text-[#c8b3e8]">Number of logs</label>
+                            <input type="number" id="log-count" name="log-count" value="10" min="1" required>
+                        </div>
 
-                <div class="input-group">
-                    <label for="eps" class="text-sm font-semibold text-[#c8b3e8]">Events Per Second (EPS)</label>
-                    <input type="number" id="eps" name="eps" value="10" min="0.1" step="0.1" required>
-                </div>
-            </div>
+                        <div class="input-group">
+                            <label for="eps" class="text-sm font-semibold text-[#c8b3e8]">Events Per Second (EPS)</label>
+                            <input type="number" id="eps" name="eps" value="10" min="0.1" step="0.1" required>
+                        </div>
+                    </div>
 
-            <!-- Destination selectors moved to sidebar -->
+                    <!-- Destination selectors moved to right sidebar -->
 
-            <button type="submit" id="start-btn" class="btn">
-                Start Log Generation
-            </button>
+                    <button type="submit" id="start-btn" class="btn">
+                        Start Log Generation
+                    </button>
                 </form>
 
                 <div>
@@ -174,11 +164,18 @@
                 </div>
 
                 <form id="scenario-form" class="space-y-6">
-                    <div class="input-group">
-                        <label for="scenario-select" class="text-sm font-semibold text-[#c8b3e8]">Select Scenario</label>
-                        <select id="scenario-select" name="scenario-select" required>
-                            <option value="" disabled selected>Loading scenarios...</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="input-group">
+                            <label for="scenario-select" class="text-sm font-semibold text-[#c8b3e8]">Select Scenario</label>
+                            <select id="scenario-select" name="scenario-select" required>
+                                <option value="" disabled selected>Loading scenarios...</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="worker-count" class="text-sm font-semibold text-[#c8b3e8]">Parallel Workers (EPS Boost)</label>
+                            <input type="number" id="worker-count" name="worker-count" value="10" min="1" max="50" required>
+                            <p class="text-xs text-[#b8a0d2] mt-1">More workers = Higher throughput (default: 10)</p>
+                        </div>
                     </div>
 
                     <div id="scenario-details" class="card p-4 space-y-3" style="display:none;">
@@ -281,6 +278,20 @@
                 </div>
             </div>
         </div>
+
+        <!-- Right Sidebar -->
+        <aside class="md:col-span-3 space-y-6">
+            <div class="card space-y-4">
+                <h3 class="text-xl font-bold text-[#f3e8ff]">Destination</h3>
+                <div class="input-group">
+                    <label for="destination-select" class="text-sm font-semibold text-[#c8b3e8]">Select Destination</label>
+                    <select id="destination-select" name="destination-select">
+                        <option value="" disabled selected>Loading...</option>
+                    </select>
+                </div>
+                <p class="text-xs text-[#b8a0d2]">Manage or add destinations in Settings → Destinations</p>
+            </div>
+        </aside>
     </div>
 </div>
 
@@ -634,6 +645,7 @@
             
             const selectedOpt = destSelect.options[destSelect.selectedIndex];
             const destinationId = selectedOpt ? selectedOpt.value : '';
+            const workerCount = parseInt(document.getElementById('worker-count').value, 10);
             
             if (!destinationId) {
                 alert('Please select a destination in the sidebar.');
@@ -652,7 +664,8 @@
                     },
                     body: JSON.stringify({
                         scenario_id: selectedId,
-                        destination_id: destinationId
+                        destination_id: destinationId,
+                        workers: workerCount
                     })
                 });
                 

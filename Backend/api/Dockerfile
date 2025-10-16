@@ -10,10 +10,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements
-COPY requirements.txt .
+COPY Backend/api/requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir --user -r requirements.txt
+# Install Python dependencies into system site-packages
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage
 FROM python:3.11-slim
@@ -22,19 +22,24 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copy Python dependencies from builder
-COPY --from=builder /root/.local /root/.local
+COPY --from=builder /usr/local /usr/local
 
 # Copy application code
-COPY app/ ./app/
-COPY start_api.py .
+COPY Backend/api/app/ ./app/
+COPY Backend/api/start_api.py .
 
 # Copy event generators and parsers from parent directory
-COPY ../event_generators ./event_generators
-COPY ../parsers ./parsers
-COPY ../scenarios ./scenarios
+COPY Backend/event_generators ./event_generators
+COPY Backend/parsers ./parsers
+COPY Backend/scenarios ./scenarios
 
-# Make sure scripts are in PATH
-ENV PATH=/root/.local/bin:$PATH
+# Ensure PATH is set (python, pip already in /usr/local/bin)
+ENV PATH=/usr/local/bin:$PATH
+
+# Provide absolute path compatibility for code expecting top-level dirs
+RUN ln -s /app/event_generators /event_generators \
+ && ln -s /app/parsers /parsers \
+ && ln -s /app/scenarios /scenarios
 
 # Create non-root user
 RUN useradd -m -u 1000 jarvis && \

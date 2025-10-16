@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Send logs from vendor_product generators to SentinelOne AI SIEM (Splunk‑HEC) one‑by‑one."""
 import argparse, json, os, time, random, requests, importlib, sys
+import gzip, io, threading
 from typing import Callable, Tuple, Optional
 
 # Add generator category paths to sys.path
@@ -598,6 +599,109 @@ DEFAULT_TLS_LOW = bool(os.getenv("S1_HEC_TLS_LOW"))
 ALLOW_INSECURE_FALLBACK = os.getenv("S1_HEC_AUTO_INSECURE", "false").lower() in ("true", "1", "yes")
 DEBUG = os.getenv("S1_HEC_DEBUG")
 
+# Cache successful connection config to avoid retry loops
+_CONNECTION_CACHE = {
+    'configured': False,
+    'event_base': None,
+    'raw_base': None,
+    'verify': DEFAULT_VERIFY_TLS,
+    'tls_low': DEFAULT_TLS_LOW,
+    'auth_scheme': None,
+    'session': None
+}
+
+# Batch mode controls
+_BATCH_ENABLED = os.getenv("S1_HEC_BATCH", "").lower() in ("1", "true", "yes")
+_BATCH_MAX_BYTES = int(os.getenv("S1_HEC_BATCH_MAX_BYTES", str(5 * 1024 * 1024)))
+_BATCH_FLUSH_MS = int(os.getenv("S1_HEC_BATCH_FLUSH_MS", "1000"))
+_BATCH_LOCK = threading.Lock()
+_BATCH_BUFFERS = {}  # key: (is_json:bool, product:str) -> {'lines': list[str], 'bytes': int, 'last': float}
+_BATCH_THREAD_STARTED = False
+
+def _batch_key(is_json: bool, product: str):
+    return (is_json, product)
+
+def _batch_enqueue(line_str: str, is_json: bool, product: str, attr_fields: dict):
+    global _BATCH_THREAD_STARTED
+    key = _batch_key(is_json, product)
+    now = time.time()
+    with _BATCH_LOCK:
+        buf = _BATCH_BUFFERS.get(key)
+        if not buf:
+            buf = {'lines': [], 'bytes': 0, 'last': now}
+            _BATCH_BUFFERS[key] = buf
+        sz = len(line_str.encode('utf-8'))
+        buf['lines'].append(line_str)
+        buf['bytes'] += sz
+        buf['last'] = now
+        if buf['bytes'] >= _BATCH_MAX_BYTES:
+            _flush_batch_locked(key)
+        if not _BATCH_THREAD_STARTED:
+            _start_batch_thread()
+
+def _start_batch_thread():
+    global _BATCH_THREAD_STARTED
+    _BATCH_THREAD_STARTED = True
+    t = threading.Thread(target=_batch_loop, daemon=True)
+    t.start()
+
+def _batch_loop():
+    while True:
+        time.sleep(0.2)
+        now = time.time()
+        to_flush = []
+        with _BATCH_LOCK:
+            for key, buf in list(_BATCH_BUFFERS.items()):
+                if buf['lines'] and (now - buf['last']) * 1000 >= _BATCH_FLUSH_MS:
+                    to_flush.append(key)
+        for key in to_flush:
+            with _BATCH_LOCK:
+                _flush_batch_locked(key)
+
+def _flush_batch_locked(key):
+    buf = _BATCH_BUFFERS.get(key)
+    if not buf or not buf['lines']:
+        return
+    is_json, product = key
+    lines = buf['lines']
+    _BATCH_BUFFERS[key] = {'lines': [], 'bytes': 0, 'last': time.time()}
+    _send_batch(lines, is_json, product)
+
+def _send_batch(lines: list, is_json: bool, product: str):
+    if not lines:
+        return
+    # Ensure connection cache is established; if not, send first line via normal path
+    if not _CONNECTION_CACHE['configured']:
+        first = lines.pop(0)
+        try:
+            if is_json:
+                payload = json.loads(first)
+                send_one(payload, product, {})
+            else:
+                send_one(first, product, {})
+        except Exception:
+            pass
+        if not lines:
+            return
+    if not _CONNECTION_CACHE['configured']:
+        return
+    if _CONNECTION_CACHE['session'] is None:
+        _CONNECTION_CACHE['session'] = _make_poster(_CONNECTION_CACHE['verify'], _CONNECTION_CACHE['tls_low'])
+    POST = _CONNECTION_CACHE['session']
+    headers_auth = {**HEADERS}
+    headers_auth["Authorization"] = f"{_CONNECTION_CACHE['auth_scheme']} {HEC_TOKEN}"
+    if is_json:
+        url = _CONNECTION_CACHE['event_base']
+        headers = {**headers_auth, "Content-Type": "application/json", "Content-Encoding": "gzip"}
+        body = "\n".join(lines).encode('utf-8')
+    else:
+        url = f"{_CONNECTION_CACHE['raw_base']}?{_build_qs(product)}"
+        headers = {**headers_auth, "Content-Type": "text/plain", "Content-Encoding": "gzip"}
+        body = ("\n".join(lines)).encode('utf-8')
+    gz = gzip.compress(body)
+    resp = POST(url, headers=headers, data=gz, timeout=30)
+    resp.raise_for_status()
+
 SOURCETYPE_MAP_OVERRIDES = {
     # ===== FIXED PARSER MAPPINGS (Based on actual parser directory names) =====
     # AWS parsers - use actual directory names
@@ -886,6 +990,7 @@ def send_one(line, product: str, attr_fields: dict):
     """
     Route JSON‑structured products to the /event endpoint and all
     raw / CSV / syslog products to the /raw endpoint.
+    Uses cached connection config after first successful send for performance.
     """
     # Build endpoint bases to try (env override → us1 → usea1 → global)
     env_event = os.getenv("S1_HEC_EVENT_URL_BASE")
@@ -929,6 +1034,57 @@ def send_one(line, product: str, attr_fields: dict):
 
     last_error: Optional[Exception] = None
 
+    # Batch mode: enqueue and return
+    if _BATCH_ENABLED:
+        if product in JSON_PRODUCTS:
+            payload = _envelope(line, product, attr_fields)
+            line_str = json.dumps(payload, separators=(",", ":"))
+            _batch_enqueue(line_str, True, product, attr_fields)
+        else:
+            if isinstance(line, (dict, list)):
+                line_str = json.dumps(line, separators=(",", ":"))
+            else:
+                line_str = str(line)
+            _batch_enqueue(line_str, False, product, attr_fields)
+        return {"status": "QUEUED"}
+
+    # Try cached config first (fast path after first successful send)
+    if _CONNECTION_CACHE['configured']:
+        try:
+            if _CONNECTION_CACHE['session'] is None:
+                _CONNECTION_CACHE['session'] = _make_poster(
+                    _CONNECTION_CACHE['verify'], 
+                    _CONNECTION_CACHE['tls_low']
+                )
+            
+            POST = _CONNECTION_CACHE['session']
+            headers_auth = {**HEADERS}
+            headers_auth["Authorization"] = f"{_CONNECTION_CACHE['auth_scheme']} {HEC_TOKEN}"
+            
+            if product in JSON_PRODUCTS:
+                url = _CONNECTION_CACHE['event_base']
+                payload = _envelope(line, product, attr_fields)
+                headers = {**headers_auth, "Content-Type": "application/json"}
+                resp = POST(url, headers=headers, json=payload, timeout=10)
+            else:
+                url = f"{_CONNECTION_CACHE['raw_base']}?{_build_qs(product)}"
+                payload = line
+                headers = {**headers_auth, "Content-Type": "text/plain"}
+                resp = POST(url, headers=headers, data=payload, timeout=10)
+            
+            resp.raise_for_status()
+            try:
+                return resp.json()
+            except ValueError:
+                return {"status": "OK", "code": resp.status_code}
+        except Exception as e:
+            # Cache failed, fall through to full retry logic
+            if DEBUG:
+                print(f"[DEBUG] Cached config failed: {e}, trying full retry")
+            _CONNECTION_CACHE['configured'] = False
+            _CONNECTION_CACHE['session'] = None
+
+    # Full retry logic (slow path for first send or after cache failure)
     for event_base, raw_base in bases:
         for verify, tls_low in combos:
             POST = _make_poster(verify=verify, tls_low=tls_low)
@@ -963,6 +1119,16 @@ def send_one(line, product: str, attr_fields: dict):
                         continue
 
                     resp.raise_for_status()
+                    
+                    # Success! Cache this config for future sends
+                    _CONNECTION_CACHE['configured'] = True
+                    _CONNECTION_CACHE['event_base'] = event_base
+                    _CONNECTION_CACHE['raw_base'] = raw_base
+                    _CONNECTION_CACHE['verify'] = verify
+                    _CONNECTION_CACHE['tls_low'] = tls_low
+                    _CONNECTION_CACHE['auth_scheme'] = scheme
+                    _CONNECTION_CACHE['session'] = POST
+                    
                     try:
                         return resp.json()
                     except ValueError:

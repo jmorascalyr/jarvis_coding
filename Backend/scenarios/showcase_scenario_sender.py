@@ -13,6 +13,8 @@ import sys
 import requests
 import time
 from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 from showcase_attack_scenario import generate_showcase_attack_scenario
 from env_loader import load_env_if_present
 
@@ -71,6 +73,9 @@ def send_to_hec(event_data, source):
 
 def send_showcase_scenario():
     """Send the showcase attack scenario"""
+    # Get worker count from environment (set by frontend)
+    worker_count = int(os.getenv('S1_HEC_WORKERS', '10'))
+    
     print("🚀 ENTERPRISE SHOWCASE ATTACK SCENARIO SENDER")
     print("=" * 80)
     
@@ -82,36 +87,64 @@ def send_showcase_scenario():
     print(f"\n🎯 SENDING {len(events)} EVENTS TO SENTINELONE AI-SIEM")
     print(f"📊 Demonstrating correlation across {len(scenario['data_sources'])} data sources")
     print(f"🔥 {len(scenario['attack_phases'])} attack phases")
+    print(f"⚡ Using {worker_count} parallel workers for high-speed transmission")
     print("=" * 80)
     
-    # Phase tracking
+    # Phase tracking (thread-safe)
     phase_counts = {}
+    phase_lock = threading.Lock()
     success_count = 0
+    success_lock = threading.Lock()
+    start_time = time.time()
     
-    # Send events
-    for i, event_entry in enumerate(events, 1):
+    def send_event_worker(i, event_entry):
+        """Worker function to send a single event"""
+        nonlocal success_count
         source = event_entry["source"]
         phase = event_entry["phase"]
         event_data = event_entry["event"]
         
-        # Track phases
-        if phase not in phase_counts:
-            phase_counts[phase] = 0
-        phase_counts[phase] += 1
-        
-        # Display progress
-        print(f"[{i:2d}/{len(events)}] {source:25s} ({phase:15s}) → ", end="", flush=True)
+        # Track phases (thread-safe)
+        with phase_lock:
+            if phase not in phase_counts:
+                phase_counts[phase] = 0
+            phase_counts[phase] += 1
         
         # Send event
         success = send_to_hec(event_data, source)
-        if success:
-            print("✅")
-            success_count += 1
-        else:
-            print("❌") 
         
-        # Brief pause for realistic timing
-        time.sleep(0.3)
+        if success:
+            with success_lock:
+                success_count += 1
+        
+        return (i, source, phase, success)
+    
+    # Send events in parallel using ThreadPoolExecutor
+    print(f"\n📤 Transmitting events with {worker_count} parallel workers...\n")
+    
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        # Submit all events
+        futures = {executor.submit(send_event_worker, i, event): i 
+                  for i, event in enumerate(events, 1)}
+        
+        completed = 0
+        last_update = time.time()
+        
+        # Process completed events
+        for future in as_completed(futures):
+            completed += 1
+            i, source, phase, success = future.result()
+            
+            # Show progress every second or every 50 events
+            if time.time() - last_update > 1.0 or completed % 50 == 0 or completed == len(events):
+                elapsed = time.time() - start_time
+                eps = completed / elapsed if elapsed > 0 else 0
+                progress_pct = (completed / len(events)) * 100
+                
+                status = "✅" if success else "❌"
+                print(f"[{completed:3d}/{len(events)}] {progress_pct:5.1f}% | "
+                      f"EPS: {eps:6.1f} | Success: {success_count}/{completed} {status}")
+                last_update = time.time()
     
     # Summary
     print("\n" + "=" * 80)

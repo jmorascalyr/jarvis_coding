@@ -1,23 +1,26 @@
-import time
 import os
 import subprocess
 import json
 import socket
 import requests
-from flask import Flask, request, Response, stream_with_context, jsonify, render_template
-try:
-    import keyring  # type: ignore
-    HAS_KEYRING = True
-except Exception:
-    HAS_KEYRING = False
+from flask import Flask, render_template, request, jsonify, Response, stream_with_context
+import sys
+import uuid
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
+import queue
+import logging
 
 app = Flask(__name__)
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 EVENT_GENERATORS_DIR = os.path.join(os.getcwd(), 'event_generators')
-API_BASE_URL = os.environ.get('API_BASE_URL', 'http://localhost:9001')
+API_BASE_URL = os.environ.get('API_BASE_URL', 'http://localhost:8000')
 BACKEND_API_KEY = os.environ.get('BACKEND_API_KEY')
-DESTINATIONS_FILE = os.path.join(os.path.dirname(__file__), 'destinations.json')
-KEYRING_SERVICE = 'jarvis_frontend_hec_destinations'
 
 @app.route('/')
 def index():
@@ -41,23 +44,12 @@ def get_scripts():
         print(f"Error scanning for scripts: {e}")
     return scripts
 
-def _load_destinations():
-    try:
-        if not os.path.exists(DESTINATIONS_FILE):
-            return []
-        with open(DESTINATIONS_FILE, 'r') as f:
-            data = json.load(f)
-            return data if isinstance(data, list) else []
-    except Exception:
-        return []
-
-def _save_destinations(items):
-    try:
-        with open(DESTINATIONS_FILE, 'w') as f:
-            json.dump(items, f)
-        return True
-    except Exception:
-        return False
+def _get_api_headers():
+    """Get headers for backend API requests"""
+    headers = {}
+    if BACKEND_API_KEY:
+        headers['X-API-Key'] = BACKEND_API_KEY
+    return headers
 
 def fetch_generators():
     base_url = f"{API_BASE_URL}/api/v1/generators"
@@ -113,102 +105,67 @@ def get_generators():
 
 @app.route('/destinations', methods=['GET'])
 def list_destinations():
-    items = _load_destinations()
-    # Do not expose HEC token
-    redacted = []
-    for d in items:
-        base = {
-            'id': d.get('id'),
-            'name': d.get('name'),
-            'type': d.get('type'),
-        }
-        if d.get('type') == 'hec':
-            base['url'] = d.get('url')
-        elif d.get('type') == 'syslog':
-            base['ip'] = d.get('ip')
-            base['port'] = d.get('port')
-            base['protocol'] = d.get('protocol')
-        redacted.append(base)
-    return jsonify({'destinations': redacted})
+    """List destinations from backend API"""
+    try:
+        resp = requests.get(
+            f"{API_BASE_URL}/api/v1/destinations",
+            headers=_get_api_headers(),
+            timeout=10
+        )
+        if resp.status_code == 200:
+            destinations = resp.json()
+            return jsonify({'destinations': destinations})
+        else:
+            logger.error(f"Backend returned {resp.status_code}: {resp.text}")
+            return jsonify({'error': f'Backend error: {resp.status_code}'}), resp.status_code
+    except Exception as e:
+        logger.error(f"Failed to fetch destinations: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/destinations', methods=['POST'])
 def create_destination():
+    """Create destination via backend API"""
     payload = request.get_json(silent=True) or {}
-    dest_type = payload.get('type')  # 'hec' or 'syslog'
-    name = payload.get('name')
-
-    if dest_type == 'hec':
-        url = payload.get('url')
-        token = payload.get('token')
-        if not name or not url or not token:
-            return jsonify({'error': 'name, url and token are required'}), 400
-        # Normalize URL for HEC
-        base = url.rstrip('/')
-        if not (base.endswith('/event') or base.endswith('/raw') or '/services/collector' in base):
-            base = base + '/services/collector'
-    elif dest_type == 'syslog':
-        ip = payload.get('ip')
-        port = payload.get('port')
-        protocol = (payload.get('protocol') or '').upper()
-        if not name or not ip or not port or protocol not in ('UDP','TCP'):
-            return jsonify({'error': 'name, ip, port, protocol (UDP/TCP) are required'}), 400
-    else:
-        return jsonify({'error': 'Unsupported destination type'}), 400
-
-    items = _load_destinations()
-    # Upsert by name and type
-    existing = next((d for d in items if d.get('name') == name and d.get('type') == dest_type), None)
-    if existing:
-        if dest_type == 'hec':
-            existing['url'] = base
-            # Store token securely; if unavailable, do not fall back to plaintext
-            if not HAS_KEYRING or not existing.get('id'):
-                return jsonify({'error': 'Secure storage unavailable. Unable to save token. Please contact support.'}), 500
-            try:
-                keyring.set_password(KEYRING_SERVICE, existing['id'], token)
-                existing.pop('token', None)
-            except Exception:
-                return jsonify({'error': 'Failed to save token securely. Please contact support.'}), 500
+    
+    logger.info(f"Creating destination: type={payload.get('type')}, name={payload.get('name')}")
+    
+    try:
+        resp = requests.post(
+            f"{API_BASE_URL}/api/v1/destinations",
+            json=payload,
+            headers=_get_api_headers(),
+            timeout=10
+        )
+        
+        if resp.status_code == 201:
+            return jsonify(resp.json()), 201
         else:
-            existing['ip'] = ip
-            existing['port'] = int(port)
-            existing['protocol'] = protocol
-        dest_id = existing.get('id')
-    else:
-        # Simple id
-        dest_id = f"{dest_type}:{len(items)+1}"
-        if dest_type == 'hec':
-            entry = {'id': dest_id, 'type': dest_type, 'name': name, 'url': base}
-            # Require secure storage for new entries
-            if not HAS_KEYRING:
-                return jsonify({'error': 'Secure storage unavailable. Unable to save token. Please contact support.'}), 500
-            try:
-                keyring.set_password(KEYRING_SERVICE, dest_id, token)
-            except Exception:
-                return jsonify({'error': 'Failed to save token securely. Please contact support.'}), 500
-        else:
-            entry = {'id': dest_id, 'type': dest_type, 'name': name, 'ip': ip, 'port': int(port), 'protocol': protocol}
-        items.append(entry)
-
-    if not _save_destinations(items):
-        return jsonify({'error': 'Failed to save destination'}), 500
-
-    return jsonify({'id': dest_id, 'name': name, 'type': dest_type, 'url': base}), 201
+            error_detail = resp.json().get('detail', resp.text) if resp.headers.get('content-type') == 'application/json' else resp.text
+            logger.error(f"Backend returned {resp.status_code}: {error_detail}")
+            return jsonify({'error': error_detail}), resp.status_code
+    except Exception as e:
+        logger.error(f"Failed to create destination: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/destinations/<dest_id>', methods=['DELETE'])
 def delete_destination(dest_id: str):
-    items = _load_destinations()
-    # Remove from keyring first (best-effort)
-    if HAS_KEYRING:
-        try:
-            keyring.delete_password(KEYRING_SERVICE, dest_id)
-        except Exception:
-            pass
-    # Remove from file
-    new_items = [d for d in items if d.get('id') != dest_id]
-    if not _save_destinations(new_items):
-        return jsonify({'error': 'Failed to delete destination'}), 500
-    return ('', 204)
+    """Delete destination via backend API"""
+    try:
+        resp = requests.delete(
+            f"{API_BASE_URL}/api/v1/destinations/{dest_id}",
+            headers=_get_api_headers(),
+            timeout=10
+        )
+        
+        if resp.status_code == 204:
+            return ('', 204)
+        else:
+            error_detail = resp.json().get('detail', resp.text) if resp.headers.get('content-type') == 'application/json' else resp.text
+            logger.error(f"Backend returned {resp.status_code}: {error_detail}")
+            return jsonify({'error': error_detail}), resp.status_code
+    except Exception as e:
+        logger.error(f"Failed to delete destination: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/scenarios', methods=['GET'])
 def list_scenarios():
@@ -312,31 +269,46 @@ def run_scenario():
     data = request.json
     scenario_id = data.get('scenario_id')
     destination_id = data.get('destination_id')
+    worker_count = int(data.get('workers', 10))  # Default 10 parallel workers
     
     if not scenario_id:
         return jsonify({'error': 'scenario_id is required'}), 400
     if not destination_id:
         return jsonify({'error': 'destination_id is required'}), 400
     
-    # Resolve destination
-    dest_items = _load_destinations()
-    chosen = next((d for d in dest_items if d.get('id') == destination_id), None)
-    if not chosen:
-        return jsonify({'error': 'Destination not found'}), 404
-    
-    if chosen.get('type') != 'hec':
-        return jsonify({'error': 'Scenarios currently only support HEC destinations'}), 400
-    
-    hec_url = chosen.get('url')
-    hec_token = None
-    if HAS_KEYRING and chosen.get('id'):
-        try:
-            hec_token = keyring.get_password(KEYRING_SERVICE, chosen['id'])
-        except Exception:
-            pass
-    
-    if not hec_url or not hec_token:
-        return jsonify({'error': 'HEC destination incomplete or token missing'}), 400
+    # Resolve destination from backend API
+    try:
+        dest_resp = requests.get(
+            f"{API_BASE_URL}/api/v1/destinations/{destination_id}",
+            headers=_get_api_headers(),
+            timeout=10
+        )
+        if dest_resp.status_code != 200:
+            return jsonify({'error': 'Destination not found'}), 404
+        
+        chosen = dest_resp.json()
+        
+        if chosen.get('type') != 'hec':
+            return jsonify({'error': 'Scenarios currently only support HEC destinations'}), 400
+        
+        hec_url = chosen.get('url')
+        
+        # Fetch decrypted token from backend
+        token_resp = requests.get(
+            f"{API_BASE_URL}/api/v1/destinations/{destination_id}/token",
+            headers=_get_api_headers(),
+            timeout=10
+        )
+        if token_resp.status_code != 200:
+            return jsonify({'error': 'Failed to retrieve HEC token'}), 400
+        
+        hec_token = token_resp.json().get('token')
+        
+        if not hec_url or not hec_token:
+            return jsonify({'error': 'HEC destination incomplete or token missing'}), 400
+    except Exception as e:
+        logger.error(f"Failed to resolve destination: {e}")
+        return jsonify({'error': f'Failed to resolve destination: {str(e)}'}), 500
     
     def generate_and_stream():
         try:
@@ -367,8 +339,32 @@ def run_scenario():
             env = os.environ.copy()
             env['S1_HEC_TOKEN'] = hec_token
             env['S1_HEC_URL'] = hec_url.rstrip('/')
+            env['S1_HEC_WORKERS'] = str(worker_count)  # Pass worker count to scripts
+            env['S1_HEC_BATCH'] = '0'  # Disable batch mode for immediate responses
+            
+            # Add event generators and all category subdirectories to Python path
+            event_generators_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Backend', 'event_generators'))
+            
+            # Build list of all category directories
+            python_paths = [event_generators_dir]
+            categories = ['cloud_infrastructure', 'network_security', 'endpoint_security', 
+                         'identity_access', 'email_security', 'web_security', 'infrastructure', 'shared']
+            for category in categories:
+                category_path = os.path.join(event_generators_dir, category)
+                if os.path.exists(category_path):
+                    python_paths.append(category_path)
+            
+            # Set PYTHONPATH
+            existing_pythonpath = env.get('PYTHONPATH', '')
+            pythonpath_str = ':'.join(python_paths)
+            if existing_pythonpath:
+                env['PYTHONPATH'] = f"{pythonpath_str}:{existing_pythonpath}"
+            else:
+                env['PYTHONPATH'] = pythonpath_str
+            
+            logger.info(f"Set PYTHONPATH with {len(python_paths)} directories")
 
-            yield f"INFO: Executing {filename}...\n"
+            yield f"INFO: Executing {filename} with {worker_count} parallel workers...\n"
             import subprocess
             process = subprocess.Popen(
                 ['python', script_path],
@@ -432,14 +428,22 @@ def generate_logs():
                 # Resolve syslog destination if provided
                 resolved_syslog_id = unified_dest_id if unified_dest_id else syslog_dest_id
                 if resolved_syslog_id:
-                    dest_items = _load_destinations()
-                    chosen = next((d for d in dest_items if d.get('id') == resolved_syslog_id and d.get('type') == 'syslog'), None)
-                    if not chosen:
-                        yield "ERROR: Selected syslog destination not found.\n"
+                    try:
+                        dest_resp = requests.get(
+                            f"{API_BASE_URL}/api/v1/destinations/{resolved_syslog_id}",
+                            headers=_get_api_headers(),
+                            timeout=10
+                        )
+                        if dest_resp.status_code != 200 or dest_resp.json().get('type') != 'syslog':
+                            yield "ERROR: Selected syslog destination not found.\n"
+                            return
+                        chosen = dest_resp.json()
+                        syslog_ip_local = chosen.get('ip')
+                        syslog_port_local = int(chosen.get('port') or 0)
+                        syslog_protocol_local = (chosen.get('protocol') or '').upper()
+                    except Exception as e:
+                        yield f"ERROR: Failed to resolve syslog destination: {e}\n"
                         return
-                    syslog_ip_local = chosen.get('ip')
-                    syslog_port_local = int(chosen.get('port') or 0)
-                    syslog_protocol_local = (chosen.get('protocol') or '').upper()
                 else:
                     syslog_ip_local = syslog_ip
                     syslog_port_local = syslog_port
@@ -499,32 +503,65 @@ def generate_logs():
                     yield "ERROR: Missing product id for HEC.\n"
                     return
 
-                # Resolve destination (prefer unified id, else legacy id, else first saved HEC)
-                dest_items = _load_destinations()
-                chosen = None
+                # Resolve destination from backend API
                 resolved_hec_id = unified_dest_id if unified_dest_id else hec_dest_id
-                if resolved_hec_id:
-                    chosen = next((d for d in dest_items if d.get('id') == resolved_hec_id and d.get('type') == 'hec'), None)
-                if not chosen:
-                    chosen = next((d for d in dest_items if d.get('type') == 'hec'), None)
-                if not chosen:
-                    yield "ERROR: No HEC destination configured. Add one in Settings > Destinations.\n"
-                    return
-                hec_url = chosen.get('url')
-                hec_token = None
-                # Fetch token from keyring; if unavailable, warn and abort
-                if not HAS_KEYRING or not chosen.get('id'):
-                    yield "ERROR: Secure token storage unavailable. Cannot access HEC token. Please contact support.\n"
-                    return
+                
                 try:
-                    hec_token = keyring.get_password(KEYRING_SERVICE, chosen['id'])
-                except Exception:
-                    hec_token = None
-                if not hec_url or not hec_token:
-                    yield "ERROR: Selected HEC destination is incomplete or token missing from secure storage. Please contact support.\n"
+                    if resolved_hec_id:
+                        # Get specific destination
+                        dest_resp = requests.get(
+                            f"{API_BASE_URL}/api/v1/destinations/{resolved_hec_id}",
+                            headers=_get_api_headers(),
+                            timeout=10
+                        )
+                        if dest_resp.status_code != 200 or dest_resp.json().get('type') != 'hec':
+                            yield "ERROR: Selected HEC destination not found.\n"
+                            return
+                        chosen = dest_resp.json()
+                    else:
+                        # Get first HEC destination
+                        list_resp = requests.get(
+                            f"{API_BASE_URL}/api/v1/destinations",
+                            headers=_get_api_headers(),
+                            timeout=10
+                        )
+                        if list_resp.status_code != 200:
+                            yield "ERROR: Failed to fetch destinations from backend.\n"
+                            return
+                        destinations = list_resp.json()
+                        hec_dests = [d for d in destinations if d.get('type') == 'hec']
+                        if not hec_dests:
+                            yield "ERROR: No HEC destination configured. Add one in Settings > Destinations.\n"
+                            return
+                        chosen = hec_dests[0]
+                    
+                    hec_url = chosen.get('url')
+                    dest_id = chosen.get('id')
+                    
+                    # Fetch decrypted token from backend
+                    token_resp = requests.get(
+                        f"{API_BASE_URL}/api/v1/destinations/{dest_id}/token",
+                        headers=_get_api_headers(),
+                        timeout=10
+                    )
+                    if token_resp.status_code != 200:
+                        yield "ERROR: Failed to retrieve HEC token from backend.\n"
+                        return
+                    
+                    hec_token = token_resp.json().get('token')
+                    
+                    if not hec_url or not hec_token:
+                        yield "ERROR: Selected HEC destination is incomplete or token missing.\n"
+                        return
+                    
+                    logger.info(f"Resolved HEC destination: id={dest_id}, url={hec_url}")
+                except Exception as e:
+                    logger.error(f"Failed to resolve HEC destination: {e}", exc_info=True)
+                    yield f"ERROR: Failed to resolve HEC destination: {e}\n"
                     return
 
-                yield "INFO: Starting HEC send...\n"
+                yield f"INFO: Starting HEC send to {hec_url}...\n"
+                yield f"INFO: Sending {log_count} events for product '{product_id}' at {eps} EPS\n"
 
                 # Build path to hec_sender.py (Frontend/../Backend/event_generators/shared/hec_sender.py)
                 hec_sender_path = os.path.normpath(
@@ -547,10 +584,13 @@ def generate_logs():
                     return base + '/services/collector'
 
                 normalized_hec_url = _normalize_hec_url(hec_url)
+                logger.info(f"Normalized HEC URL: {normalized_hec_url}")
 
                 env = os.environ.copy()
                 env['S1_HEC_TOKEN'] = hec_token
                 env['S1_HEC_URL'] = normalized_hec_url
+                # Disable batch mode to get immediate HTTP responses
+                env['S1_HEC_BATCH'] = '0'
                 # Enable debug output to see exact payloads
                 env['S1_HEC_DEBUG'] = '1'
 
@@ -558,6 +598,7 @@ def generate_logs():
                 delay = 1.0 / eps if eps > 0 else 1.0
                 command = ['python3', hec_sender_path, '--product', product_id, '-n', str(log_count), 
                            '--min-delay', str(delay), '--max-delay', str(delay), '--print-responses']
+                logger.info(f"Executing HEC sender: {' '.join(command)}")
                 process = subprocess.Popen(
                     command,
                     stdout=subprocess.PIPE,
@@ -567,23 +608,34 @@ def generate_logs():
                 )
 
                 # Stream sanitized output
+                line_count = 0
                 for line in iter(process.stdout.readline, ''):
                     if not line:
-                        continue
-                    sanitized = (line
-                        .replace(hec_token, '***')
-                        .replace(hec_url or '', '<hec_url>')
-                        .replace(normalized_hec_url or '', '<hec_url>'))
+                        break
+                    line_count += 1
+                    # Redact token from output
+                    sanitized = line.replace(hec_token, '***REDACTED***')
                     yield sanitized
+                    logger.debug(f"HEC sender output line {line_count}: {sanitized.strip()}")
 
-                errors = process.stderr.read()
-                if errors:
-                    sanitized_err = (errors
-                        .replace(hec_token, '***')
-                        .replace(hec_url or '', '<hec_url>')
-                        .replace(normalized_hec_url or '', '<hec_url>'))
-                    yield f"ERROR: HEC sender errors:\n{sanitized_err}\n"
+                # Capture any errors or additional output
                 process.wait()
+                stderr_output = process.stderr.read() if process.stderr else ""
+                logger.info(f"HEC sender process completed with return code: {process.returncode}")
+                
+                if stderr_output:
+                    sanitized_stderr = stderr_output.replace(hec_token, '***REDACTED***')
+                    logger.info(f"HEC sender stderr: {sanitized_stderr}")
+                    # Show stderr output (may contain debug info)
+                    if sanitized_stderr.strip():
+                        yield f"DEBUG: {sanitized_stderr}\n"
+                
+                if process.returncode != 0:
+                    logger.error(f"HEC send failed with return code {process.returncode}")
+                    yield f"ERROR: HEC send failed with code {process.returncode}\n"
+                else:
+                    yield f"INFO: Successfully sent {log_count} events to HEC\n"
+                    logger.info(f"Successfully sent {log_count} events")
 
         except FileNotFoundError:
             yield f"ERROR: Python executable not found. Please ensure Python is in your system's PATH.\n"
@@ -591,6 +643,7 @@ def generate_logs():
             yield f"ERROR: An unexpected error occurred: {e}\n"
             
         finally:
+            logger.info("Log generation complete")
             yield "INFO: Log generation complete.\n"
             if sock:
                 sock.close()

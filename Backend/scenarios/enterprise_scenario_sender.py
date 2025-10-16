@@ -12,6 +12,8 @@ import sys
 import requests
 import time
 from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 # Add path to shared utilities
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'event_generators', 'shared'))
@@ -78,6 +80,9 @@ def send_to_hec(event_data, source):
 
 def send_enterprise_scenario():
     """Send the enhanced enterprise attack scenario"""
+    # Get worker count from environment (set by frontend)
+    worker_count = int(os.getenv('S1_HEC_WORKERS', '10'))
+    
     print("🚀 ENTERPRISE ATTACK SCENARIO SENDER - 330+ Events")
     print("=" * 80)
     
@@ -90,42 +95,70 @@ def send_enterprise_scenario():
     print(f"📊 Attack spans {scenario['metadata']['duration_minutes']} minutes")
     print(f"🏢 {len(scenario['data_sources'])} data sources involved")
     print(f"🔥 {len(scenario['attack_phases'])} attack phases")
+    print(f"⚡ Using {worker_count} parallel workers for high-speed transmission")
     print("=" * 80)
     
-    # Phase tracking
+    # Phase tracking (thread-safe)
     phase_counts = {}
+    phase_lock = threading.Lock()
     success_count = 0
-    current_phase = None
+    success_lock = threading.Lock()
+    start_time = time.time()
     
-    # Send events
-    for i, event_entry in enumerate(events, 1):
+    def send_event_worker(i, event_entry):
+        """Worker function to send a single event"""
+        nonlocal success_count
         source = event_entry["source"]
         phase = event_entry["phase"]
         event_data = event_entry["event"]
         
-        # Track phases and show phase transitions
-        if phase != current_phase:
-            current_phase = phase
-            print(f"\n🔥 {phase.upper().replace('_', ' ')}:")
-        
-        if phase not in phase_counts:
-            phase_counts[phase] = 0
-        phase_counts[phase] += 1
-        
-        # Display progress (more compact)
-        if i % 10 == 1 or i == len(events):
-            print(f"[{i:3d}/{len(events)}] ", end="", flush=True)
+        # Track phases (thread-safe)
+        with phase_lock:
+            if phase not in phase_counts:
+                phase_counts[phase] = 0
+            phase_counts[phase] += 1
         
         # Send event
         success = send_to_hec(event_data, source)
-        if success:
-            print("✅", end="", flush=True)
-            success_count += 1
-        else:
-            print("❌", end="", flush=True) 
         
-        # Brief pause for realistic timing (faster for demo)
-        # time.sleep(0.01)  # Removed for faster execution
+        if success:
+            with success_lock:
+                success_count += 1
+        
+        return (i, source, phase, success)
+    
+    # Send events in parallel using ThreadPoolExecutor
+    print(f"\n📤 Transmitting events with {worker_count} parallel workers...\n")
+    
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        # Submit all events
+        futures = {executor.submit(send_event_worker, i, event): i 
+                  for i, event in enumerate(events, 1)}
+        
+        completed = 0
+        last_update = time.time()
+        last_phase = None
+        
+        # Process completed events
+        for future in as_completed(futures):
+            completed += 1
+            i, source, phase, success = future.result()
+            
+            # Show phase transitions
+            if phase != last_phase:
+                print(f"\n🔥 {phase.upper().replace('_', ' ')}")
+                last_phase = phase
+            
+            # Show progress every second or every 50 events
+            if time.time() - last_update > 1.0 or completed % 50 == 0 or completed == len(events):
+                elapsed = time.time() - start_time
+                eps = completed / elapsed if elapsed > 0 else 0
+                progress_pct = (completed / len(events)) * 100
+                
+                status = "✅" if success else "❌"
+                print(f"[{completed:3d}/{len(events)}] {progress_pct:5.1f}% | "
+                      f"EPS: {eps:6.1f} | Success: {success_count}/{completed} {status}")
+                last_update = time.time()
     
     # Summary
     print("\n\n" + "=" * 80)

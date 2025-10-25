@@ -259,20 +259,25 @@
                 <span class="flow-label">② Data Options & Output</span>
                 
                 <form id="log-form" class="space-y-6">
+                    <!-- Generation Mode -->
                     <div class="input-group">
-                        <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-                        <input type="checkbox" id="continuous-mode" style="width: auto;">
-                        <span>Continuous Mode (run until stopped)</span>
-                    </label>
-                    <label id="speed-mode-container" style="display: none; align-items: center; gap: 8px; margin-top: 8px; margin-left: 24px;">
-                        <input type="checkbox" id="speed-mode" style="width: auto;">
-                        <span>Speed Mode (pre-generate 1K events, loop for max throughput)</span>
-                    </label>
-                    <p class="text-xs text-[#b8a0d2] mt-1">When enabled, logs will generate continuously until stopped</p>
+                        <label for="generation-mode" class="text-sm font-semibold text-[#c8b3e8]">Generation Mode</label>
+                        <select id="generation-mode" name="generation-mode" required>
+                            <option value="batch" selected>📦 Batch - Generate specific count</option>
+                            <option value="stream">🌊 Stream - Run continuously</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Speed Mode (shown only in stream mode) -->
+                    <div id="speed-mode-container" class="input-group" style="display: none;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="speed-mode" style="width: auto;">
+                            <span class="text-sm">⚡ Speed Mode (pre-generate 1K events for max throughput)</span>
+                        </label>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="input-group">
+                        <div class="input-group" id="log-count-container">
                             <label for="log-count" class="text-sm font-semibold text-[#c8b3e8]">Number of Events</label>
                             <input type="number" id="log-count" name="log-count" value="10" min="1" required>
                         </div>
@@ -693,34 +698,47 @@
             });
         }
         
-        // Handle continuous mode toggle
-        const continuousModeCheckbox = document.getElementById('continuous-mode');
+        // Handle generation mode selector
+        const generationModeSelect = document.getElementById('generation-mode');
         const speedModeContainer = document.getElementById('speed-mode-container');
         const speedModeCheckbox = document.getElementById('speed-mode');
         const logCountInput = document.getElementById('log-count');
+        const logCountContainer = document.getElementById('log-count-container');
         const epsInput = document.getElementById('eps');
         const stopBtn = document.getElementById('stop-btn');
         let currentAbortController = null;
+        let currentMode = 'batch';  // Default mode
 
-        continuousModeCheckbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
+        generationModeSelect.addEventListener('change', (e) => {
+            currentMode = e.target.value;
+            const isStreamMode = currentMode === 'stream';
+            
+            // Update body class for CSS targeting
+            document.body.classList.toggle('stream-mode-active', isStreamMode);
+            document.body.classList.toggle('batch-mode-active', !isStreamMode);
+            
+            // Update UI based on mode
+            if (isStreamMode) {
                 logCountInput.disabled = true;
                 logCountInput.required = false;
-                logCountInput.style.opacity = '0.5';
-                speedModeContainer.style.display = 'flex';
+                logCountContainer.style.opacity = '0.4';
+                speedModeContainer.style.display = 'block';
             } else {
                 logCountInput.disabled = false;
                 logCountInput.required = true;
-                logCountInput.style.opacity = '1';
+                logCountContainer.style.opacity = '1';
                 speedModeContainer.style.display = 'none';
                 speedModeCheckbox.checked = false;
             }
         });
         
+        // Initialize with batch mode
+        document.body.classList.add('batch-mode-active');
+        
         // Auto-enable speed mode for high EPS
         epsInput.addEventListener('change', (e) => {
             const eps = parseFloat(e.target.value);
-            if (continuousModeCheckbox.checked && eps > 1000) {
+            if (currentMode === 'stream' && eps > 1000) {
                 speedModeCheckbox.checked = true;
                 speedModeCheckbox.disabled = true;
             } else {
@@ -751,7 +769,7 @@
             const productId = scriptSelect.selectedOptions[0]?.dataset?.productId; // for HEC mode
             const logCount = parseInt(document.getElementById('log-count').value, 10);
             const eps = parseFloat(document.getElementById('eps').value);
-            const continuousMode = continuousModeCheckbox.checked;
+            const continuousMode = (currentMode === 'stream');
             const speedMode = speedModeCheckbox.checked;
             const selectedOpt = destSelect.options[destSelect.selectedIndex];
             const destinationId = selectedOpt ? selectedOpt.value : '';

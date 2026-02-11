@@ -119,13 +119,18 @@ CORRELATION_CONFIG = {
     "phase_mapping": {
         "phishing_delivery": {
             "anchor": "bridge_first_activity",
-            "offset_minutes": -5,
-            "description": "Phishing email arrives ~5 min before first EDR activity"
+            "offset_minutes": -10,
+            "description": "Phishing email arrives ~10 min before first EDR activity"
+        },
+        "malicious_link_click": {
+            "anchor": "bridge_first_activity",
+            "offset_minutes": -8,
+            "description": "Jean-Luc clicks malicious link ~8 min before Excel processes start"
         },
         "email_interaction": {
             "anchor": "bridge_first_activity",
-            "offset_minutes": -2,
-            "description": "User opens email and downloads attachment ~2 min before EDR sees XLSX open"
+            "offset_minutes": -5,
+            "description": "User opens email and downloads attachment ~5 min before Excel execution"
         },
         "sharepoint_bruteforce": {
             "anchor": "bridge_first_activity",
@@ -285,6 +290,53 @@ def generate_proofpoint_phishing_delivery(base_time: datetime) -> List[Dict]:
         "dmarc": "fail",
     }
     events.append(create_event(delivery_time, "proofpoint", "phishing_delivery", pf_event))
+    
+    return events
+
+
+def generate_proofpoint_malicious_link_click(base_time: datetime) -> List[Dict]:
+    """Generate Proofpoint malicious link click event when Jean-Luc clicks the bad link"""
+    events = []
+    
+    # User clicks malicious link - 3 minutes after email delivery
+    click_time = get_scenario_time(base_time, 3)
+    
+    campaign_id = str(uuid.uuid4())
+    threat_id = str(uuid.uuid4())
+    pf_click_event = {
+        "event.type": "Click",
+        "unmapped.threatStatus": "active",
+        "unmapped.classification": "malware",
+        "GUID": str(uuid.uuid4()),
+        "id": str(uuid.uuid4()),
+        "campaignId": campaign_id,
+        "classification": "phish",
+        "clickIP": VICTIM_PROFILE["client_ip"],
+        "clickTime": click_time,
+        "messageID": f"<{uuid.uuid4()}@starfleet-benefits.com>",
+        "recipient": VICTIM_PROFILE["email"],
+        "sender": ATTACKER_PROFILE["sender_email"],
+        "senderIP": ATTACKER_PROFILE["sender_ip"],
+        "threatID": threat_id,
+        "threatTime": click_time,
+        "threatURL": "https://threatinsight.proofpoint.com/#/threat_id",
+        "threatStatus": "active",
+        "url": "https://malicious-starfleet-docs.com/enterprise-schematics",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "threatsInfoMap": [
+            {
+                "campaignId": campaign_id,
+                "classification": "phish",
+                "threat": "https://malicious-starfleet-docs.com/enterprise-schematics",
+                "threatID": threat_id,
+                "threatStatus": "active",
+                "threatTime": click_time,
+                "threatType": "url",
+                "threatUrl": "https://threatinsight.proofpoint.com/#/threat_id"
+            }
+        ],
+    }
+    events.append(create_event(click_time, "proofpoint", "malicious_link_click", pf_click_event))
     
     return events
 
@@ -483,22 +535,26 @@ def generate_apollo_ransomware_scenario(siem_context: Optional[Dict] = None) -> 
         phases = [
             ("📧 PHASE 1: Phishing Email Delivery", generate_proofpoint_phishing_delivery, 
              "Malicious XLSX delivered via Proofpoint", phase_times.get("phishing_delivery", base_time)),
-            ("📬 PHASE 2: Email Interaction", generate_m365_email_interaction, 
+            ("� PHASE 2: Malicious Link Click", generate_proofpoint_malicious_link_click, 
+             "Jean-Luc clicks malicious link in email", phase_times.get("malicious_link_click", base_time)),
+            ("�� PHASE 3: Email Interaction", generate_m365_email_interaction, 
              "User opens email and downloads TestBook.xlsm", phase_times.get("email_interaction", base_time)),
-            ("🔍 PHASE 3: SharePoint Recon", generate_m365_sharepoint_bruteforce, 
+            ("🔍 PHASE 4: SharePoint Recon", generate_m365_sharepoint_bruteforce, 
              "Failed access attempts to restricted SharePoint sites", phase_times.get("sharepoint_bruteforce", base_time)),
-            ("📤 PHASE 4: Data Exfiltration", generate_m365_sharepoint_exfil, 
+            ("📤 PHASE 5: Data Exfiltration", generate_m365_sharepoint_exfil, 
              "Downloading sensitive documents from SharePoint", phase_times.get("sharepoint_exfil", base_time)),
         ]
     else:
         phases = [
             ("📧 PHASE 1: Phishing Email Delivery", generate_proofpoint_phishing_delivery, 
              "Malicious XLSX delivered via Proofpoint", base_time),
-            ("📬 PHASE 2: Email Interaction", generate_m365_email_interaction, 
+            ("🔗 PHASE 2: Malicious Link Click", generate_proofpoint_malicious_link_click, 
+             "Jean-Luc clicks malicious link in email", base_time),
+            ("📬 PHASE 3: Email Interaction", generate_m365_email_interaction, 
              "User opens email and downloads TestBook.xlsm", base_time),
-            ("🔍 PHASE 3: SharePoint Recon", generate_m365_sharepoint_bruteforce, 
+            ("🔍 PHASE 4: SharePoint Recon", generate_m365_sharepoint_bruteforce, 
              "Failed access attempts to restricted SharePoint sites", base_time),
-            ("📤 PHASE 4: Data Exfiltration", generate_m365_sharepoint_exfil, 
+            ("📤 PHASE 5: Data Exfiltration", generate_m365_sharepoint_exfil, 
              "Downloading sensitive documents from SharePoint", base_time),
         ]
     

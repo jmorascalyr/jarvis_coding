@@ -3001,19 +3001,51 @@
                     correlationAnchorsPanel.style.display = '';
                     correlationAnchorsList.innerHTML = '';
                     
+                    // Collect extra fields from matched rows (agent.uuid, endpoint.name)
+                    let resolvedAgentUuid = '';
+                    let resolvedEndpointName = '';
+                    
                     for (const [anchorId, anchorData] of Object.entries(anchors)) {
                         const anchorConfig = currentCorrelationScenario?.time_anchors?.find(a => a.id === anchorId);
+                        const matchedRow = anchorData.matched_row || {};
+                        const agentUuid = matchedRow['agent.uuid'] || '';
+                        const endpointName = matchedRow['endpoint.name'] || '';
+                        
+                        // Use the first non-empty agent.uuid we find
+                        if (agentUuid && !resolvedAgentUuid) resolvedAgentUuid = agentUuid;
+                        if (endpointName && !resolvedEndpointName) resolvedEndpointName = endpointName;
+                        
                         const div = document.createElement('div');
-                        div.className = 'flex items-center gap-2 p-2 bg-[#1a1629] rounded';
+                        div.className = 'p-2 bg-[#1a1629] rounded space-y-1';
+                        let extraFields = '';
+                        if (agentUuid) {
+                            extraFields += `<div class="flex items-center gap-2"><span class="text-[#8b7aaa]">agent.uuid:</span><span class="text-[#f3e8ff] font-mono text-[11px]">${agentUuid}</span></div>`;
+                        }
+                        if (endpointName) {
+                            extraFields += `<div class="flex items-center gap-2"><span class="text-[#8b7aaa]">endpoint.name:</span><span class="text-[#f3e8ff]">${endpointName}</span></div>`;
+                        }
                         div.innerHTML = `
-                            <span class="text-green-400">✓</span>
-                            <span class="font-semibold text-[#c8b3e8]">${anchorConfig?.name || anchorId}:</span>
-                            <span class="text-[#f3e8ff]">${anchorData.timestamp}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-green-400">✓</span>
+                                <span class="font-semibold text-[#c8b3e8]">${anchorConfig?.name || anchorId}:</span>
+                                <span class="text-[#f3e8ff]">${anchorData.timestamp}</span>
+                            </div>
+                            ${extraFields}
                         `;
                         correlationAnchorsList.appendChild(div);
                     }
                     
+                    // Store agent.uuid and endpoint.name in SIEM context for scenario use
+                    currentSiemContext['agent.uuid'] = resolvedAgentUuid;
+                    currentSiemContext['endpoint.name'] = resolvedEndpointName;
+                    
                     correlationOutputBox.innerText += `\n✓ Resolved ${Object.keys(anchors).length} time anchors\n`;
+                    if (resolvedAgentUuid) {
+                        correlationOutputBox.innerText += `✓ agent.uuid: ${resolvedAgentUuid}\n`;
+                    }
+                    if (resolvedEndpointName) {
+                        correlationOutputBox.innerText += `✓ endpoint.name: ${resolvedEndpointName}\n`;
+                    }
                     correlationOutputBox.innerText += '\nReady to run scenario with SIEM context.\n';
                     
                     runCorrelationScenarioBtn.disabled = false;

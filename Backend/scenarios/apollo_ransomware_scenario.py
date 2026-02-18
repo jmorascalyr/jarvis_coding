@@ -89,9 +89,9 @@ CORRELATION_CONFIG = {
     "description": "Correlates Proofpoint and M365 events with existing EDR/WEL data for the Apollo ransomware attack chain targeting STARFLEET.",
     
     "default_query": """dataSource.name in ('SentinelOne','Windows Event Logs') endpoint.name contains ("Enterprise", "bridge")
-| group newest_timestamp = newest(timestamp), oldest_timestamp = oldest(timestamp) by event.type, src.process.user, endpoint.name, src.endpoint.ip.address, dst.ip.address
+| group newest_timestamp = newest(timestamp), oldest_timestamp = oldest(timestamp) by event.type, src.process.user, endpoint.name, src.endpoint.ip.address, dst.ip.address, agent.uuid
 | sort newest_timestamp
-| columns event.type, src.process.user, endpoint.name, oldest_timestamp, newest_timestamp, src.endpoint.ip.address, dst.ip.address""",
+| columns event.type, src.process.user, endpoint.name, oldest_timestamp, newest_timestamp, src.endpoint.ip.address, dst.ip.address, agent.uuid""",
     
     "time_anchors": [
         {
@@ -170,6 +170,83 @@ ALERT_PHASE_MAPPING = {
         "overrides": {
             "finding_info.title": "Apollo Ransomware - RDP Files Downloaded",
             "finding_info.desc": f"User {VICTIM_PROFILE['email']} downloaded RDP files from SharePoint - potential lateral movement preparation"
+        }
+    },
+    "wel_ad_admin_group": {
+        "template": "wel_ad_global_admin_group_created",
+        "offset_minutes": 12,  # ~12 min after base: post-Mimikatz credential dump, attacker creates Global Admin group for persistence
+        "overrides": {
+            "finding_info.title": "WEL Active Directory Global Admin Group Created",
+            "finding_info.desc": f"A new Global Admin security group was created on {VICTIM_PROFILE['machine_bridge']} in the {VICTIM_PROFILE['domain']} domain by {VICTIM_PROFILE['username']}. This occurred after credential dumping via Mimikatz and may indicate privilege escalation for persistent domain-wide administrative access."
+        },
+        "dynamic_resource": True
+    },
+    "panw_firewall_malware": {
+        "template": "panw_firewall_malware_allowed",
+        "offset_minutes": 8,  # ~8 min after base: XLSX opens at T+7, macro fires PowerShell, apollo.exe connects to C2 — firewall allows the traffic
+        "overrides": {
+            "finding_info.title": "PANW Firewall Malware Allowed",
+            "finding_info.desc": f"Malware-associated network traffic from {VICTIM_PROFILE['machine_bridge']} ({VICTIM_PROFILE['client_ip']}) to C2 server {ATTACKER_PROFILE['c2_server']}:{ATTACKER_PROFILE['c2_port']} allowed through Palo Alto Networks firewall. Traffic identified as virus sub-type ({ATTACKER_PROFILE['malware_name']}) but no deny/drop/reset/block action was applied.",
+            "finding_info.related_events": [
+                {
+                    "type": "Network Activity",
+                    "attacks": [
+                        {
+                            "tactic": {
+                                "uid": "TA0011",
+                                "name": "Command and Control"
+                            },
+                            "technique": {
+                                "uid": "T1071",
+                                "name": "Application Layer Protocol"
+                            },
+                            "version": "13.1"
+                        }
+                    ],
+                    "uid": "placeholder_uid",
+                    "observables": [
+                        {
+                            "name": "dataSource.name",
+                            "type_id": 7,
+                            "value": "Palo Alto Networks Firewall"
+                        },
+                        {
+                            "name": "src.endpoint.ip.address",
+                            "type_id": 2,
+                            "value": VICTIM_PROFILE['client_ip']
+                        },
+                        {
+                            "name": "dst.ip.address",
+                            "type_id": 2,
+                            "value": ATTACKER_PROFILE['c2_server']
+                        },
+                        {
+                            "name": "dst.port",
+                            "type_id": 29,
+                            "value": str(ATTACKER_PROFILE['c2_port'])
+                        },
+                        {
+                            "name": "unmapped.sub_type",
+                            "type_id": 7,
+                            "value": "virus"
+                        },
+                        {
+                            "name": "unmapped.action",
+                            "type_id": 7,
+                            "value": "allow"
+                        }
+                    ],
+                    "severity_id": 2,
+                    "time": "DYNAMIC",
+                    "message": f"Malware traffic from {VICTIM_PROFILE['machine_bridge']} to C2 {ATTACKER_PROFILE['c2_server']}:{ATTACKER_PROFILE['c2_port']} allowed by PANW firewall — apollo.exe virus activity detected"
+                }
+            ],
+            "resources": [
+                {
+                    "uid": VICTIM_PROFILE['machine_bridge'],
+                    "name": VICTIM_PROFILE['machine_bridge']
+                }
+            ]
         }
     }
 }
@@ -262,15 +339,35 @@ def load_alert_template(template_id: str) -> Optional[Dict]:
         return json.load(f)
 
 
+def _replace_dynamic(obj, time_ms: int) -> None:
+    """Recursively replace all 'DYNAMIC' string values with the given timestamp."""
+    if isinstance(obj, dict):
+        for key in obj:
+            if obj[key] == "DYNAMIC":
+                obj[key] = time_ms
+            elif isinstance(obj[key], (dict, list)):
+                _replace_dynamic(obj[key], time_ms)
+    elif isinstance(obj, list):
+        for i, item in enumerate(obj):
+            if item == "DYNAMIC":
+                obj[i] = time_ms
+            elif isinstance(item, (dict, list)):
+                _replace_dynamic(item, time_ms)
+
+
 def send_phase_alert(
     phase_name: str,
     base_time: datetime,
-    uam_config: dict
+    uam_config: dict,
+    siem_context: Optional[Dict] = None
 ) -> bool:
     """Send alert for a specific phase with correct timing.
     
     Standalone implementation — loads template from disk and sends
     directly via requests + gzip. No AlertService dependency.
+    
+    If the mapping has dynamic_resource=True and siem_context provides
+    agent_uuid, it will be injected into resources[0].uid.
     """
     if phase_name not in ALERT_PHASE_MAPPING:
         return False
@@ -300,11 +397,19 @@ def send_phase_alert(
     alert["metadata"]["logged_time"] = time_ms
     alert["metadata"]["modified_time"] = time_ms
     
-    # Set user as the resource
-    alert["resources"] = [{
-        "uid": VICTIM_PROFILE["email"],
-        "name": VICTIM_PROFILE["email"]
-    }]
+    # Set resource — use dynamic agent.uuid if available, otherwise default to victim email
+    if mapping.get("dynamic_resource") and siem_context:
+        agent_uuid = siem_context.get("agent.uuid", "")
+        endpoint_name = siem_context.get("endpoint.name", VICTIM_PROFILE["machine_bridge"])
+        alert["resources"] = [{
+            "uid": agent_uuid if agent_uuid else VICTIM_PROFILE["machine_bridge"],
+            "name": endpoint_name
+        }]
+    else:
+        alert["resources"] = [{
+            "uid": VICTIM_PROFILE["email"],
+            "name": VICTIM_PROFILE["email"]
+        }]
     
     # Apply overrides
     overrides = mapping.get("overrides", {})
@@ -319,6 +424,14 @@ def send_phase_alert(
             current[keys[-1]] = value
         else:
             alert[key] = value
+    
+    # Replace "DYNAMIC" timestamps recursively (covers related_events[].time etc.)
+    _replace_dynamic(alert, time_ms)
+    
+    # Generate fresh UIDs for related events
+    for event in alert.get("finding_info", {}).get("related_events", []):
+        if event.get("uid") in ("placeholder_uid", None):
+            event["uid"] = str(uuid.uuid4())
     
     # Send alert via UAM ingest API
     try:
@@ -699,10 +812,24 @@ def generate_apollo_ransomware_scenario(siem_context: Optional[Dict] = None) -> 
             success = send_phase_alert(phase_name, phase_base_time, uam_config)
             print(f"{'✓' if success else '✗'}")
         
+        # Send PANW Firewall alert after email interaction phase
+        # (XLSX opens at T+7min, macro fires PowerShell, apollo.exe beacons C2 at T+8min)
+        if alerts_enabled and phase_name == "📬 PHASE 2: Email Interaction":
+            print(f"   📤 Sending PANW Firewall Malware Allowed alert...", end=" ")
+            success = send_phase_alert("panw_firewall_malware", phase_base_time, uam_config, siem_context=siem_context)
+            print(f"{'✓' if success else '✗'}")
+        
+        # Send WEL AD Admin Group Created alert after SharePoint recon phase
+        # (post-Mimikatz, attacker creates Global Admin group at ~T+12min)
+        if alerts_enabled and phase_name == "🔍 PHASE 3: SharePoint Recon":
+            print(f"   📤 Sending WEL AD Global Admin Group Created alert...", end=" ")
+            success = send_phase_alert("wel_ad_admin_group", phase_base_time, uam_config, siem_context=siem_context)
+            print(f"{'✓' if success else '✗'}")
+        
         # Send RDP alert after data exfiltration phase
         if alerts_enabled and phase_name == "📤 PHASE 4: Data Exfiltration":
             print(f"   📤 Sending RDP download alert...", end=" ")
-            success = send_phase_alert("rdp_download", phase_base_time, uam_config)
+            success = send_phase_alert("rdp_download", phase_base_time, uam_config, siem_context=siem_context)
             print(f"{'✓' if success else '✗'}")
     
     all_events.sort(key=lambda x: x["timestamp"])
@@ -733,7 +860,9 @@ def generate_apollo_ransomware_scenario(siem_context: Optional[Dict] = None) -> 
             {"phase": 5, "step": "PowerShell Spawned", "log_source": "EDR/WEL", "event_type": "ProcessCreate_4688", "description": f"EXCEL.EXE spawned powershell.exe with encoded command on {VICTIM_PROFILE['machine_bridge']}", "generated": False},
             {"phase": 6, "step": "Scheduled Task Created (Initial)", "log_source": "EDR/WEL", "event_type": "ScheduledTaskCreated_4698", "description": f"Persistence task 'WindowsUpdate' created on {VICTIM_PROFILE['machine_bridge']} to run {ATTACKER_PROFILE['malware_name']}", "generated": False},
             {"phase": 7, "step": "Initial C2 Beacon", "log_source": "EDR/Firewall", "event_type": "NetworkConnection", "description": f"{ATTACKER_PROFILE['malware_name']} on {VICTIM_PROFILE['machine_bridge']} connected to C2 {ATTACKER_PROFILE['c2_server']}:{ATTACKER_PROFILE['c2_port']}", "generated": False},
+            {"phase": 7.5, "step": "PANW Firewall Malware Allowed", "log_source": "PANW Firewall", "event_type": "THREAT/virus", "description": f"Palo Alto Networks firewall detected malware traffic from {VICTIM_PROFILE['machine_bridge']} to C2 {ATTACKER_PROFILE['c2_server']}:{ATTACKER_PROFILE['c2_port']} but allowed it through — virus sub-type, no deny/drop/block action", "generated": True},
             {"phase": 8, "step": "Credential Dump (Mimikatz)", "log_source": "EDR/WEL", "event_type": "ProcessCreate_4688/LSASS_4663", "description": f"Mimikatz executed on {VICTIM_PROFILE['machine_bridge']} - LSASS memory accessed for credential extraction", "generated": False},
+            {"phase": 8.5, "step": "AD Global Admin Group Created", "log_source": "WEL", "event_type": "GroupCreated_4727", "description": f"New Global Admin security group created on {VICTIM_PROFILE['machine_bridge']} in {VICTIM_PROFILE['domain']} domain — privilege escalation for persistent administrative access", "generated": True},
             {"phase": 9, "step": "Brute Force (Domain Auth)", "log_source": "WEL", "event_type": "FailedLogon_4625", "description": f"Multiple failed logon attempts from {VICTIM_PROFILE['machine_bridge']} ({VICTIM_PROFILE['client_ip']}) against domain accounts", "generated": False},
             {"phase": 10, "step": "Lateral Movement", "log_source": "WEL", "event_type": "SuccessfulLogon_4624", "description": f"Type 3 network logon from {VICTIM_PROFILE['machine_bridge']} to {VICTIM_PROFILE['machine_enterprise']} DC using stolen credentials", "generated": False},
             {"phase": 11, "step": "Scheduled Task Created (Lateral)", "log_source": "EDR/WEL", "event_type": "ScheduledTaskCreated_4698", "description": f"Persistence task created on {VICTIM_PROFILE['machine_enterprise']} Domain Controller to run {ATTACKER_PROFILE['malware_name']}", "generated": False},

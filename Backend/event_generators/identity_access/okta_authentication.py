@@ -46,6 +46,12 @@ _NOW = lambda: datetime.now(timezone.utc)
 _ISO = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 _IP = lambda: str(IPv4Address(random.getrandbits(32)))
 
+ATTR_FIELDS = {
+    "dataSource.vendor": "Okta",
+    "dataSource.name": "Okta",
+    "dataSource.category": "security",
+}
+
 # Possible outcome statuses and reasons
 _OUTCOMES: List[Dict[str, str]] = [
     {"result": "SUCCESS", "reason": "User logged in successfully"},
@@ -59,13 +65,21 @@ _AUTH_CONTEXTS = [
     "WEB", "MOBILE", "API", "SAML", "OIDC",
 ]
 
-# Common Okta event types for authentication
+# Common Okta event types for authentication / sign-on policy
 _EVENT_TYPES = [
-    "user.authentication.sso",         # Single sign‑on
-    "user.authentication.auth_via_mfa",# MFA challenge passed
-    "user.session.start",             # Session creation
-    "user.session.end",               # Session termination
-    "system.api_token.verify",        # API token verification
+    "policy.evaluate_sign_on",
+    "user.authentication.sso",
+    "user.authentication.auth_via_mfa",
+]
+
+_PROXY_OPERATORS = [
+    "LUMINATI_PROXY",
+    "IPIDEA_PROXY",
+    "NETNUT_PROXY",
+    "EARNFM_PROXY",
+    "BIGMAMA_PROXY",
+    "OXYLABS_PROXY",
+    "STARVPN_PROXY",
 ]
 
 def _random_user() -> Dict[str, Any]:
@@ -137,6 +151,14 @@ def okta_authentication_log() -> str:
     outcome = random.choice(_OUTCOMES)
     event_type = random.choice(_EVENT_TYPES)
     
+    request_id = str(uuid.uuid4())
+    authn_request_id = request_id
+    lat = round(random.uniform(25.0, 48.0), 4)
+    lon = round(random.uniform(-125.0, -65.0), 4)
+    as_number = random.randint(1000, 65535)
+    as_org = random.choice(["comcast cable", "verizon", "att", "cogent communications"])
+    isp = random.choice(["Comcast", "Verizon", "AT&T", "Cogent"])
+
     event = {
         "uuid": str(uuid.uuid4()),
         "published": original_time,
@@ -144,7 +166,7 @@ def okta_authentication_log() -> str:
         "version": "0",
         "severity": random.choice(["INFO", "WARN", "ERROR"]),
         "legacyEventType": f"{event_type}_{'success' if outcome['result'] == 'SUCCESS' else 'failure'}",
-        "displayMessage": outcome["reason"],
+        "displayMessage": "Evaluation of sign-on policy" if event_type == "policy.evaluate_sign_on" else outcome["reason"],
         "actor": {
             "id": user["id"],
             "type": "User",
@@ -162,8 +184,8 @@ def okta_authentication_log() -> str:
                 "country": "United States",
                 "postalCode": f"{random.randint(10000, 99999)}",
                 "geolocation": {
-                    "lat": round(random.uniform(25.0, 48.0), 4),
-                    "lon": round(random.uniform(-125.0, -65.0), 4)
+                    "lat": lat,
+                    "lon": lon
                 }
             }
         },
@@ -172,12 +194,13 @@ def okta_authentication_log() -> str:
             "reason": outcome["reason"]
         },
         "transaction": {
-            "type": random.choice(_AUTH_CONTEXTS),
+            "type": "WEB",
             "id": str(uuid.uuid4())
         },
         "debugContext": {
             "debugData": {
-                "requestId": str(uuid.uuid4()),
+                "requestId": request_id,
+                "authnRequestId": authn_request_id,
                 "requestUri": f"/api/v1/{event_type.replace('.', '/')}",
                 "threatSuspected": str(random.choice([True, False])).lower(),
                 "url": f"/api/v1/{event_type.replace('.', '/')}?limit=20"
@@ -189,17 +212,42 @@ def okta_authentication_log() -> str:
             "rootSessionId": str(uuid.uuid4())
         },
         "securityContext": {
-            "asNumber": random.randint(100, 999),
-            "asOrg": random.choice(["comcast cable", "verizon", "att", "cogent communications"]),
-            "isp": random.choice(["Comcast", "Verizon", "AT&T", "Cogent"]),
+            "asNumber": as_number,
+            "asOrg": as_org,
+            "isp": isp,
             "domain": random.choice(["comcast.net", "verizon.net", "att.net", "example.com"]),
-            "isProxy": random.choice([True, False])
+            "isProxy": random.choice([True, False]),
+            "ipDetails": {
+                "asNumber": as_number,
+                "asOrg": as_org,
+                "isp": isp,
+                "ipServiceCategories": [
+                    {"type": "Residential Proxy", "operator": op}
+                    for op in random.sample(_PROXY_OPERATORS, k=3)
+                ],
+            },
         }
     }
+
+    event["request"] = {
+        "ipChain": [
+            {
+                "ip": client["ipAddress"],
+                "geographicalContext": {
+                    "country": event["client"]["geographicalContext"]["country"],
+                    "city": event["client"]["geographicalContext"]["city"],
+                    "postalCode": event["client"]["geographicalContext"]["postalCode"],
+                    "state": event["client"]["geographicalContext"]["state"],
+                    "geolocation": {"lon": lon, "lat": lat},
+                },
+                "version": "V4",
+                "ipDetails": event["securityContext"]["ipDetails"],
+            }
+        ]
+    }
     
-    # Add targets for some event types
-    if "session" in event_type:
-        event["target"] = [{
+    # Add target with app/rule context
+    event["target"] = [{
             "id": str(uuid.uuid4()),
             "type": "AppInstance",
             "alternateId": f"app_{random.randint(1000, 9999)}",

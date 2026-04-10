@@ -30,7 +30,7 @@ class ScenarioHECSender:
         # Platform to product mapping
         self.platform_mapping = {
             "email_security": ["proofpoint", "mimecast", "microsoft_defender_email"],
-            "identity": ["microsoft_azure_ad_signin"],
+            "identity": ["microsoft_azure_ad_signin", "okta_authentication"],
             "endpoint": ["crowdstrike_falcon"],
             "network": ["darktrace"],
             "cloud": ["netskope", "microsoft_365_mgmt_api"],

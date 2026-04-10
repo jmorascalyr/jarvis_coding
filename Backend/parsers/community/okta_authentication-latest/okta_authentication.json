@@ -1,10 +1,10 @@
 {
   "attributes": {
     "dataSource.vendor": "Okta",
-    "dataSource.name": "Okta System Log",
+    "dataSource.name": "Okta",
     "dataSource.category": "security",
     "metadata.product.vendor_name": "Okta",
-    "metadata.product.name": "Okta System Log",
+    "metadata.product.name": "Okta Authentication",
     "metadata.version": "1.0.0"
   },
   "formats": [
@@ -78,6 +78,12 @@
             "copy": {
               "from": "unmapped.displayMessage",
               "to": "message"
+            }
+          },
+          {
+            "copy": {
+              "from": "unmapped.displayMessage",
+              "to": "activity_name"
             }
           },
           {

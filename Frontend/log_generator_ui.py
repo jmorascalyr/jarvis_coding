@@ -392,6 +392,15 @@ def list_scenarios():
             'duration_minutes': 15,
             'total_events': 100,
             'phases': ['Baseline', 'Phishing Delivery', 'Email Interaction', 'Download', 'Execution & Persistence', 'C2', 'Detection & Response']
+        },
+        {
+            'id': 'identity_theft_ransomware',
+            'name': 'Cross-Platform Identity Theft & Ransomware',
+            'description': 'Advanced identity-led attack: esentutl.exe LOLBin credential theft, stolen OAuth refresh-token abuse through Okta, C2 via ScreenConnect/ngrok/AnyDesk, AD recon (SharpHound, ADRecon), LSASS dump + Okta privilege escalation, and ALPHV/BlackCat ransomware execution with VSS deletion.',
+            'duration_minutes': 55,
+            'total_events': 37,
+            'data_sources': ['SentinelOne EDR', 'Okta Authentication', 'Palo Alto Firewall', 'Windows Event Logs'],
+            'phases': ['Initial Access / Credential Theft', 'Command & Control', 'Endpoint Discovery & Staging', 'Credential & Privilege Abuse', 'Ransomware Preparation', 'Ransomware Execution / Impact']
         }
     ]
     
@@ -613,7 +622,7 @@ def run_correlation_scenario():
     local_token = data.get('hec_token')
     overwrite_parser = data.get('overwrite_parser', False)
     suppress_alerts = data.get('suppress_alerts', False)
-    strip_helios_prefix = data.get('strip_helios_prefix', False)
+    include_helios_prefix = data.get('include_helios_prefix', False)
     
     if not scenario_id:
         return jsonify({'error': 'scenario_id is required'}), 400
@@ -769,6 +778,7 @@ def run_correlation_scenario():
             # Map scenario IDs to files
             id_to_file = {
                 'apollo_ransomware_scenario': 'apollo_ransomware_scenario.py',
+                'identity_theft_ransomware': 'identity_theft_ransomware_scenario.py',
             }
             
             filename = id_to_file.get(scenario_id, f"{scenario_id}.py")
@@ -792,6 +802,7 @@ def run_correlation_scenario():
             env['S1_TAG_TRACE'] = '1' if tag_trace else '0'
             if trace_id:
                 env['S1_TRACE_ID'] = trace_id
+            env['SCENARIO_INCLUDE_HELIOS_PREFIX'] = 'true' if include_helios_prefix else 'false'
             
             # Pass UAM credentials for alert detonation
             if uam_ingest_url and uam_account_id and uam_service_token:
@@ -822,9 +833,9 @@ def run_correlation_scenario():
                     yield "INFO: 🔇 Alert detonation suppressed by user\n"
                 else:
                     yield "INFO: 🚨 Alert detonation enabled (UAM credentials found)\n"
-                if strip_helios_prefix:
-                    env['SCENARIO_STRIP_HELIOS_PREFIX'] = 'true'
-                    yield "INFO: ✂️ HELIOS prefix will be stripped from alert titles\n"
+                env['SCENARIO_INCLUDE_HELIOS_PREFIX'] = 'true' if include_helios_prefix else 'false'
+                if include_helios_prefix:
+                    yield "INFO: 🏷️ HELIOS prefix enabled for alert titles\n"
             else:
                 yield "INFO: ⚠️ Alert detonation disabled (no UAM credentials on destination)\n"
             
@@ -1007,6 +1018,7 @@ def run_scenario():
     worker_count = int(data.get('workers', 10))  # Default 10 parallel workers
     tag_phase = data.get('tag_phase', True)
     tag_trace = data.get('tag_trace', True)
+    include_helios_prefix = data.get('include_helios_prefix', False)
     trace_id = (data.get('trace_id') or '').strip()
     generate_noise = data.get('generate_noise', False)
     noise_events_count = int(data.get('noise_events_count', 1200))
@@ -1184,6 +1196,7 @@ def run_scenario():
                 'finance_mfa_fatigue_scenario': 'finance_mfa_fatigue_scenario.py',
                 'insider_cloud_download_exfiltration': 'insider_cloud_download_exfiltration.py',
                 'hr_phishing_pdf_c2': 'hr_phishing_pdf_c2_sender.py',
+                'identity_theft_ransomware': 'identity_theft_ransomware_scenario.py',
             }
             scenarios_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Backend', 'scenarios'))
             # Resolve script path
@@ -1239,6 +1252,8 @@ def run_scenario():
                 except Exception as s1e:
                     logger.warning(f"Could not resolve S1 API token: {s1e}")
                 yield "INFO: 🚨 Alert detonation enabled (UAM credentials found)\n"
+                if include_helios_prefix:
+                    yield "INFO: 🏷️ HELIOS prefix enabled for alert titles\n"
             else:
                 yield "INFO: ⚠️ Alert detonation disabled (no UAM credentials on destination)\n"
             
@@ -1325,7 +1340,7 @@ def run_scenario():
                 yield "INFO: Scenario generation complete\n"
                 # If this scenario produces a JSON file, automatically replay it to HEC
                 try:
-                    if scenario_id in ['finance_mfa_fatigue_scenario', 'insider_cloud_download_exfiltration', 'attack_scenario_orchestrator']:
+                    if scenario_id in ['finance_mfa_fatigue_scenario', 'insider_cloud_download_exfiltration', 'attack_scenario_orchestrator', 'identity_theft_ransomware']:
                         from os import path
                         output_dir = env.get('SCENARIO_OUTPUT_DIR', path.join(scenarios_dir, 'configs'))
                         output_file = path.join(output_dir, f'{scenario_id}.json')

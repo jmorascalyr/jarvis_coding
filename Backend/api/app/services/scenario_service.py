@@ -161,6 +161,19 @@ class ScenarioService:
                     {"name": "Command & Control", "generators": ["sentinelone_endpoint", "paloalto_firewall"], "duration": 1},
                     {"name": "Detection & Response", "generators": ["proofpoint", "sentinelone_endpoint"], "duration": 1}
                 ]
+            },
+            "identity_theft_ransomware": {
+                "id": "identity_theft_ransomware",
+                "name": "Cross-Platform Identity Theft & Ransomware",
+                "description": "Advanced identity-led attack: esentutl.exe LOLBin credential theft, stolen OAuth refresh-token abuse through Okta, C2 via ScreenConnect/ngrok/AnyDesk, AD recon (SharpHound, ADRecon), LSASS dump + Okta privilege escalation, and ALPHV/BlackCat ransomware execution with VSS deletion.",
+                "phases": [
+                    {"name": "Initial Access / Credential Theft", "generators": ["sentinelone_endpoint", "microsoft_windows_eventlog", "okta_authentication"], "duration": 10},
+                    {"name": "Command & Control", "generators": ["sentinelone_endpoint", "paloalto_firewall"], "duration": 5},
+                    {"name": "Endpoint Discovery & Staging", "generators": ["sentinelone_endpoint"], "duration": 10},
+                    {"name": "Credential & Privilege Abuse", "generators": ["sentinelone_endpoint", "microsoft_windows_eventlog", "okta_authentication"], "duration": 10},
+                    {"name": "Ransomware Preparation", "generators": ["sentinelone_endpoint"], "duration": 10},
+                    {"name": "Ransomware Execution / Impact", "generators": ["sentinelone_endpoint", "microsoft_windows_eventlog"], "duration": 10}
+                ]
             }
         }
         self._load_json_scenarios()
@@ -240,6 +253,12 @@ class ScenarioService:
         
         # Add metadata
         for scenario in scenarios:
+            data_sources = sorted({
+                generator
+                for phase in scenario.get("phases", [])
+                for generator in phase.get("generators", [])
+            })
+            scenario["data_sources"] = data_sources
             scenario["phase_count"] = len(scenario.get("phases", []))
             scenario["estimated_duration_minutes"] = sum(
                 phase.get("duration", 0) for phase in scenario.get("phases", [])
@@ -293,7 +312,7 @@ class ScenarioService:
         dry_run: bool = False,
         overwrite_parser: bool = False,
         suppress_alerts: bool = False,
-        strip_helios_prefix: bool = False,
+        include_helios_prefix: bool = False,
         background_tasks=None
     ) -> str:
         """Start correlation scenario execution with SIEM context and trace ID support"""
@@ -312,7 +331,7 @@ class ScenarioService:
             "tag_trace": tag_trace,
             "overwrite_parser": overwrite_parser,
             "suppress_alerts": suppress_alerts,
-            "strip_helios_prefix": strip_helios_prefix,
+            "include_helios_prefix": include_helios_prefix,
             "progress": 0
         }
         
@@ -326,7 +345,7 @@ class ScenarioService:
                 tag_phase,
                 tag_trace,
                 suppress_alerts,
-                strip_helios_prefix
+                include_helios_prefix
             )
         
         return execution_id
@@ -340,7 +359,7 @@ class ScenarioService:
         tag_phase: bool = True,
         tag_trace: bool = True,
         suppress_alerts: bool = False,
-        strip_helios_prefix: bool = False
+        include_helios_prefix: bool = False
     ):
         """Execute correlation scenario with SIEM context and trace ID support"""
         import sys
@@ -362,13 +381,19 @@ class ScenarioService:
                 os.environ['S1_TRACE_ID'] = trace_id
             os.environ['S1_TAG_PHASE'] = '1' if tag_phase else '0'
             os.environ['S1_TAG_TRACE'] = '1' if tag_trace else '0'
+            os.environ['SCENARIO_INCLUDE_HELIOS_PREFIX'] = 'true' if include_helios_prefix else 'false'
             
             # Import and run the scenario
-            module = __import__(scenario_id)
-            scenario_result = module.generate_apollo_ransomware_scenario(
+            scenario_module_map = {
+                'apollo_ransomware_scenario': ('apollo_ransomware_scenario', 'generate_apollo_ransomware_scenario'),
+                'identity_theft_ransomware': ('identity_theft_ransomware_scenario', 'generate_identity_theft_ransomware_scenario'),
+            }
+            module_name, function_name = scenario_module_map.get(scenario_id, (scenario_id, f'generate_{scenario_id}'))
+            module = __import__(module_name)
+            scenario_func = getattr(module, function_name)
+            scenario_result = scenario_func(
                 siem_context=siem_context,
-                suppress_alerts=suppress_alerts,
-                strip_helios_prefix=strip_helios_prefix,
+                include_helios_prefix=include_helios_prefix,
             )
             
             # Update execution status
@@ -391,6 +416,8 @@ class ScenarioService:
                 os.environ.pop('S1_TRACE_ID', None)
             os.environ.pop('S1_TAG_PHASE', None)
             os.environ.pop('S1_TAG_TRACE', None)
+            os.environ.pop('SCENARIO_INCLUDE_HELIOS_PREFIX', None)
+
     
     async def _execute_scenario(self, execution_id: str, scenario: Dict[str, Any]):
         """Execute scenario in background"""

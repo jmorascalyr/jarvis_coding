@@ -42,7 +42,7 @@ class CorrelationRunRequest(BaseModel):
     workers: int = 10
     overwrite_parser: bool = False
     suppress_alerts: bool = False
-    strip_helios_prefix: bool = False
+    include_helios_prefix: bool = False
 
 # Initialize scenario service
 scenario_service = ScenarioService()
@@ -146,6 +146,15 @@ async def get_scenario_templates(
             "generators": ["proofpoint", "microsoft_365_collaboration", "sentinelone_endpoint", "paloalto_firewall"],
             "severity": "high",
             "mitre_tactics": ["T1566.002", "T1204.002", "T1059.001", "T1053.005", "T1071.001"]
+        },
+        {
+            "id": "identity_theft_ransomware",
+            "name": "Cross-Platform Identity Theft & Ransomware",
+            "description": "Advanced identity-led attack: esentutl.exe LOLBin credential theft, stolen OAuth refresh-token abuse through Okta, C2 via ScreenConnect/ngrok/AnyDesk, AD recon (SharpHound, ADRecon), LSASS dump + Okta privilege escalation, and ALPHV/BlackCat ransomware execution with VSS deletion.",
+            "duration_minutes": 55,
+            "generators": ["sentinelone_endpoint", "okta_authentication", "paloalto_firewall", "microsoft_windows_eventlog"],
+            "severity": "critical",
+            "mitre_tactics": ["T1539", "T1550.001", "T1078", "T1071.001", "T1059.001", "T1003.001", "T1486", "T1490"]
         }
     ]
     
@@ -193,7 +202,20 @@ async def list_correlation_scenarios(
     except ImportError as e:
         logger.warning(f"Failed to import apollo_ransomware_scenario: {e}")
     
-    # Add more correlation scenarios here as they are created
+    # Identity Theft & Ransomware Scenario
+    try:
+        from identity_theft_ransomware_scenario import CORRELATION_CONFIG as SS_CORRELATION_CONFIG
+        correlation_scenarios.append({
+            "id": SS_CORRELATION_CONFIG["scenario_id"],
+            "name": SS_CORRELATION_CONFIG["name"],
+            "description": SS_CORRELATION_CONFIG["description"],
+            "default_query": SS_CORRELATION_CONFIG["default_query"],
+            "time_anchors": SS_CORRELATION_CONFIG["time_anchors"],
+            "phase_mapping": SS_CORRELATION_CONFIG["phase_mapping"],
+            "fallback_behavior": SS_CORRELATION_CONFIG.get("fallback_behavior", "offset_from_now")
+        })
+    except ImportError as e:
+        logger.warning(f"Failed to import identity_theft_ransomware_scenario: {e}")
     
     return BaseResponse(
         success=True,
@@ -324,7 +346,7 @@ async def run_correlation_scenario(
             tag_trace=request.tag_trace,
             overwrite_parser=request.overwrite_parser,
             suppress_alerts=request.suppress_alerts,
-            strip_helios_prefix=request.strip_helios_prefix,
+            include_helios_prefix=request.include_helios_prefix,
             background_tasks=background_tasks
         )
         

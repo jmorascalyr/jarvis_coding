@@ -149,6 +149,15 @@ class ScenarioService:
                     {"name": "Data Exfiltration", "generators": ["microsoft_365_collaboration"], "duration": 10}
                 ]
             },
+            "tor_user": {
+                "id": "tor_user",
+                "name": "Tor User",
+                "description": "Palo Alto firewall logs showing Tor usage followed by Okta authentication for the same user. Triggers Tor-usage detections with cross-source pivoting.",
+                "phases": [
+                    {"name": "Tor Browsing", "generators": ["paloalto_firewall"], "duration": 5},
+                    {"name": "Okta Login", "generators": ["okta_authentication"], "duration": 5}
+                ]
+            },
             "hr_phishing_pdf_c2": {
                 "id": "hr_phishing_pdf_c2",
                 "name": "HR Phishing PDF -> PowerShell -> Scheduled Task -> C2",
@@ -395,6 +404,26 @@ class ScenarioService:
     async def _execute_scenario(self, execution_id: str, scenario: Dict[str, Any]):
         """Execute scenario in background"""
         try:
+            # Special handling: invoke sender for Tor User scenario
+            if scenario.get("id") == "tor_user":
+                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+                scenarios_dir = os.path.join(base_dir, "scenarios")
+                if scenarios_dir not in sys.path:
+                    sys.path.insert(0, scenarios_dir)
+                try:
+                    sender = importlib.import_module("tor_user_sender")
+                    workers_env = os.getenv("S1_HEC_WORKERS", "4")
+                    workers = int(workers_env) if workers_env.isdigit() else 4
+                    await asyncio.to_thread(sender.send_tor_user, workers)
+                    self.running_scenarios[execution_id]["status"] = "completed"
+                    self.running_scenarios[execution_id]["completed_at"] = datetime.utcnow().isoformat()
+                    return
+                except Exception as e:
+                    logger.error(f"Failed to run Tor User scenario sender: {e}")
+                    self.running_scenarios[execution_id]["status"] = "failed"
+                    self.running_scenarios[execution_id]["error"] = str(e)
+                    return
+
             # Special handling: invoke sender for HR phishing scenario to generate and send real events
             if scenario.get("id") == "hr_phishing_pdf_c2":
                 # Compute repo root and add scenarios path for import

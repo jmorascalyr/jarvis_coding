@@ -392,6 +392,14 @@ def list_scenarios():
             'duration_minutes': 15,
             'total_events': 100,
             'phases': ['Baseline', 'Phishing Delivery', 'Email Interaction', 'Download', 'Execution & Persistence', 'C2', 'Detection & Response']
+        },
+        {
+            'id': 'tor_user',
+            'name': 'Tor User',
+            'description': 'Palo Alto firewall logs showing Tor usage (app=tor) followed by Okta authentication for the same user. Triggers Tor-usage detections with cross-source pivoting.',
+            'duration_minutes': 10,
+            'total_events': 20,
+            'phases': ['Tor Browsing (Palo Alto)', 'Okta Login']
         }
     ]
     
@@ -434,7 +442,8 @@ def list_all_scenarios():
         {'id': 'insider_cloud_download_exfiltration', 'name': 'Insider Data Exfiltration via Cloud Download'},
         {'id': 'scenario_hec_sender', 'name': 'Scenario HEC Sender'},
         {'id': 'star_trek_integration_test', 'name': 'Integration Test (Star Trek)'},
-        {'id': 'hr_phishing_pdf_c2', 'name': 'HR Phishing PDF → PowerShell → Task → C2'}
+        {'id': 'hr_phishing_pdf_c2', 'name': 'HR Phishing PDF → PowerShell → Task → C2'},
+        {'id': 'tor_user', 'name': 'Tor User'}
     ]
     return jsonify(scenarios)
 
@@ -1184,6 +1193,7 @@ def run_scenario():
                 'finance_mfa_fatigue_scenario': 'finance_mfa_fatigue_scenario.py',
                 'insider_cloud_download_exfiltration': 'insider_cloud_download_exfiltration.py',
                 'hr_phishing_pdf_c2': 'hr_phishing_pdf_c2_sender.py',
+                'tor_user': 'tor_user_sender.py',
             }
             scenarios_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Backend', 'scenarios'))
             # Resolve script path
@@ -1203,6 +1213,7 @@ def run_scenario():
             env['S1_HEC_URL'] = clean_url
             yield f"INFO: Using HEC URL: {clean_url}\n"
             yield f"INFO: Debug mode: {'ON' if debug_mode else 'OFF'}\n"
+            env['S1_HEC_DEBUG'] = '1' if debug_mode else '0'
             env['S1_HEC_WORKERS'] = str(worker_count)  # Pass worker count to scripts
             env['S1_HEC_BATCH'] = '0'  # Disable batch mode for immediate responses
             # Prefer a writable location inside the container for scenario outputs
@@ -1883,6 +1894,10 @@ def generate_logs():
     syslog_port = int(data.get('port')) if data.get('port') is not None else None
     syslog_protocol = data.get('protocol')
     product_id = data.get('product')
+    product_aliases = {
+        'okta_system_log': 'okta_authentication',
+    }
+    product_id = product_aliases.get(product_id, product_id)
     local_hec_token = data.get('hec_token')  # Token from browser localStorage
     metadata_fields = data.get('metadata')  # Custom metadata fields as JSON object
     # Unified destination id (preferred)

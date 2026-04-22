@@ -608,7 +608,8 @@ _CONNECTION_CACHE = {
     'verify': DEFAULT_VERIFY_TLS,
     'tls_low': DEFAULT_TLS_LOW,
     'auth_scheme': None,
-    'session': None
+    'session': None,
+    'raw_fallback': False,
 }
 
 # Batch mode controls
@@ -788,27 +789,51 @@ def _send_batch(lines: list, is_json: bool, product: str):
     POST = _CONNECTION_CACHE['session']
     headers_auth = {**HEADERS}
     headers_auth["Authorization"] = f"{_CONNECTION_CACHE['auth_scheme']} {HEC_TOKEN}"
-    # Both endpoints use text/plain with gzip for batched events
     body = "\n".join(lines).encode('utf-8')
     
     # Use fast compression (level 1) for high throughput - trades compression ratio for speed
     # Level 1 is ~10x faster than default level 9, with only ~10% larger output
     gz = gzip.compress(body, compresslevel=1)
-    headers = {**headers_auth, "Content-Type": "text/plain", "Content-Encoding": "gzip"}
     
-    if is_json:
-        # JSON products to /event endpoint
-        url = _CONNECTION_CACHE['event_base']
-    else:
-        # Raw/syslog products to /raw endpoint
-        url = f"{_CONNECTION_CACHE['raw_base']}?{_build_qs(product)}"
-    
-    # Show batch flush in info mode and above (not debug only)
     if _VERBOSITY in ('info', 'verbose', 'debug'):
         print(f"[BATCH] Flushing {len(lines)} events ({len(gz)} bytes compressed)", flush=True)
         sys.stdout.flush()
     
-    resp = POST(url, headers=headers, data=gz, timeout=30)
+    if is_json:
+        # JSON products to /event endpoint — must use application/json
+        url = _CONNECTION_CACHE['event_base']
+        headers = {**headers_auth, "Content-Type": "application/json", "Content-Encoding": "gzip"}
+        resp = POST(url, headers=headers, data=gz, timeout=30)
+    elif not _CONNECTION_CACHE['raw_fallback']:
+        # Raw products: try /raw first
+        raw_url = f"{_CONNECTION_CACHE['raw_base']}?{_build_qs(product)}"
+        raw_headers = {**headers_auth, "Content-Type": "text/plain", "Content-Encoding": "gzip"}
+        try:
+            resp = POST(raw_url, headers=raw_headers, data=gz, timeout=30)
+            resp.raise_for_status()
+            if _VERBOSITY == 'debug':
+                print(f"[BATCH] Response: {resp.status_code} - {resp.text[:200] if resp.text else 'OK'}", flush=True)
+                sys.stdout.flush()
+            return
+        except Exception as raw_err:
+            if _VERBOSITY in ('info', 'verbose', 'debug'):
+                print(f"[BATCH] /raw failed ({type(raw_err).__name__}: {raw_err}), switching to /event with _raw wrapper", flush=True)
+                sys.stdout.flush()
+            _CONNECTION_CACHE['raw_fallback'] = True
+            # Fall through to _raw JSON wrapper below
+            event_lines = [json.dumps(_envelope({"_raw": l}, product, {}, None), separators=(",", ":")) for l in lines]
+            event_gz = gzip.compress("\n".join(event_lines).encode('utf-8'), compresslevel=1)
+            url = _CONNECTION_CACHE['event_base']
+            headers = {**headers_auth, "Content-Type": "application/json", "Content-Encoding": "gzip"}
+            resp = POST(url, headers=headers, data=event_gz, timeout=30)
+    else:
+        # raw_fallback already cached — go straight to /event with _raw wrapper
+        event_lines = [json.dumps(_envelope({"_raw": l}, product, {}, None), separators=(",", ":")) for l in lines]
+        event_gz = gzip.compress("\n".join(event_lines).encode('utf-8'), compresslevel=1)
+        url = _CONNECTION_CACHE['event_base']
+        headers = {**headers_auth, "Content-Type": "application/json", "Content-Encoding": "gzip"}
+        resp = POST(url, headers=headers, data=event_gz, timeout=30)
+    
     resp.raise_for_status()
     
     if _VERBOSITY == 'debug':
@@ -1196,15 +1221,16 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
             env_raw = base + "/raw"
     bases = []
     if env_event and env_raw:
+        # Explicit URL configured — use only that; don't fall back to other regions
+        # (tokens are region-specific and cross-region fallback would also fail)
         bases.append((env_event, env_raw))
-    bases.extend([
-        ("https://ingest.us1.sentinelone.net/services/collector/event",
-         "https://ingest.us1.sentinelone.net/services/collector/raw"),
-        ("https://ingest.usea1.sentinelone.net/services/collector/event",
-         "https://ingest.usea1.sentinelone.net/services/collector/raw"),
-        ("https://ingest.sentinelone.net/services/collector/event",
-         "https://ingest.sentinelone.net/services/collector/raw"),
-    ])
+    else:
+        bases.extend([
+            ("https://ingest.us1.sentinelone.net/services/collector/event",
+             "https://ingest.us1.sentinelone.net/services/collector/raw"),
+            ("https://ingest.usea1.sentinelone.net/services/collector/event",
+             "https://ingest.usea1.sentinelone.net/services/collector/raw"),
+        ])
 
     # Try verification/TLS combinations (secure → low TLS → insecure as last resort)
     combos = [
@@ -1249,6 +1275,12 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
             if product in JSON_PRODUCTS:
                 url = _CONNECTION_CACHE['event_base']
                 payload = _envelope(line, product, attr_fields, event_time)
+                headers = {**headers_auth, "Content-Type": "application/json"}
+                resp = POST(url, headers=headers, json=payload, timeout=10)
+            elif _CONNECTION_CACHE['raw_fallback']:
+                url = _CONNECTION_CACHE['event_base']
+                raw_str = line if isinstance(line, str) else json.dumps(line, separators=(",", ":"))
+                payload = _envelope({"_raw": raw_str}, product, attr_fields, event_time)
                 headers = {**headers_auth, "Content-Type": "application/json"}
                 resp = POST(url, headers=headers, json=payload, timeout=10)
             else:
@@ -1322,6 +1354,43 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
                     last_error = e
                     # On SSL/connection errors, continue to next combo/base
                     continue
+
+    # For raw products: retry all bases using /event with _raw JSON wrapper as fallback
+    if product not in JSON_PRODUCTS:
+        for event_base, raw_base in bases:
+            for verify, tls_low in combos:
+                POST = _make_poster(verify=verify, tls_low=tls_low)
+                for scheme in auth_schemes:
+                    headers_auth = {**HEADERS}
+                    headers_auth["Authorization"] = f"{scheme} {HEC_TOKEN}"
+                    raw_str = line if isinstance(line, str) else json.dumps(line, separators=(",", ":"))
+                    try:
+                        url = event_base
+                        payload = _envelope({"_raw": raw_str}, product, attr_fields, event_time)
+                        headers = {**headers_auth, "Content-Type": "application/json"}
+                        if DEBUG:
+                            print(f"[DEBUG] Sending to {url} (_raw fallback)")
+                        resp = POST(url, headers=headers, json=payload, timeout=10)
+                        if resp.status_code in (401, 403) and scheme == auth_schemes[0]:
+                            continue
+                        resp.raise_for_status()
+                        _CONNECTION_CACHE['configured'] = True
+                        _CONNECTION_CACHE['event_base'] = event_base
+                        _CONNECTION_CACHE['raw_base'] = raw_base
+                        _CONNECTION_CACHE['verify'] = verify
+                        _CONNECTION_CACHE['tls_low'] = tls_low
+                        _CONNECTION_CACHE['auth_scheme'] = scheme
+                        _CONNECTION_CACHE['session'] = POST
+                        _CONNECTION_CACHE['raw_fallback'] = True
+                        if _VERBOSITY in ('info', 'verbose', 'debug'):
+                            print(f"[INFO] /raw not supported, using /event+_raw wrapper for {product}", flush=True)
+                        try:
+                            return resp.json()
+                        except ValueError:
+                            return {"status": "OK", "code": resp.status_code}
+                    except Exception as e:
+                        last_error = e
+                        continue
 
     # If all attempts failed, raise last error for visibility
     if last_error:

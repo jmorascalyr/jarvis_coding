@@ -452,6 +452,10 @@
                             <span class="text-[#f3e8ff]" id="scenario-duration"></span>
                         </div>
                         <div>
+                            <span class="font-semibold text-[#c8b3e8] block mb-1">Data Sources:</span>
+                            <ul id="scenario-data-sources" class="list-disc list-inside text-[#b8a0d2]"></ul>
+                        </div>
+                        <div>
                             <span class="font-semibold text-[#c8b3e8] block mb-1">Attack Phases:</span>
                             <ul id="scenario-phases" class="list-disc list-inside text-[#b8a0d2]"></ul>
                         </div>
@@ -537,6 +541,17 @@
                                 <span class="text-[#f3e8ff]">Overwrite existing parsers</span>
                             </label>
                             <p class="text-xs text-[#b8a0d2]">If checked, will overwrite existing parsers in the destination SIEM instead of skipping them. Use with caution.</p>
+                        </div>
+                    </details>
+
+                    <details class="bg-[#241d3a] rounded-lg p-3 border border-[#3c325c]">
+                        <summary class="cursor-pointer text-sm font-semibold text-[#c8b3e8]">Alert Options</summary>
+                        <div class="mt-3 space-y-2 text-sm">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" id="scenario-include-helios-prefix">
+                                <span class="text-[#f3e8ff]">Include <code>HELIOS -</code> prefix in alert titles</span>
+                            </label>
+                            <p class="text-xs text-[#b8a0d2]">When unchecked, scenario alerts use plain product-style titles by default.</p>
                         </div>
                     </details>
 
@@ -804,10 +819,10 @@
                         </label>
                         <p class="text-xs text-[#b8a0d2]">Skip sending UAM alerts even if credentials are configured on the destination.</p>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" id="correlation-strip-helios-prefix">
-                            <span class="text-[#f3e8ff]">Strip <code>HELIOS -</code> prefix from alert titles</span>
+                            <input type="checkbox" id="correlation-include-helios-prefix">
+                            <span class="text-[#f3e8ff]">Include <code>HELIOS -</code> prefix in alert titles</span>
                         </label>
-                        <p class="text-xs text-[#b8a0d2]">Remove the "HELIOS - " prefix from alert titles before sending to S1.</p>
+                        <p class="text-xs text-[#b8a0d2]">When unchecked, correlation alerts use plain product-style titles by default.</p>
                     </div>
                 </details>
 
@@ -2724,6 +2739,14 @@
                 }
                 document.getElementById('scenario-duration').textContent = duration;
                 
+                const dataSourcesList = document.getElementById('scenario-data-sources');
+                dataSourcesList.innerHTML = '';
+                (scenario.data_sources || []).forEach(source => {
+                    const li = document.createElement('li');
+                    li.textContent = source;
+                    dataSourcesList.appendChild(li);
+                });
+                
                 const phasesList = document.getElementById('scenario-phases');
                 phasesList.innerHTML = '';
                 (scenario.phases || []).forEach(phase => {
@@ -2848,6 +2871,7 @@
                 
                 // Parser options
                 const overwriteParser = document.getElementById('scenario-overwrite-parser')?.checked || false;
+                const includeHeliosPrefix = document.getElementById('scenario-include-helios-prefix')?.checked || false;
                 
                 // Get local token if available
                 let localToken = null;
@@ -2870,6 +2894,7 @@
                         generate_noise: generateNoise,
                         noise_events_count: noiseEventsCount,
                         overwrite_parser: overwriteParser,
+                        include_helios_prefix: includeHeliosPrefix,
                         hec_token: localToken,  // Pass local token if available
                         debug_mode: debugMode   // Pass debug mode for server-side filtering
                     }),
@@ -3503,7 +3528,7 @@
             const tagTrace = document.getElementById('correlation-tag-trace').checked;
             const overwriteParser = document.getElementById('correlation-overwrite-parser').checked;
             const suppressAlerts = document.getElementById('correlation-suppress-alerts').checked;
-            const stripHeliosPrefix = document.getElementById('correlation-strip-helios-prefix').checked;
+            const includeHeliosPrefix = document.getElementById('correlation-include-helios-prefix').checked;
             let traceId = correlationTraceIdInput.value.trim();
             
             if (tagTrace && !traceId) {
@@ -3537,7 +3562,7 @@
                         trace_id: traceId,
                         overwrite_parser: overwriteParser,
                         suppress_alerts: suppressAlerts,
-                        strip_helios_prefix: stripHeliosPrefix,
+                        include_helios_prefix: includeHeliosPrefix,
                         hec_token: localToken
                     })
                 });

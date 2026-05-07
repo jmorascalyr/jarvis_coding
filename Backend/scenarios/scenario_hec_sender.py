@@ -32,7 +32,7 @@ class ScenarioHECSender:
             "email_security": ["proofpoint", "mimecast", "microsoft_defender_email"],
             "identity": ["microsoft_azure_ad_signin"],
             "endpoint": ["crowdstrike_falcon"],
-            "network": ["darktrace"],
+            "network": ["darktrace", "paloalto_firewall"],
             "cloud": ["netskope", "microsoft_365_mgmt_api"],
             "privileged_access": ["cyberark_pas", "beyondtrust_passwordsafe"],
             "secrets": ["hashicorp_vault"],
@@ -172,7 +172,9 @@ class ScenarioHECSender:
 
             # Build raw event body from 'event' field (dict -> JSON, str -> as-is)
             payload = event.get('event', {})
-            if isinstance(payload, dict):
+            if product == 'paloalto_firewall' and isinstance(payload, dict) and 'raw' in payload:
+                raw_event = str(payload['raw'])
+            elif isinstance(payload, dict):
                 raw_event = json.dumps(payload, separators=(',', ':'))
             else:
                 raw_event = str(payload)

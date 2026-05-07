@@ -150,30 +150,39 @@ CORRELATION_CONFIG = {
 
 # Alert configuration for scenario phases
 ALERT_PHASE_MAPPING = {
-    "📬 PHASE 2: Email Interaction": {
-        "template": "proofpoint_email_alert",
+    "� PHASE 1: Phishing Email Delivery": {
+        "template": "default_alert",
         "offset_minutes": 2,  # 2 min after delivery (user clicks link)
         "target_machine": "email",
         "overrides": {
-            "finding_info.title": "HELIOS - Malicious Email Link Clicked",
+            "finding_info.title": "Malicious Email Link Clicked",
             "finding_info.desc": f"User {VICTIM_PROFILE['email']} clicked malicious link in phishing email from {ATTACKER_PROFILE['sender_email']}"
         }
     },
+    "� PHASE 2: Email Interaction": {
+        "template": "default_alert",
+        "offset_minutes": 2,  # 2 min after delivery (user clicks link)
+        "target_machine": "email",
+        "overrides": {
+            "finding_info.title": "Email Interaction",
+            "finding_info.desc": f"User {VICTIM_PROFILE['email']} interacted with phishing email from {ATTACKER_PROFILE['sender_email']}"
+        }
+    },
     "📤 PHASE 4: Data Exfiltration": {
-        "template": "sharepoint_data_exfil_alert",
+        "template": "advanced_sample_alert",
         "offset_minutes": 25,  # After last document download (base+24:30)
         "target_machine": "email",
         "overrides": {
-            "finding_info.title": "HELIOS - Data Exfiltration from SharePoint",
+            "finding_info.title": "Data Exfiltration from SharePoint",
             "finding_info.desc": f"User {VICTIM_PROFILE['email']} downloaded sensitive documents including Personnel Records and Command Codes"
         }
     },
     "rdp_download": {
-        "template": "o365_rdp_sharepoint_access",
+        "template": "advanced_sample_alert",
         "offset_minutes": 35,  # After RDP file download event (base+25)
         "target_machine": "email",
         "overrides": {
-            "finding_info.title": "HELIOS - OneDrive RDP Files Downloaded",
+            "finding_info.title": "OneDrive RDP Files Downloaded",
             "finding_info.desc": f"User {VICTIM_PROFILE['email']} downloaded RDP files from SharePoint - potential lateral movement preparation"
         }
     },
@@ -308,7 +317,7 @@ def send_phase_alert(
     phase_name: str,
     base_time: datetime,
     uam_config: dict,
-    strip_helios_prefix: bool = False
+    include_helios_prefix: bool = False
 ) -> bool:
     """Send alert for a specific phase with correct timing.
     
@@ -380,11 +389,11 @@ def send_phase_alert(
         else:
             alert[key] = value
     
-    # Strip "HELIOS - " prefix from alert title if requested
-    if strip_helios_prefix:
+    # Add HELIOS prefix to alert title if requested
+    if include_helios_prefix:
         title = alert.get("finding_info", {}).get("title", "")
-        if title.startswith("HELIOS - "):
-            alert["finding_info"]["title"] = title[len("HELIOS - "):]
+        if title and not title.startswith("HELIOS - "):
+            alert["finding_info"]["title"] = f"HELIOS - {title}"
     
     # Send alert via UAM ingest API
     try:
@@ -710,7 +719,7 @@ EXFIL_DAY_EXTRA_FILES = [
     ("Xenobiology-Research-Data.xlsx", "/sites/Science/Shared Documents/Research/"),
     ("Astrophysics-Survey-Results.xlsx", "/sites/Science/Shared Documents/Surveys/"),
     ("Subspace-Anomaly-Catalog.xlsx", "/sites/Science/Shared Documents/Anomalies/"),
-    ("Medical-Research-Trials.xlsx", "/sites/Medical/Shared Documents/Research/"),
+    ("Medical-Research-Classified.xlsx", "/sites/Medical/Shared Documents/Research/"),
     ("Pharmaceutical-Inventory.xlsx", "/sites/Medical/Shared Documents/Inventory/"),
     ("Crew-Medical-Records-Full.xlsx", "/sites/Medical/Shared Documents/Records/"),
     ("Quarantine-Protocols.docx", "/sites/Medical/Shared Documents/Protocols/"),
@@ -819,7 +828,7 @@ def generate_m365_sharepoint_exfil(base_time: datetime) -> List[Dict]:
     
     On the exfil day the attacker downloads ~120 files — the original
     sensitive documents plus a large bulk sweep of everything they can
-    reach, creating a 10× spike over the normal ~10 files/day baseline.
+    reach, creating a massive spike compared to the normal ~10 files/day.
     """
     events = []
     
@@ -912,7 +921,7 @@ def generate_m365_sharepoint_exfil(base_time: datetime) -> List[Dict]:
 def generate_apollo_ransomware_scenario(
     siem_context: Optional[Dict] = None,
     suppress_alerts: Optional[bool] = None,
-    strip_helios_prefix: Optional[bool] = None,
+    include_helios_prefix: Optional[bool] = None,
 ) -> Dict:
     """Generate the complete Apollo ransomware scenario (Proofpoint + M365 only)
     
@@ -922,13 +931,13 @@ def generate_apollo_ransomware_scenario(
                       If provided, timestamps are calculated relative to existing EDR/WEL data.
                       If None, falls back to offset from current time.
         suppress_alerts: If True, skip sending UAM alerts. Env fallback: SCENARIO_SUPPRESS_ALERTS.
-        strip_helios_prefix: If True, remove "HELIOS - " prefix from alert titles. Env fallback: SCENARIO_STRIP_HELIOS_PREFIX.
+        include_helios_prefix: If True, add "HELIOS - " prefix to alert titles. Env fallback: SCENARIO_INCLUDE_HELIOS_PREFIX.
     """
     # Resolve options from args or env vars
     if suppress_alerts is None:
         suppress_alerts = os.getenv('SCENARIO_SUPPRESS_ALERTS', 'false').lower() == 'true'
-    if strip_helios_prefix is None:
-        strip_helios_prefix = os.getenv('SCENARIO_STRIP_HELIOS_PREFIX', 'false').lower() == 'true'
+    if include_helios_prefix is None:
+        include_helios_prefix = os.getenv('SCENARIO_INCLUDE_HELIOS_PREFIX', 'false').lower() == 'true'
     
     # Determine base time based on SIEM context or fallback
     use_correlation = False
@@ -1036,8 +1045,8 @@ def generate_apollo_ransomware_scenario(
             print("\n🚨 ALERT DETONATION ENABLED")
             print(f"   UAM Ingest: {uam_ingest_url}")
             print(f"   Account ID: {uam_account_id}")
-            if strip_helios_prefix:
-                print(f"   Strip HELIOS prefix: Yes")
+            if include_helios_prefix:
+                print(f"   Include HELIOS prefix: Yes")
             print("=" * 80)
         else:
             print("⚠️  SCENARIO_ALERTS_ENABLED=true but UAM credentials missing")
@@ -1096,13 +1105,13 @@ def generate_apollo_ransomware_scenario(
         phase_alert_key = phase_name.split(" (~")[0] if " (~" in phase_name else phase_name
         if alerts_enabled and phase_alert_key in ALERT_PHASE_MAPPING:
             print(f"   📤 Sending alert for {phase_name}...", end=" ")
-            success = send_phase_alert(phase_alert_key, phase_base_time, uam_config, strip_helios_prefix=strip_helios_prefix)
+            success = send_phase_alert(phase_alert_key, phase_base_time, uam_config, include_helios_prefix=include_helios_prefix)
             print(f"{'✓' if success else '✗'}")
         
         # Send RDP alert after data exfiltration phase
         if alerts_enabled and "PHASE 4: Data Exfiltration" in phase_name:
             print(f"   📤 Sending RDP download alert...", end=" ")
-            success = send_phase_alert("rdp_download", phase_base_time, uam_config, strip_helios_prefix=strip_helios_prefix)
+            success = send_phase_alert("rdp_download", phase_base_time, uam_config, include_helios_prefix=include_helios_prefix)
             print(f"{'✓' if success else '✗'}")
     
     # Send standalone WEL alerts (not tied to a specific event generation phase)
@@ -1116,7 +1125,7 @@ def generate_apollo_ransomware_scenario(
         ]
         for alert_key, alert_desc in wel_alerts:
             print(f"   📤 {alert_desc}...", end=" ")
-            success = send_phase_alert(alert_key, base_time, uam_config, strip_helios_prefix=strip_helios_prefix)
+            success = send_phase_alert(alert_key, base_time, uam_config, include_helios_prefix=include_helios_prefix)
             print(f"{'✓' if success else '✗'}")
     
     all_events.sort(key=lambda x: x["timestamp"])

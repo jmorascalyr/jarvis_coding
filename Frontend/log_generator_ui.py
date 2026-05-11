@@ -23,6 +23,13 @@ EVENT_GENERATORS_DIR = os.path.join(os.getcwd(), 'event_generators')
 API_BASE_URL = os.environ.get('API_BASE_URL', 'http://localhost:8000')
 BACKEND_API_KEY = os.environ.get('BACKEND_API_KEY')
 
+LUA_SCENARIOS = {
+    'identity_theft_ransomware_lua': {
+        'script': 'lua/identity_theft_ransomware.lua',
+        'output': 'identity_theft_ransomware_lua.json',
+    }
+}
+
 @app.route('/')
 def index():
     return render_template('log_generator.html')
@@ -397,9 +404,21 @@ def list_scenarios():
             'name': 'Cross-Platform Identity Theft & Ransomware',
             'description': 'Advanced identity-led attack: esentutl.exe LOLBin credential theft, stolen OAuth refresh-token abuse through Okta, C2 via ScreenConnect/ngrok/AnyDesk, AD recon (SharpHound, ADRecon), LSASS dump + Okta privilege escalation, and ALPHV/BlackCat ransomware execution with VSS deletion.',
             'duration_minutes': 55,
-            'total_events': 37,
+            'total_events': 48,
             'data_sources': ['SentinelOne EDR', 'Okta Authentication', 'Palo Alto Firewall', 'Windows Event Logs'],
             'phases': ['Initial Access / Credential Theft', 'Command & Control', 'Endpoint Discovery & Staging', 'Credential & Privilege Abuse', 'Ransomware Preparation', 'Ransomware Execution / Impact']
+        },
+        {
+            'id': 'identity_theft_ransomware_lua',
+            'name': 'Cross-Platform Identity Theft & Ransomware (Lua)',
+            'description': 'Portable Lua version of the identity-led ransomware scenario using the unified Lua sender API.',
+            'duration_minutes': 55,
+            'total_events': 48,
+            'engine': 'lua',
+            'data_sources': ['SentinelOne EDR', 'Okta Authentication', 'Palo Alto Firewall', 'Windows Event Logs'],
+            'phases': ['Credential Theft', 'Identity Abuse', 'Command and Control', 'Discovery and Staging', 'Privilege Abuse', 'Ransomware Preparation', 'Ransomware Execution', 'Ransomware Impact']
+        },
+        {
             'id': 'tor_user',
             'name': 'Tor User',
             'description': 'Palo Alto firewall logs showing Tor usage (app=tor) followed by Okta authentication for the same user. Triggers Tor-usage detections with cross-source pivoting.',
@@ -449,6 +468,8 @@ def list_all_scenarios():
         {'id': 'scenario_hec_sender', 'name': 'Scenario HEC Sender'},
         {'id': 'star_trek_integration_test', 'name': 'Integration Test (Star Trek)'},
         {'id': 'hr_phishing_pdf_c2', 'name': 'HR Phishing PDF → PowerShell → Task → C2'},
+        {'id': 'identity_theft_ransomware', 'name': 'Cross-Platform Identity Theft & Ransomware'},
+        {'id': 'identity_theft_ransomware_lua', 'name': 'Cross-Platform Identity Theft & Ransomware (Lua)'},
         {'id': 'tor_user', 'name': 'Tor User'}
     ]
     return jsonify(scenarios)
@@ -811,7 +832,8 @@ def run_correlation_scenario():
             env['SCENARIO_INCLUDE_HELIOS_PREFIX'] = 'true' if include_helios_prefix else 'false'
             
             # Pass UAM credentials for alert detonation
-            if uam_ingest_url and uam_account_id and uam_service_token:
+            have_uam_creds = bool(uam_ingest_url and uam_account_id and uam_service_token)
+            if have_uam_creds:
                 env['SCENARIO_ALERTS_ENABLED'] = 'true'
                 env['UAM_INGEST_URL'] = uam_ingest_url
                 env['UAM_ACCOUNT_ID'] = uam_account_id
@@ -1206,9 +1228,15 @@ def run_scenario():
                 'tor_user': 'tor_user_sender.py',
             }
             scenarios_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Backend', 'scenarios'))
+            is_lua_scenario = scenario_id in LUA_SCENARIOS
             # Resolve script path
-            filename = id_to_file.get(scenario_id, f"{scenario_id}.py")
-            script_path = os.path.join(scenarios_dir, filename)
+            if is_lua_scenario:
+                lua_config = LUA_SCENARIOS[scenario_id]
+                filename = lua_config['script']
+                script_path = os.path.join(scenarios_dir, filename)
+            else:
+                filename = id_to_file.get(scenario_id, f"{scenario_id}.py")
+                script_path = os.path.join(scenarios_dir, filename)
             if not os.path.exists(script_path):
                 yield f"ERROR: Scenario script not found: {filename}\n"
                 return
@@ -1227,7 +1255,7 @@ def run_scenario():
             env['S1_HEC_WORKERS'] = str(worker_count)  # Pass worker count to scripts
             env['S1_HEC_BATCH'] = '0'  # Disable batch mode for immediate responses
             # Prefer a writable location inside the container for scenario outputs
-            env['SCENARIO_OUTPUT_DIR'] = '/app/data/scenarios/configs'
+            env['SCENARIO_OUTPUT_DIR'] = os.path.join(scenarios_dir, 'configs')
             # Control inclusion of scenario.phase tag via env
             env['S1_TAG_PHASE'] = '1' if tag_phase else '0'
             # Control inclusion of scenario.trace_id tag via env
@@ -1236,7 +1264,8 @@ def run_scenario():
                 env['S1_TRACE_ID'] = trace_id
             
             # Pass UAM credentials for alert detonation
-            if uam_ingest_url and uam_account_id and uam_service_token:
+            have_uam_creds = bool(uam_ingest_url and uam_account_id and uam_service_token)
+            if have_uam_creds:
                 env['SCENARIO_ALERTS_ENABLED'] = 'true'
                 env['UAM_INGEST_URL'] = uam_ingest_url
                 env['UAM_ACCOUNT_ID'] = uam_account_id
@@ -1317,7 +1346,25 @@ def run_scenario():
             import subprocess
             
             # Build command with appropriate flags
-            cmd = ['python', script_path]
+            if is_lua_scenario:
+                output_file = os.path.join(env['SCENARIO_OUTPUT_DIR'], LUA_SCENARIOS[scenario_id]['output'])
+                lua_mode = 'live' if env.get('SCENARIO_ALERTS_ENABLED') == 'true' else 'generate'
+                if lua_mode == 'live':
+                    yield "INFO: Lua scenario running in LIVE mode (alerts will be sent)\n"
+                else:
+                    yield "INFO: Lua scenario running in GENERATE mode (alerts skipped)\n"
+                cmd = [
+                    'python',
+                    os.path.join(scenarios_dir, 'lua_scenario_runner.py'),
+                    '--scenario',
+                    script_path,
+                    '--mode',
+                    lua_mode,
+                    '--output',
+                    output_file,
+                ]
+            else:
+                cmd = ['python', script_path]
             # Add --non-interactive flag for scripts that support it
             if scenario_id == 'attack_scenario_orchestrator':
                 cmd.extend(['--non-interactive', '--retroactive'])
@@ -1348,13 +1395,18 @@ def run_scenario():
                 yield "INFO: Scenario generation complete\n"
                 # If this scenario produces a JSON file, automatically replay it to HEC
                 try:
-                    if scenario_id in ['finance_mfa_fatigue_scenario', 'insider_cloud_download_exfiltration', 'attack_scenario_orchestrator', 'identity_theft_ransomware']:
+                    replayable_scenarios = ['finance_mfa_fatigue_scenario', 'insider_cloud_download_exfiltration', 'attack_scenario_orchestrator', 'identity_theft_ransomware']
+                    if scenario_id in replayable_scenarios or is_lua_scenario:
                         from os import path
                         output_dir = env.get('SCENARIO_OUTPUT_DIR', path.join(scenarios_dir, 'configs'))
-                        output_file = path.join(output_dir, f'{scenario_id}.json')
+                        if is_lua_scenario:
+                            output_file = path.join(output_dir, LUA_SCENARIOS[scenario_id]['output'])
+                        else:
+                            output_file = path.join(output_dir, f'{scenario_id}.json')
                         if not path.exists(output_file):
                             # Fallback to scenarios/configs
-                            fallback = path.join(scenarios_dir, 'configs', f'{scenario_id}.json')
+                            fallback_name = LUA_SCENARIOS[scenario_id]['output'] if is_lua_scenario else f'{scenario_id}.json'
+                            fallback = path.join(scenarios_dir, 'configs', fallback_name)
                             if path.exists(fallback):
                                 output_file = fallback
                         if path.exists(output_file):

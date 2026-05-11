@@ -52,6 +52,7 @@ services:
     volumes:
       - ./Frontend:/app/Frontend
       - ./Backend:/app/Backend:ro
+      - ./Backend/scenarios/configs:/app/Backend/scenarios/configs
     depends_on:
       - api
     restart: unless-stopped

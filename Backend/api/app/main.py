@@ -16,7 +16,22 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from app.core.config import settings
-from app.routers import generators, parsers, health, scenarios, export, metrics, search, categories, destinations, uploads, parser_sync, alerts, threat_intel
+from app.routers import (
+    generators,
+    parsers,
+    health,
+    scenarios,
+    export,
+    metrics,
+    search,
+    categories,
+    destinations,
+    uploads,
+    parser_sync,
+    alerts,
+    threat_intel,
+    lua_scenarios,
+)
 from app.routers import settings as settings_router
 from app.utils.logging import setup_logging
 from app.core.simple_auth import validate_api_keys_config
@@ -247,6 +262,12 @@ app.include_router(
     threat_intel.router,
     prefix=f"{settings.API_V1_STR}/threat-intel",
     tags=["threat-intel"]
+)
+
+app.include_router(
+    lua_scenarios.router,
+    prefix=f"{settings.API_V1_STR}/lua-scenarios",
+    tags=["lua-scenarios"]
 )
 
 if __name__ == "__main__":

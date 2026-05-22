@@ -437,9 +437,11 @@
                     <select id="scenario-select" name="scenario-select" required>
                         <option value="" disabled selected>Loading scenarios...</option>
                     </select>
+                    <p id="scenario-select-hint" class="text-xs text-[#8b7a9f] mt-2">Need your own Lua runbook? Choose <span class="text-[#f3e8ff] font-semibold">“Add new Lua scenario…”</span> in the dropdown to open the editor.</p>
                 </div>
                 
                 <div id="scenario-details" class="space-y-3" style="display:none;">
+                    <div id="scenario-meta-tags" class="flex flex-wrap gap-2 text-[0.65rem]"></div>
                     <h4 class="text-base font-bold text-[#f3e8ff]" id="scenario-name"></h4>
                     <p class="text-xs text-[#b8a0d2]" id="scenario-description"></p>
                     <div class="space-y-2 text-xs">
@@ -1256,7 +1258,7 @@
                 <div class="flex flex-wrap gap-2">
                     <button type="button" id="settings-nav-destinations" class="btn" style="width:auto; padding:0.6rem 1rem;">Destinations</button>
                     <button type="button" id="settings-nav-github" class="btn" style="width:auto; padding:0.6rem 1rem; background:#3c325c;">GitHub Parser Repositories</button>
-                    <button type="button" id="settings-nav-scenarios" class="btn" style="width:auto; padding:0.6rem 1rem; background:#3c325c;">Scenario Visibility</button>
+                    <button type="button" id="settings-nav-scenarios" class="btn" style="width:auto; padding:0.6rem 1rem; background:#3c325c;">Lua Scenarios</button>
                 </div>
 
                 <div id="settings-panel-destinations" class="space-y-3">
@@ -1461,13 +1463,85 @@
                     <button type="button" id="test-parser-repos" class="btn" style="width: auto; background: #3c325c; margin-left: 8px;">Test Connection</button>
                 </div>
 
-                <div id="settings-panel-scenarios" class="space-y-3" style="display:none;">
-                    <h3 class="text-xl font-bold text-[#f3e8ff]">Scenario Visibility</h3>
-                    <p class="text-sm text-[#b8a0d2]">Select which scenarios to hide from the dropdown menu. Hidden scenarios won't appear in the Scenarios tab.</p>
-                    <div id="scenario-visibility-list" class="space-y-2 max-h-64 overflow-y-auto p-3 bg-[#241d3a] rounded-lg border border-[#3c325c]">
-                        <p class="text-xs text-[#8b7a9f]">Loading scenarios...</p>
+                <div id="settings-panel-scenarios" class="space-y-4" style="display:none;">
+                    <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-[#f3e8ff]">Lua Scenarios</h3>
+                            <p class="text-sm text-[#b8a0d2]">Create, edit, and organize portable Lua runbooks. User scripts are stored under <code class="text-[#f3e8ff]">Backend/scenarios/lua/user</code>.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" id="lua-scenario-refresh" class="btn" style="width:auto; padding:0.5rem 1rem;">Refresh</button>
+                            <button type="button" id="lua-scenario-new" class="btn" style="width:auto; padding:0.5rem 1rem; background:#10b981;">＋ New Scenario</button>
+                        </div>
                     </div>
-                    <button type="button" id="save-scenario-visibility" class="btn" style="width: auto;">Save Visibility Settings</button>
+
+                    <div class="grid gap-4 lg:grid-cols-3">
+                        <div class="space-y-4">
+                            <div class="p-4 bg-[#241d3a] rounded-lg border border-[#3c325c] space-y-3">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-[#f3e8ff]">Built-in Lua Scenarios</h4>
+                                    <p class="text-xs text-[#b8a0d2]">Out-of-the-box runbooks maintained by the Jarvis team.</p>
+                                </div>
+                                <div id="lua-ootb-list" class="space-y-2 text-sm">
+                                    <p class="text-xs text-[#8b7a9f]">Loading built-in scenarios...</p>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-[#241d3a] rounded-lg border border-[#3c325c] space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="text-lg font-semibold text-[#f3e8ff]">My Lua Scenarios</h4>
+                                        <p class="text-xs text-[#b8a0d2]">Writable, versionable scenarios synced to disk.</p>
+                                    </div>
+                                    <span id="lua-scenario-count" class="text-xs text-[#8b7a9f] bg-[#1b142c] px-3 py-1 rounded-full border border-[#3c325c]">0</span>
+                                </div>
+                                <div id="lua-user-list" class="space-y-2 text-sm">
+                                    <p class="text-xs text-[#8b7a9f]">No user scenarios yet. Click “New Scenario” to start.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-2 card space-y-4 p-5">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-[#f3e8ff]" id="lua-scenario-form-title">Create Lua Scenario</h4>
+                                    <p class="text-xs text-[#b8a0d2]" id="lua-scenario-form-hint">Scenario IDs become filenames (snake_case, lowercase only).</p>
+                                </div>
+                                <button type="button" id="lua-scenario-cancel" class="text-xs text-[#a78bfa] hover:text-[#f3e8ff]" style="display:none; background:none; border:none;">Cancel edit</button>
+                            </div>
+
+                            <form id="lua-scenario-form" class="space-y-4">
+                                <div class="grid gap-4 md:grid-cols-2">
+                                    <div class="input-group">
+                                        <label for="lua-scenario-id" class="text-sm font-semibold text-[#c8b3e8]">Scenario ID</label>
+                                        <input type="text" id="lua-scenario-id" name="lua-scenario-id" placeholder="identity_theft_clone" pattern="[a-z][a-z0-9_]{2,63}" required>
+                                        <p class="text-xs text-[#8b7a9f]">3–64 chars. Lowercase letters, numbers, underscores.</p>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="lua-scenario-name" class="text-sm font-semibold text-[#c8b3e8]">Display Name</label>
+                                        <input type="text" id="lua-scenario-name" name="lua-scenario-name" placeholder="Zero-Trust Insider Lua" required>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="lua-scenario-description" class="text-sm font-semibold text-[#c8b3e8]">Description</label>
+                                    <textarea id="lua-scenario-description" name="lua-scenario-description" rows="3" placeholder="What does this runbook simulate?" required></textarea>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="lua-scenario-source" class="text-sm font-semibold text-[#c8b3e8]">Lua Source</label>
+                                    <textarea id="lua-scenario-source" name="lua-scenario-source" rows="14" class="text-sm" style="font-family: 'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace;" placeholder="-- Paste your Lua scenario here" required></textarea>
+                                    <p class="text-xs text-[#8b7a9f] mt-1">Jarvis executes scripts via <code>Backend/scenarios/lua_scenario_runner.py</code>. Use <code>send_event()</code> helpers for alerts/logs.</p>
+                                </div>
+
+                                <div class="flex flex-wrap gap-3">
+                                    <button type="submit" id="lua-scenario-submit" class="btn flex-1" style="min-width:160px;">Save Scenario</button>
+                                    <button type="button" id="lua-scenario-reset" class="btn" style="background:#3c325c; width:auto; padding:0.6rem 1.2rem;">Reset</button>
+                                </div>
+
+                                <p id="lua-scenario-form-status" class="text-xs text-[#b8a0d2]"></p>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1619,6 +1693,7 @@
 
         // Navigation tab switching
         const tabButtons = Array.from(document.querySelectorAll('.nav-tab'));
+        const settingsTabButton = tabButtons.find(btn => btn.dataset.target === 'settings-section');
         const sections = {
             'generate-section': document.getElementById('generate-section'),
             'scenarios-section': document.getElementById('scenarios-section'),
@@ -2086,97 +2161,334 @@
         // Clear all tokens button
         const clearAllTokensBtn = document.getElementById('clear-all-tokens-btn');
         if (clearAllTokensBtn) {
-            clearAllTokensBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear all locally stored tokens? This cannot be undone.')) {
-                    window.tokenVault.clearAll();
-                    alert('All local tokens have been cleared');
-                    refreshDestinations();
+            clearAllTokensBtn.addEventListener('click', async () => {
+                if (!window.tokenVault || typeof window.tokenVault.clearAll !== 'function') {
+                    alert('Token vault not initialized in this browser session.');
+                    return;
+                }
+                if (!confirm('Remove all locally stored tokens? This only affects your browser.')) {
+                    return;
+                }
+                try {
+                    await window.tokenVault.clearAll();
+                    await refreshDestinations();
+                    alert('All local tokens cleared.');
+                } catch (err) {
+                    console.error('Failed to clear local tokens', err);
+                    alert('Failed to clear tokens. Check console for details.');
                 }
             });
         }
-        
-        // Scenario visibility settings
-        let allScenarios = [];
-        let hiddenScenarios = [];
-        
-        async function loadScenarioVisibilitySettings() {
-            try {
-                // Fetch ALL scenarios (unfiltered) for settings UI
-                const scenariosRes = await fetch('/scenarios/all');
-                if (scenariosRes.ok) {
-                    allScenarios = await scenariosRes.json();
+
+        if (settingsNavDestinations) settingsNavDestinations.addEventListener('click', () => showSettingsPanel('destinations'));
+        if (settingsNavGithub) settingsNavGithub.addEventListener('click', () => showSettingsPanel('github'));
+        if (settingsNavScenarios) settingsNavScenarios.addEventListener('click', () => showSettingsPanel('scenarios'));
+
+        // Default Settings panel
+        showSettingsPanel('destinations');
+
+        function openLuaScenarioSettings(focusForm = false) {
+            if (settingsTabButton) {
+                settingsTabButton.click();
+            } else if (sections['settings-section']) {
+                Object.entries(sections).forEach(([id, el]) => {
+                    el.style.display = (id === 'settings-section') ? '' : 'none';
+                });
+            }
+
+            showSettingsPanel('scenarios');
+
+            const settingsSectionEl = sections['settings-section'];
+            if (settingsSectionEl) {
+                settingsSectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            if (focusForm) {
+                const luaIdField = document.getElementById('lua-scenario-id');
+                if (luaIdField) {
+                    luaIdField.focus();
                 }
-                
-                // Fetch hidden scenarios from backend
-                const hiddenRes = await fetch('/api/v1/settings/hidden-scenarios');
-                if (hiddenRes.ok) {
-                    const data = await hiddenRes.json();
-                    hiddenScenarios = data.hidden_scenarios || [];
-                }
-                
-                renderScenarioVisibilityList();
-            } catch (err) {
-                console.error('Failed to load scenario visibility settings:', err);
             }
         }
-        
-        function renderScenarioVisibilityList() {
-            const container = document.getElementById('scenario-visibility-list');
-            if (!container || !allScenarios.length) return;
-            
-            container.innerHTML = allScenarios.map(s => `
-                <label class="flex items-center gap-2 p-2 hover:bg-[#3c325c]/50 rounded cursor-pointer">
-                    <input type="checkbox" class="scenario-hide-checkbox" data-id="${s.id}" ${hiddenScenarios.includes(s.id) ? 'checked' : ''}>
-                    <span class="text-sm ${hiddenScenarios.includes(s.id) ? 'text-[#8b7a9f] line-through' : 'text-[#f3e8ff]'}">${s.name}</span>
-                </label>
-            `).join('');
-            
-            // Update styling on change
-            container.querySelectorAll('.scenario-hide-checkbox').forEach(cb => {
-                cb.addEventListener('change', (e) => {
-                    const label = e.target.closest('label');
-                    const span = label.querySelector('span');
-                    if (e.target.checked) {
-                        span.classList.add('text-[#8b7a9f]', 'line-through');
-                        span.classList.remove('text-[#f3e8ff]');
-                    } else {
-                        span.classList.remove('text-[#8b7a9f]', 'line-through');
-                        span.classList.add('text-[#f3e8ff]');
-                    }
-                });
-            });
+
+        // Lua Scenario management state
+        const luaOotbList = document.getElementById('lua-ootb-list');
+        const luaUserList = document.getElementById('lua-user-list');
+        const luaCountBadge = document.getElementById('lua-scenario-count');
+        const luaRefreshBtn = document.getElementById('lua-scenario-refresh');
+        const luaNewBtn = document.getElementById('lua-scenario-new');
+        const luaForm = document.getElementById('lua-scenario-form');
+        const luaFormTitle = document.getElementById('lua-scenario-form-title');
+        const luaFormHint = document.getElementById('lua-scenario-form-hint');
+        const luaCancelBtn = document.getElementById('lua-scenario-cancel');
+        const luaResetBtn = document.getElementById('lua-scenario-reset');
+        const luaStatus = document.getElementById('lua-scenario-form-status');
+        const luaIdInput = document.getElementById('lua-scenario-id');
+        const luaNameInput = document.getElementById('lua-scenario-name');
+        const luaDescriptionInput = document.getElementById('lua-scenario-description');
+        const luaSourceInput = document.getElementById('lua-scenario-source');
+
+        let luaScenarioCache = { ootb: [], user: [] };
+        let luaScenarioEditingId = null;
+
+        function formatIsoTimestamp(value) {
+            if (!value) return '—';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return value;
+            return date.toLocaleString();
         }
-        
-        const saveVisibilityBtn = document.getElementById('save-scenario-visibility');
-        if (saveVisibilityBtn) {
-            saveVisibilityBtn.addEventListener('click', async () => {
-                const checkboxes = document.querySelectorAll('.scenario-hide-checkbox:checked');
-                const newHidden = Array.from(checkboxes).map(cb => cb.dataset.id);
-                
-                try {
-                    const res = await fetch('/api/v1/settings/hidden-scenarios', {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ hidden_scenarios: newHidden })
+
+        function setLuaScenarioStatus(message = '', type = 'info') {
+            if (!luaStatus) return;
+            luaStatus.textContent = message;
+            luaStatus.style.color = type === 'error' ? '#f87171' : '#b8a0d2';
+        }
+
+        function resetLuaScenarioForm() {
+            luaScenarioEditingId = null;
+            if (luaFormTitle) luaFormTitle.textContent = 'Create Lua Scenario';
+            if (luaFormHint) luaFormHint.textContent = 'Scenario IDs become filenames (snake_case, lowercase only).';
+            if (luaCancelBtn) luaCancelBtn.style.display = 'none';
+            if (luaIdInput) {
+                luaIdInput.value = '';
+                luaIdInput.removeAttribute('readonly');
+                luaIdInput.removeAttribute('disabled');
+            }
+            if (luaNameInput) luaNameInput.value = '';
+            if (luaDescriptionInput) luaDescriptionInput.value = '';
+            if (luaSourceInput) luaSourceInput.value = '';
+            setLuaScenarioStatus('');
+        }
+
+        function renderLuaScenarioLists() {
+            if (luaOotbList) {
+                luaOotbList.innerHTML = '';
+                if ((luaScenarioCache.ootb || []).length === 0) {
+                    luaOotbList.innerHTML = '<p class="text-xs text-[#8b7a9f]">No built-in Lua scenarios detected.</p>';
+                } else {
+                    luaScenarioCache.ootb.forEach((scenario) => {
+                        const card = document.createElement('div');
+                        card.className = 'p-3 rounded-lg border border-[#3c325c] bg-[#1b1626] space-y-1';
+                        card.innerHTML = `
+                            <p class="text-sm font-semibold text-[#f3e8ff]">${scenario.name}</p>
+                            <p class="text-xs text-[#8b7a9f]">ID: ${scenario.id}</p>
+                            <p class="text-xs text-[#8b7a9f]">Updated ${formatIsoTimestamp(scenario.updated_at)}</p>
+                        `;
+                        luaOotbList.appendChild(card);
                     });
-                    
-                    if (res.ok) {
-                        hiddenScenarios = newHidden;
-                        alert('✓ Scenario visibility settings saved');
-                        // Refresh scenario dropdown
-                        await fetchScenarios();
-                    } else {
-                        throw new Error('Failed to save');
-                    }
-                } catch (err) {
-                    console.error('Failed to save scenario visibility:', err);
-                    alert('Failed to save settings');
+                }
+            }
+
+            if (luaUserList) {
+                luaUserList.innerHTML = '';
+                const userScenarios = luaScenarioCache.user || [];
+                if (luaCountBadge) luaCountBadge.textContent = userScenarios.length;
+
+                if (userScenarios.length === 0) {
+                    luaUserList.innerHTML = '<p class="text-xs text-[#8b7a9f]">No user scenarios yet. Click “New Scenario” to start.</p>';
+                } else {
+                    userScenarios.forEach((scenario) => {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'flex items-start justify-between gap-3 p-3 rounded-lg border border-[#3c325c] bg-[#1b142c]';
+                        wrapper.dataset.scenarioId = scenario.id;
+
+                        const info = document.createElement('div');
+                        info.className = 'space-y-1';
+                        info.innerHTML = `
+                            <p class="text-sm font-semibold text-[#f3e8ff]">${scenario.name}</p>
+                            <p class="text-xs text-[#8b7a9f]">${scenario.description || 'No description'}</p>
+                            <p class="text-[0.65rem] text-[#6b7280]">Updated ${formatIsoTimestamp(scenario.updated_at)}</p>
+                        `;
+
+                        const actions = document.createElement('div');
+                        actions.className = 'flex flex-col gap-2 shrink-0';
+
+                        const editBtn = document.createElement('button');
+                        editBtn.type = 'button';
+                        editBtn.textContent = 'Edit';
+                        editBtn.className = 'text-xs px-3 py-1 rounded bg-[#3c325c] text-[#f3e8ff] hover:bg-[#4a416e]';
+                        editBtn.dataset.action = 'edit';
+                        editBtn.dataset.id = scenario.id;
+
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.type = 'button';
+                        deleteBtn.textContent = 'Delete';
+                        deleteBtn.className = 'text-xs px-3 py-1 rounded bg-[#4b1f2f] text-[#fda4af] hover:bg-[#7f1d1d]';
+                        deleteBtn.dataset.action = 'delete';
+                        deleteBtn.dataset.id = scenario.id;
+
+                        actions.appendChild(editBtn);
+                        actions.appendChild(deleteBtn);
+
+                        wrapper.appendChild(info);
+                        wrapper.appendChild(actions);
+                        luaUserList.appendChild(wrapper);
+                    });
+                }
+            }
+        }
+
+        async function loadLuaScenarios(showToast = false) {
+            if (!luaOotbList && !luaUserList) return;
+            setLuaScenarioStatus(showToast ? 'Refreshing scenarios…' : '');
+            try {
+                const response = await fetch('/api/v1/lua-scenarios');
+                if (!response.ok) throw new Error(`Failed to load Lua scenarios (${response.status})`);
+                const payload = await response.json();
+                const data = payload.data || payload;
+                luaScenarioCache = {
+                    ootb: data.ootb || [],
+                    user: data.user || []
+                };
+                renderLuaScenarioLists();
+                if (showToast) {
+                    setLuaScenarioStatus('Lua scenarios refreshed.');
+                    setTimeout(() => setLuaScenarioStatus(''), 2000);
+                }
+            } catch (error) {
+                console.error('Failed to load Lua scenarios', error);
+                setLuaScenarioStatus('Failed to load Lua scenarios. Check console.', 'error');
+                if (luaOotbList) luaOotbList.innerHTML = '<p class="text-xs text-[#f87171]">Unable to load built-in scenarios.</p>';
+                if (luaUserList) luaUserList.innerHTML = '<p class="text-xs text-[#f87171]">Unable to load user scenarios.</p>';
+            }
+        }
+
+        async function beginLuaScenarioEdit(scenarioId) {
+            if (!scenarioId) return;
+            setLuaScenarioStatus('Loading scenario…');
+            try {
+                const response = await fetch(`/api/v1/lua-scenarios/${scenarioId}`);
+                if (!response.ok) throw new Error('Failed to load scenario');
+                const payload = await response.json();
+                const scenario = payload.data?.scenario || payload.scenario;
+                if (!scenario) throw new Error('Scenario payload missing');
+
+                luaScenarioEditingId = scenario.id;
+                if (luaFormTitle) luaFormTitle.textContent = `Edit ${scenario.name}`;
+                if (luaFormHint) luaFormHint.textContent = `${scenario.id}.lua lives in Backend/scenarios/lua/user/`;
+                if (luaCancelBtn) luaCancelBtn.style.display = '';
+                if (luaIdInput) {
+                    luaIdInput.value = scenario.id;
+                    luaIdInput.setAttribute('readonly', 'true');
+                    luaIdInput.setAttribute('disabled', 'true');
+                }
+                if (luaNameInput) luaNameInput.value = scenario.name || '';
+                if (luaDescriptionInput) luaDescriptionInput.value = scenario.description || '';
+                if (luaSourceInput) luaSourceInput.value = scenario.source || '';
+                setLuaScenarioStatus('Loaded scenario. Edit and save when ready.');
+            } catch (error) {
+                console.error(error);
+                setLuaScenarioStatus('Unable to load scenario for editing.', 'error');
+            }
+        }
+
+        async function deleteLuaScenario(scenarioId) {
+            if (!scenarioId) return;
+            const target = luaScenarioCache.user?.find((s) => s.id === scenarioId);
+            const label = target?.name || scenarioId;
+            if (!confirm(`Delete Lua scenario “${label}”? This cannot be undone.`)) {
+                return;
+            }
+            setLuaScenarioStatus('Deleting scenario…');
+            try {
+                const response = await fetch(`/api/v1/lua-scenarios/${scenarioId}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error('Failed to delete scenario');
+                setLuaScenarioStatus('Scenario deleted.');
+                resetLuaScenarioForm();
+                await loadLuaScenarios();
+                await fetchScenarios();
+            } catch (error) {
+                console.error(error);
+                setLuaScenarioStatus('Failed to delete scenario.', 'error');
+            }
+        }
+
+        if (luaUserList) {
+            luaUserList.addEventListener('click', (event) => {
+                const btn = event.target.closest('button[data-action]');
+                if (!btn) return;
+                const scenarioId = btn.dataset.id;
+                if (btn.dataset.action === 'edit') {
+                    beginLuaScenarioEdit(scenarioId);
+                } else if (btn.dataset.action === 'delete') {
+                    deleteLuaScenario(scenarioId);
                 }
             });
         }
-        
-        // Load settings on page load
-        loadScenarioVisibilitySettings();
+
+        if (luaRefreshBtn) {
+            luaRefreshBtn.addEventListener('click', () => loadLuaScenarios(true));
+        }
+
+        if (luaNewBtn) {
+            luaNewBtn.addEventListener('click', () => {
+                resetLuaScenarioForm();
+                if (luaIdInput) luaIdInput.focus();
+            });
+        }
+
+        if (luaCancelBtn) {
+            luaCancelBtn.addEventListener('click', () => {
+                resetLuaScenarioForm();
+                setLuaScenarioStatus('Edit canceled.');
+                setTimeout(() => setLuaScenarioStatus(''), 1500);
+            });
+        }
+
+        if (luaResetBtn) {
+            luaResetBtn.addEventListener('click', resetLuaScenarioForm);
+        }
+
+        if (luaForm) {
+            luaForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                if (!luaIdInput || !luaNameInput || !luaDescriptionInput || !luaSourceInput) return;
+
+                const payload = {
+                    id: luaIdInput.value.trim(),
+                    name: luaNameInput.value.trim(),
+                    description: luaDescriptionInput.value.trim(),
+                    source: luaSourceInput.value
+                };
+
+                if (!payload.id || !payload.name || !payload.description || !payload.source) {
+                    setLuaScenarioStatus('All fields are required.', 'error');
+                    return;
+                }
+
+                const isEdit = Boolean(luaScenarioEditingId);
+                setLuaScenarioStatus(isEdit ? 'Updating scenario…' : 'Creating scenario…');
+
+                try {
+                    const response = await fetch(isEdit ? `/api/v1/lua-scenarios/${luaScenarioEditingId}` : '/api/v1/lua-scenarios', {
+                        method: isEdit ? 'PUT' : 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(isEdit ? {
+                            name: payload.name,
+                            description: payload.description,
+                            source: payload.source
+                        } : payload)
+                    });
+
+                    if (!response.ok) {
+                        const errPayload = await response.json().catch(() => ({}));
+                        const detail = errPayload.detail || errPayload.error || `HTTP ${response.status}`;
+                        throw new Error(detail);
+                    }
+
+                    setLuaScenarioStatus(isEdit ? 'Scenario updated.' : 'Scenario created.');
+                    if (!isEdit) resetLuaScenarioForm();
+                    await loadLuaScenarios();
+                    await fetchScenarios();
+                } catch (error) {
+                    console.error(error);
+                    setLuaScenarioStatus(error.message || 'Failed to save scenario.', 'error');
+                }
+            });
+        }
+
+        // Load scenarios for settings UI on init
+        loadLuaScenarios();
         
         // Parser Repositories Settings
         async function loadParserRepositories() {
@@ -2685,10 +2997,12 @@
         // Scenarios functionality
         const scenarioSelect = document.getElementById('scenario-select');
         const scenarioDetails = document.getElementById('scenario-details');
+        const scenarioMetaTags = document.getElementById('scenario-meta-tags');
         const scenarioForm = document.getElementById('scenario-form');
         const runScenarioBtn = document.getElementById('run-scenario-btn');
         const scenarioOutputBox = document.getElementById('scenario-output-box');
         let scenariosData = [];
+        const LUA_SCENARIO_ADD_VALUE = '__add_lua_scenario';
 
         async function fetchScenarios() {
             try {
@@ -2698,38 +3012,84 @@
                 scenariosData = data.scenarios || [];
                 
                 scenarioSelect.innerHTML = '';
-                if (scenariosData.length === 0) {
-                    const opt = document.createElement('option');
-                    opt.textContent = 'No scenarios available';
-                    opt.disabled = true;
-                    scenarioSelect.appendChild(opt);
-                } else {
-                    const placeholder = document.createElement('option');
-                    placeholder.value = '';
-                    placeholder.textContent = 'Select a scenario...';
-                    placeholder.disabled = true;
-                    placeholder.selected = true;
-                    scenarioSelect.appendChild(placeholder);
-                    
-                    scenariosData.forEach(s => {
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = scenariosData.length ? 'Select a scenario...' : 'No scenarios available yet';
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                scenarioSelect.appendChild(placeholder);
+
+                if (scenariosData.length) {
+                    const builtInGroup = document.createElement('optgroup');
+                    builtInGroup.label = 'Built-in Scenarios';
+                    const userLuaGroup = document.createElement('optgroup');
+                    userLuaGroup.label = 'User Lua Scenarios';
+
+                    scenariosData.forEach((s) => {
                         const opt = document.createElement('option');
                         opt.value = s.id;
-                        opt.textContent = s.name;
-                        scenarioSelect.appendChild(opt);
+                        opt.textContent = `${s.name}${s.engine === 'lua' ? ' · Lua' : ''}`;
+                        opt.dataset.category = s.category || 'built-in';
+                        opt.dataset.engine = s.engine || 'python';
+
+                        if ((s.category || '') === 'user') {
+                            userLuaGroup.appendChild(opt);
+                        } else {
+                            builtInGroup.appendChild(opt);
+                        }
                     });
+
+                    if (builtInGroup.children.length) scenarioSelect.appendChild(builtInGroup);
+                    if (userLuaGroup.children.length) scenarioSelect.appendChild(userLuaGroup);
                 }
+
+                const addNewOption = document.createElement('option');
+                addNewOption.value = LUA_SCENARIO_ADD_VALUE;
+                addNewOption.textContent = '➕ Add new Lua scenario…';
+                scenarioSelect.appendChild(addNewOption);
             } catch (error) {
                 console.error('Error fetching scenarios:', error);
             }
         }
 
+        function renderScenarioTags(scenario) {
+            if (!scenarioMetaTags) return;
+            scenarioMetaTags.innerHTML = '';
+            if (!scenario) return;
+            const tags = [];
+            if (scenario.engine === 'lua') {
+                tags.push({ label: 'Lua', className: 'bg-[#312052] text-[#c084fc]' });
+            } else {
+                tags.push({ label: 'Python', className: 'bg-[#10243d] text-[#93c5fd]' });
+            }
+            if (scenario.category === 'user') {
+                tags.push({ label: 'User', className: 'bg-[#1f2937] text-[#fbbf24]' });
+            } else {
+                tags.push({ label: 'Built-in', className: 'bg-[#1b142c] text-[#a78bfa]' });
+            }
+            tags.forEach(tag => {
+                const badge = document.createElement('span');
+                badge.className = `px-2 py-1 rounded-full text-[0.6rem] font-semibold tracking-wide ${tag.className}`;
+                badge.textContent = tag.label;
+                scenarioMetaTags.appendChild(badge);
+            });
+        }
+
         scenarioSelect.addEventListener('change', () => {
             const selectedId = scenarioSelect.value;
+            if (selectedId === LUA_SCENARIO_ADD_VALUE) {
+                scenarioSelect.value = '';
+                scenarioDetails.style.display = 'none';
+                renderScenarioTags(null);
+                openLuaScenarioSettings(true);
+                return;
+            }
             const scenario = scenariosData.find(s => s.id === selectedId);
             if (scenario) {
+                renderScenarioTags(scenario);
                 document.getElementById('scenario-name').textContent = scenario.name;
                 document.getElementById('scenario-description').textContent = scenario.description;
-                document.getElementById('scenario-events').textContent = scenario.total_events;
+                document.getElementById('scenario-events').textContent = scenario.total_events ?? '—';
                 
                 let duration = '';
                 if (scenario.duration_days) {
@@ -2737,7 +3097,7 @@
                 } else if (scenario.duration_minutes) {
                     duration = `${scenario.duration_minutes} minutes`;
                 }
-                document.getElementById('scenario-duration').textContent = duration;
+                document.getElementById('scenario-duration').textContent = duration || '—';
                 
                 const dataSourcesList = document.getElementById('scenario-data-sources');
                 dataSourcesList.innerHTML = '';
@@ -2757,6 +3117,7 @@
                 
                 scenarioDetails.style.display = '';
             } else {
+                renderScenarioTags(null);
                 scenarioDetails.style.display = 'none';
             }
         });

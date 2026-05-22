@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 EVENT_GENERATORS_DIR = os.path.join(os.getcwd(), 'event_generators')
 API_BASE_URL = os.environ.get('API_BASE_URL', 'http://localhost:8000')
 BACKEND_API_KEY = os.environ.get('BACKEND_API_KEY')
+SCENARIOS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Backend', 'scenarios'))
+USER_LUA_DIR = os.path.join(SCENARIOS_DIR, 'lua', 'user')
 
 LUA_SCENARIOS = {
     'identity_theft_ransomware_lua': {
@@ -29,6 +31,22 @@ LUA_SCENARIOS = {
         'output': 'identity_theft_ransomware_lua.json',
     }
 }
+
+
+def get_lua_scenario_config(scenario_id: str):
+    """Resolve Lua scenario metadata for built-in or user-uploaded entries."""
+    if scenario_id in LUA_SCENARIOS:
+        return {**LUA_SCENARIOS[scenario_id]}
+
+    user_script_rel = os.path.join('lua', 'user', f"{scenario_id}.lua")
+    user_script_abs = os.path.join(SCENARIOS_DIR, user_script_rel)
+    if os.path.exists(user_script_abs):
+        return {
+            'script': user_script_rel,
+            'output': f'{scenario_id}.json',
+            'user_uploaded': True
+        }
+    return None
 
 @app.route('/')
 def index():
@@ -427,7 +445,30 @@ def list_scenarios():
             'phases': ['Tor Browsing (Palo Alto)', 'Okta Login']
         }
     ]
-    
+
+    # Pull user-uploaded Lua scenarios from backend
+    try:
+        headers = _get_api_headers()
+        res = requests.get(f"{API_BASE_URL}/api/v1/lua-scenarios", headers=headers, timeout=5)
+        if res.status_code == 200:
+            payload = res.json()
+            data = payload.get('data') or payload
+            for entry in data.get('user', []):
+                scenarios.append({
+                    'id': entry['id'],
+                    'name': entry.get('name') or entry['id'],
+                    'description': entry.get('description', 'User uploaded Lua scenario'),
+                    'duration_minutes': entry.get('estimated_duration_minutes', 55),
+                    'total_events': entry.get('total_events', 0),
+                    'engine': 'lua',
+                    'category': 'user',
+                    'is_user_uploaded': True,
+                    'phases': entry.get('phases', ['Lua Scenario']),
+                    'data_sources': entry.get('data_sources', ['Lua Runner'])
+                })
+    except Exception as e:
+        logger.warning(f"Could not load user Lua scenarios: {e}")
+
     # Filter out hidden scenarios
     try:
         headers = {'X-API-Key': BACKEND_API_KEY} if BACKEND_API_KEY else {}
@@ -437,6 +478,10 @@ def list_scenarios():
             scenarios = [s for s in scenarios if s['id'] not in hidden]
     except Exception as e:
         logger.warning(f"Could not fetch hidden scenarios: {e}")
+
+    for scenario in scenarios:
+        scenario.setdefault('category', 'built-in')
+        scenario['is_user_uploaded'] = scenario.get('category') == 'user'
     
     return jsonify({'scenarios': scenarios})
 
@@ -451,28 +496,6 @@ def get_hidden_scenarios():
     except Exception as e:
         logger.error(f"Failed to get hidden scenarios: {e}")
         return jsonify({'hidden_scenarios': []}), 200
-
-
-@app.route('/scenarios/all', methods=['GET'])
-def list_all_scenarios():
-    """List ALL scenarios without filtering hidden ones - for settings UI"""
-    scenarios = [
-        {'id': 'attack_scenario_orchestrator', 'name': 'Operation Digital Heist'},
-        {'id': 'enterprise_scenario_sender', 'name': 'Enterprise Attack Scenario'},
-        {'id': 'showcase_scenario_sender', 'name': 'AI-SIEM Showcase Scenario'},
-        {'id': 'enterprise_scenario_sender_10min', 'name': 'Enterprise Breach (10 min)'},
-        {'id': 'quick_scenario', 'name': 'Quick Scenario (Comprehensive)'},
-        {'id': 'quick_scenario_simple', 'name': 'Quick Scenario (Simple)'},
-        {'id': 'finance_mfa_fatigue_scenario', 'name': 'Finance Employee MFA Fatigue Attack'},
-        {'id': 'insider_cloud_download_exfiltration', 'name': 'Insider Data Exfiltration via Cloud Download'},
-        {'id': 'scenario_hec_sender', 'name': 'Scenario HEC Sender'},
-        {'id': 'star_trek_integration_test', 'name': 'Integration Test (Star Trek)'},
-        {'id': 'hr_phishing_pdf_c2', 'name': 'HR Phishing PDF → PowerShell → Task → C2'},
-        {'id': 'identity_theft_ransomware', 'name': 'Cross-Platform Identity Theft & Ransomware'},
-        {'id': 'identity_theft_ransomware_lua', 'name': 'Cross-Platform Identity Theft & Ransomware (Lua)'},
-        {'id': 'tor_user', 'name': 'Tor User'}
-    ]
-    return jsonify(scenarios)
 
 
 # =============================================================================
@@ -958,6 +981,40 @@ def set_parser_repositories():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/v1/lua-scenarios', methods=['GET', 'POST'])
+def proxy_lua_scenarios():
+    """Proxy Lua scenario list/create requests to backend API"""
+    headers = _get_api_headers()
+    url = f"{API_BASE_URL}/api/v1/lua-scenarios"
+    try:
+        if request.method == 'GET':
+            res = requests.get(url, headers=headers, timeout=10)
+        else:
+            res = requests.post(url, headers={**headers, 'Content-Type': 'application/json'}, json=request.json, timeout=15)
+        return jsonify(res.json()), res.status_code
+    except Exception as e:
+        logger.error(f"Failed to proxy lua scenarios request: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/v1/lua-scenarios/<scenario_id>', methods=['GET', 'PUT', 'DELETE'])
+def proxy_lua_scenario_detail(scenario_id):
+    """Proxy Lua scenario detail/update/delete requests"""
+    headers = _get_api_headers()
+    url = f"{API_BASE_URL}/api/v1/lua-scenarios/{scenario_id}"
+    try:
+        if request.method == 'GET':
+            res = requests.get(url, headers=headers, timeout=10)
+        elif request.method == 'PUT':
+            res = requests.put(url, headers={**headers, 'Content-Type': 'application/json'}, json=request.json, timeout=15)
+        else:
+            res = requests.delete(url, headers=headers, timeout=10)
+        return jsonify(res.json()), res.status_code
+    except Exception as e:
+        logger.error(f"Failed to proxy lua scenario detail request: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/v1/parser-sync/github/search', methods=['POST'])
 def search_github_parsers():
     """Proxy to search for parsers in GitHub repositories"""
@@ -1227,11 +1284,11 @@ def run_scenario():
                 'identity_theft_ransomware': 'identity_theft_ransomware_scenario.py',
                 'tor_user': 'tor_user_sender.py',
             }
-            scenarios_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Backend', 'scenarios'))
-            is_lua_scenario = scenario_id in LUA_SCENARIOS
+            scenarios_dir = SCENARIOS_DIR
+            lua_config = get_lua_scenario_config(scenario_id)
+            is_lua_scenario = lua_config is not None
             # Resolve script path
             if is_lua_scenario:
-                lua_config = LUA_SCENARIOS[scenario_id]
                 filename = lua_config['script']
                 script_path = os.path.join(scenarios_dir, filename)
             else:
@@ -1347,7 +1404,8 @@ def run_scenario():
             
             # Build command with appropriate flags
             if is_lua_scenario:
-                output_file = os.path.join(env['SCENARIO_OUTPUT_DIR'], LUA_SCENARIOS[scenario_id]['output'])
+                output_filename = lua_config.get('output') or f'{scenario_id}.json'
+                output_file = os.path.join(env['SCENARIO_OUTPUT_DIR'], output_filename)
                 lua_mode = 'live' if env.get('SCENARIO_ALERTS_ENABLED') == 'true' else 'generate'
                 if lua_mode == 'live':
                     yield "INFO: Lua scenario running in LIVE mode (alerts will be sent)\n"
@@ -1400,12 +1458,13 @@ def run_scenario():
                         from os import path
                         output_dir = env.get('SCENARIO_OUTPUT_DIR', path.join(scenarios_dir, 'configs'))
                         if is_lua_scenario:
-                            output_file = path.join(output_dir, LUA_SCENARIOS[scenario_id]['output'])
+                            output_filename = lua_config.get('output') or f'{scenario_id}.json'
+                            output_file = path.join(output_dir, output_filename)
                         else:
                             output_file = path.join(output_dir, f'{scenario_id}.json')
                         if not path.exists(output_file):
                             # Fallback to scenarios/configs
-                            fallback_name = LUA_SCENARIOS[scenario_id]['output'] if is_lua_scenario else f'{scenario_id}.json'
+                            fallback_name = output_filename if is_lua_scenario else f'{scenario_id}.json'
                             fallback = path.join(scenarios_dir, 'configs', fallback_name)
                             if path.exists(fallback):
                                 output_file = fallback

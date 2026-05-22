@@ -27,6 +27,7 @@ services:
       - ./Backend/event_generators:/app/event_generators:ro
       - ./Backend/parsers:/app/parsers:ro
       - ./Backend/scenarios:/app/scenarios:ro
+      - ./Backend/scenarios/lua/user:/app/scenarios/lua/user
       - ./Backend/api/data:/app/data
     restart: unless-stopped
     networks:
@@ -53,6 +54,7 @@ services:
       - ./Frontend:/app/Frontend
       - ./Backend:/app/Backend:ro
       - ./Backend/scenarios/configs:/app/Backend/scenarios/configs
+      - ./Backend/scenarios/lua/user:/app/Backend/scenarios/lua/user
     depends_on:
       - api
     restart: unless-stopped

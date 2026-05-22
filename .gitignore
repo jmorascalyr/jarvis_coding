@@ -74,6 +74,8 @@ scenario_*.json
 # Generated Scenario Configs (timestamped outputs)
 Backend/scenarios/configs/*.json
 !Backend/scenarios/configs/*_example.json
+Backend/scenarios/lua/user/*.lua
+!Backend/scenarios/lua/user/.gitkeep
 
 # Generated Event Files
 # ====================

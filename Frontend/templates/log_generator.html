@@ -1530,7 +1530,25 @@
                                 <div class="input-group">
                                     <label for="lua-scenario-source" class="text-sm font-semibold text-[#c8b3e8]">Lua Source</label>
                                     <textarea id="lua-scenario-source" name="lua-scenario-source" rows="14" class="text-sm" style="font-family: 'JetBrains Mono', 'Fira Code', Consolas, 'Courier New', monospace;" placeholder="-- Paste your Lua scenario here" required></textarea>
-                                    <p class="text-xs text-[#8b7a9f] mt-1">Jarvis executes scripts via <code>Backend/scenarios/lua_scenario_runner.py</code>. Use <code>send_event()</code> helpers for alerts/logs.</p>
+                                    <p class="text-xs text-[#8b7a9f] mt-1">
+                                        Jarvis runs scripts through <code>Backend/scenarios/lua_scenario_runner.py</code>. Emit with
+                                        <code>sender:hec_event(src, payload, opts)</code> /
+                                        <code>sender:emit_many</code> /
+                                        <code>sender:from_generator</code>.
+                                    </p>
+                                    <p class="text-xs text-[#8b7a9f] mt-1">
+                                        Declare <code>scenario.sources = { aws_cloudtrail = { hec_path = "event", parser = "aws_cloudtrail-latest" } }</code>
+                                        to lock the HEC path &amp; parser per source. After a generate run the output JSON's
+                                        <code>source_routing</code> block previews the resolved routing — handy before flipping to LIVE.
+                                    </p>
+                                    {% raw %}
+                                    <p class="text-xs text-[#8b7a9f] mt-1">
+                                        Use <code>{{actor.&lt;id&gt;.field}}</code>, <code>{{host.&lt;id&gt;.field}}</code>,
+                                        <code>{{ioc.1}}</code>, <code>{{phase}}</code>, <code>{{now}}</code>, <code>{{uuid}}</code> tokens
+                                        anywhere in your payload — they’re auto-rendered by <code>sender:hec_event</code> unless you pass <code>opts.render = false</code>.
+                                        See <code>lua_refactor.md</code> for the full helper reference.
+                                    </p>
+                                    {% endraw %}
                                 </div>
 
                                 <div class="flex flex-wrap gap-3">

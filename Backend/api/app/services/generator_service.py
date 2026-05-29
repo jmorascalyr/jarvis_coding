@@ -65,7 +65,7 @@ class GeneratorService:
         
         # Scan for generators
         for category_dir in self.generators_path.iterdir():
-            if category_dir.is_dir() and not category_dir.name.startswith('_'):
+            if category_dir.is_dir() and not category_dir.name.startswith('_') and category_dir.name != 'lua':
                 category = category_dir.name
                 
                 for generator_file in category_dir.glob("*.py"):
@@ -86,6 +86,45 @@ class GeneratorService:
                         "supported_formats": ["json"],  # Default, will be updated
                         "star_trek_enabled": True
                     }
+
+        # Discover single-file Lua generators under event_generators/lua/<category>/*.lua
+        # Header is parsed text-only (no lupa required here).
+        try:
+            from event_generators.shared.lua_bridge import discover as _lua_discover
+        except Exception:
+            try:
+                import sys
+                shared_dir = self.generators_path / "shared"
+                if str(shared_dir) not in sys.path:
+                    sys.path.insert(0, str(shared_dir))
+                from lua_bridge import discover as _lua_discover  # type: ignore
+            except Exception:
+                _lua_discover = None  # Lua bridge unavailable; skip discovery.
+
+        if _lua_discover is not None:
+            try:
+                for lua_id, meta in _lua_discover(self.generators_path).items():
+                    if lua_id in self.generator_metadata:
+                        continue  # Don't shadow Python entries by accident.
+                    vendor, product = self._parse_generator_name(lua_id)
+                    self.generator_metadata[lua_id] = {
+                        "id": lua_id,
+                        "name": meta.get("name") or self._format_name(lua_id),
+                        "category": meta.get("category", "uncategorized"),
+                        "vendor": meta.get("vendor") or vendor,
+                        "product": meta.get("product") or product,
+                        "description": meta.get("description")
+                        or f"{vendor} {product} Lua event generator",
+                        "file_path": meta["file_path"],
+                        "supported_formats": ["json"],
+                        "star_trek_enabled": False,
+                        "engine": "lua",
+                        "sourcetype": meta.get("sourcetype"),
+                        "hec_path": meta.get("hec_path"),
+                    }
+            except Exception:
+                # Discovery failures must never break the API startup.
+                pass
     
     def _parse_generator_name(self, generator_id: str) -> tuple:
         """Parse vendor and product from generator ID"""

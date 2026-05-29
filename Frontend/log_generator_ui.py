@@ -29,7 +29,11 @@ LUA_SCENARIOS = {
     'identity_theft_ransomware_lua': {
         'script': 'lua/identity_theft_ransomware.lua',
         'output': 'identity_theft_ransomware_lua.json',
-    }
+    },
+    'aws_cloudtrail_synthetic_lua': {
+        'script': 'lua/aws_cloudtrail_synthetic.lua',
+        'output': 'aws_cloudtrail_synthetic_lua.json',
+    },
 }
 
 
@@ -435,6 +439,16 @@ def list_scenarios():
             'engine': 'lua',
             'data_sources': ['SentinelOne EDR', 'Okta Authentication', 'Palo Alto Firewall', 'Windows Event Logs'],
             'phases': ['Credential Theft', 'Identity Abuse', 'Command and Control', 'Discovery and Staging', 'Privilege Abuse', 'Ransomware Preparation', 'Ransomware Execution', 'Ransomware Impact']
+        },
+        {
+            'id': 'aws_cloudtrail_synthetic_lua',
+            'name': 'AWS CloudTrail Synthetic Activity (Lua)',
+            'description': 'Mixed benign + malicious CloudTrail audit traffic across IAM, S3, Bedrock, SageMaker, DynamoDB, KMS, and Secrets Manager. Lua port of the Python aws_cloudtrail generator with hec_path/parser routing pinned via scenario.sources.',
+            'duration_minutes': 30,
+            'total_events': 60,
+            'engine': 'lua',
+            'data_sources': ['AWS CloudTrail'],
+            'phases': ['Normal Operations', 'Suspicious Burst']
         },
         {
             'id': 'tor_user',

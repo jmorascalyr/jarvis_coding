@@ -4,6 +4,7 @@
 !README.md
 !AGENTS.md
 *.md
+!lua_refactor.md
 !README.md.example
 *.markdown
 *.mdown

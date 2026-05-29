@@ -216,8 +216,20 @@ class ScenarioHECSender:
                 if dt:
                     event_time_sec = dt.timestamp()
 
+            # Per-event routing hints declared by Lua scenarios via scenario.sources
+            # or per-event opts (see lua_scenario_runner._apply_routing_hints).
+            send_kwargs = {}
+            hec_path = event.get('hec_path')
+            if isinstance(hec_path, str) and hec_path.lower() in ('event', 'raw', 'auto'):
+                send_kwargs['hec_path'] = hec_path.lower()
+            parser_override = event.get('parser')
+            if isinstance(parser_override, str) and parser_override.strip():
+                send_kwargs['parser_override'] = parser_override.strip()
+            if 'force_parser' in event:
+                send_kwargs['force_parser'] = bool(event.get('force_parser'))
+
             # Send via existing hec sender (passing event_time to set HEC envelope time)
-            send_one(raw_event, product, enhanced_attr_fields, event_time=event_time_sec)
+            send_one(raw_event, product, enhanced_attr_fields, event_time=event_time_sec, **send_kwargs)
             
             return True
             

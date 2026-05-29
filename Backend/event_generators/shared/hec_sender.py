@@ -1037,21 +1037,27 @@ _JARVIS_API_KEY = os.getenv("JARVIS_API_KEY")
 _S1_CONFIG_API_URL = os.getenv("S1_CONFIG_API_URL")
 _S1_CONFIG_WRITE_TOKEN = os.getenv("S1_CONFIG_WRITE_TOKEN")
 
-_ENSURED_PARSERS: set[str] = set()
+_ENSURED_PARSERS: set[tuple[str, bool]] = set()
 
 
-def _ensure_parser_in_destination(product: str) -> None:
+def _ensure_parser_in_destination(
+    product: str,
+    sourcetype_override: Optional[str] = None,
+    overwrite_override: Optional[bool] = None,
+) -> None:
     if not _ENSURE_PARSER:
         return
 
-    sourcetype = SOURCETYPE_MAP.get(product, product)
+    sourcetype = sourcetype_override or SOURCETYPE_MAP.get(product, product)
 
     sync_sourcetype = sourcetype
     if sync_sourcetype.startswith("community-"):
         sync_sourcetype = sync_sourcetype[len("community-"):]
 
+    overwrite = _OVERWRITE_PARSER if overwrite_override is None else bool(overwrite_override)
+    cache_key = (sync_sourcetype, overwrite)
 
-    if sync_sourcetype in _ENSURED_PARSERS:
+    if cache_key in _ENSURED_PARSERS:
         return
 
     # If the sourcetype isn't one that maps to a parser bundle name, nothing to do.
@@ -1076,7 +1082,7 @@ def _ensure_parser_in_destination(product: str) -> None:
         "sourcetype": sync_sourcetype,
         "config_api_url": _S1_CONFIG_API_URL,
         "config_write_token": _S1_CONFIG_WRITE_TOKEN,
-        "overwrite_parser": _OVERWRITE_PARSER,
+        "overwrite_parser": overwrite,
     }
 
     try:
@@ -1092,18 +1098,63 @@ def _ensure_parser_in_destination(product: str) -> None:
         data = resp.json() if resp.content else {}
         if _VERBOSITY in ('info', 'verbose', 'debug'):
             print(
-                f"[PARSER] Ensure-parser {sync_sourcetype}: {data.get('status', 'unknown')} - {data.get('message', '')}",
+                f"[PARSER] Ensure-parser {sync_sourcetype} (overwrite={overwrite}): "
+                f"{data.get('status', 'unknown')} - {data.get('message', '')}",
                 flush=True,
             )
 
-        _ENSURED_PARSERS.add(sync_sourcetype)
+        _ENSURED_PARSERS.add(cache_key)
     except Exception as e:
         if _VERBOSITY in ('info', 'verbose', 'debug'):
             print(f"[PARSER] Ensure-parser error for {sync_sourcetype}: {e}", flush=True)
         return
 
-def _build_qs(product: str) -> str:
-    parts = [f"sourcetype={SOURCETYPE_MAP.get(product, product)}"]
+def _discover_lua_product_ids() -> list:
+    """Return the list of single-file Lua generator ids (header-parsed, no lupa needed)."""
+    try:
+        from lua_bridge import discover as _lua_discover  # type: ignore
+    except ImportError:
+        try:
+            from event_generators.shared.lua_bridge import discover as _lua_discover  # type: ignore
+        except Exception:
+            return []
+    try:
+        return sorted(_lua_discover(generator_root).keys())
+    except Exception:
+        return []
+
+
+def _resolve_lua_product(product: str):
+    """Look for a single-file Lua generator at <root>/lua/<category>/<product>.lua.
+
+    Returns a loaded ``LuaGeneratorHandle`` or ``None`` if no matching file
+    exists. Import failures (e.g. missing ``lupa``) bubble up so the operator
+    sees the real problem instead of "generator not implemented".
+    """
+    lua_root = os.path.join(generator_root, "lua")
+    if not os.path.isdir(lua_root):
+        return None
+    candidate: Optional[str] = None
+    for category in os.listdir(lua_root):
+        cat_dir = os.path.join(lua_root, category)
+        if not os.path.isdir(cat_dir):
+            continue
+        path = os.path.join(cat_dir, f"{product}.lua")
+        if os.path.isfile(path):
+            candidate = path
+            break
+    if candidate is None:
+        return None
+    try:
+        from lua_bridge import load as _lua_load  # type: ignore
+    except ImportError:
+        from event_generators.shared.lua_bridge import load as _lua_load  # type: ignore
+    return _lua_load(candidate)
+
+
+def _build_qs(product: str, sourcetype_override: Optional[str] = None) -> str:
+    sourcetype = sourcetype_override or SOURCETYPE_MAP.get(product, product)
+    parts = [f"sourcetype={sourcetype}"]
     if ENV_SOURCE:
         parts.append(f"source={ENV_SOURCE}")
     if ENV_HOST:
@@ -1222,18 +1273,19 @@ JSON_PRODUCTS = {
     "pingprotect",
 }
 
-def _envelope(line, product: str, attr_fields: dict, event_time: float | None = None) -> dict:
+def _envelope(line, product: str, attr_fields: dict, event_time: float | None = None,
+              sourcetype_override: Optional[str] = None) -> dict:
     # Handle both JSON dict objects and string inputs
     if isinstance(line, dict):
         event_data = line  # Use dict directly for JSON products
     else:
         event_data = line  # Use string for raw products
-    
+
     # If event_time is provided, use it; otherwise current time
     env_time = round(time.time()) if event_time is None else int(event_time)
     env = {"time": env_time,
            "event": event_data,
-           "sourcetype": SOURCETYPE_MAP.get(product, product),
+           "sourcetype": sourcetype_override or SOURCETYPE_MAP.get(product, product),
            "fields": attr_fields}
     if ENV_SOURCE:
         env["source"] = ENV_SOURCE
@@ -1243,12 +1295,36 @@ def _envelope(line, product: str, attr_fields: dict, event_time: float | None = 
         env["index"] = ENV_INDEX
     return env
 
-def send_one(line, product: str, attr_fields: dict, event_time: float | None = None):
+def send_one(line, product: str, attr_fields: dict, event_time: float | None = None,
+             *, hec_path: Optional[str] = None,
+             parser_override: Optional[str] = None,
+             force_parser: Optional[bool] = None):
     """
     Route JSON‑structured products to the /event endpoint and all
     raw / CSV / syslog products to the /raw endpoint.
+
+    Lua-declared routing/parser hints can override the static `JSON_PRODUCTS`
+    allowlist and `SOURCETYPE_MAP`:
+      hec_path:        "event" | "raw" | "auto" | None  (None == "auto")
+      parser_override: explicit sourcetype string
+      force_parser:    overrides JARVIS_OVERWRITE_PARSER for this call's
+                       ensure-parser sync.
     """
-    _ensure_parser_in_destination(product)
+    _ensure_parser_in_destination(
+        product,
+        sourcetype_override=parser_override,
+        overwrite_override=force_parser,
+    )
+
+    # Decide JSON vs raw routing using the Lua-declared hint, falling back to
+    # JSON_PRODUCTS membership when no hint (or "auto") was provided.
+    hec_path_lc = hec_path.lower() if isinstance(hec_path, str) else None
+    if hec_path_lc == "event":
+        is_json = True
+    elif hec_path_lc == "raw":
+        is_json = False
+    else:
+        is_json = product in JSON_PRODUCTS
     # Build endpoint bases to try (env override → us1 → usea1 → global)
     env_event = os.getenv("S1_HEC_EVENT_URL_BASE")
     env_raw = os.getenv("S1_HEC_RAW_URL_BASE")
@@ -1294,8 +1370,9 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
 
     # Batch mode: enqueue and return
     if _BATCH_ENABLED:
-        if product in JSON_PRODUCTS:
-            payload = _envelope(line, product, attr_fields, event_time)
+        if is_json:
+            payload = _envelope(line, product, attr_fields, event_time,
+                                sourcetype_override=parser_override)
             line_str = json.dumps(payload, separators=(",", ":"))
             _batch_enqueue(line_str, True, product, attr_fields)
         else:
@@ -1319,19 +1396,21 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
             headers_auth = {**HEADERS}
             headers_auth["Authorization"] = f"{_CONNECTION_CACHE['auth_scheme']} {HEC_TOKEN}"
             
-            if product in JSON_PRODUCTS:
+            if is_json:
                 url = _CONNECTION_CACHE['event_base']
-                payload = _envelope(line, product, attr_fields, event_time)
+                payload = _envelope(line, product, attr_fields, event_time,
+                                    sourcetype_override=parser_override)
                 headers = {**headers_auth, "Content-Type": "application/json"}
                 resp = POST(url, headers=headers, json=payload, timeout=10)
             elif _CONNECTION_CACHE['raw_fallback']:
                 url = _CONNECTION_CACHE['event_base']
                 raw_str = line if isinstance(line, str) else json.dumps(line, separators=(",", ":"))
-                payload = _envelope({"_raw": raw_str}, product, attr_fields, event_time)
+                payload = _envelope({"_raw": raw_str}, product, attr_fields, event_time,
+                                    sourcetype_override=parser_override)
                 headers = {**headers_auth, "Content-Type": "application/json"}
                 resp = POST(url, headers=headers, json=payload, timeout=10)
             else:
-                url = f"{_CONNECTION_CACHE['raw_base']}?{_build_qs(product)}"
+                url = f"{_CONNECTION_CACHE['raw_base']}?{_build_qs(product, parser_override)}"
                 payload = line
                 headers = {**headers_auth, "Content-Type": "text/plain"}
                 resp = POST(url, headers=headers, data=payload, timeout=10)
@@ -1358,10 +1437,11 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
                 headers_auth["Authorization"] = f"{scheme} {HEC_TOKEN}"
 
                 try:
-                    if product in JSON_PRODUCTS:
+                    if is_json:
                         # JSON payload → /event
                         url = event_base
-                        payload = _envelope(line, product, attr_fields, event_time)
+                        payload = _envelope(line, product, attr_fields, event_time,
+                                            sourcetype_override=parser_override)
                         headers = {**headers_auth, "Content-Type": "application/json"}
                         if DEBUG:
                             print(f"[DEBUG] Sending to {url}")
@@ -1370,7 +1450,7 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
                         resp = POST(url, headers=headers, json=payload, timeout=10)
                     else:
                         # Raw payload → /raw
-                        url = f"{raw_base}?{_build_qs(product)}"
+                        url = f"{raw_base}?{_build_qs(product, parser_override)}"
                         payload = line
                         headers = {**headers_auth, "Content-Type": "text/plain"}
                         if DEBUG:
@@ -1403,7 +1483,7 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
                     continue
 
     # For raw products: retry all bases using /event with _raw JSON wrapper as fallback
-    if product not in JSON_PRODUCTS:
+    if not is_json:
         for event_base, raw_base in bases:
             for verify, tls_low in combos:
                 POST = _make_poster(verify=verify, tls_low=tls_low)
@@ -1413,7 +1493,8 @@ def send_one(line, product: str, attr_fields: dict, event_time: float | None = N
                     raw_str = line if isinstance(line, str) else json.dumps(line, separators=(",", ":"))
                     try:
                         url = event_base
-                        payload = _envelope({"_raw": raw_str}, product, attr_fields, event_time)
+                        payload = _envelope({"_raw": raw_str}, product, attr_fields, event_time,
+                                            sourcetype_override=parser_override)
                         headers = {**headers_auth, "Content-Type": "application/json"}
                         if DEBUG:
                             print(f"[DEBUG] Sending to {url} (_raw fallback)")
@@ -1576,6 +1657,7 @@ if __name__ == "__main__":
             "infoblox_ddi",
             "paloalto_firewall",
             "zscaler_private_access",
+            *_discover_lua_product_ids(),
         ],
         default="fortinet_fortigate",
         help="Which log generator to use (default: fortinet_fortigate)",
@@ -1615,13 +1697,28 @@ if __name__ == "__main__":
     else:
         product = args.product
 
-    # Check if generator exists
-    if product not in PROD_MAP:
+    # Check if generator exists — Python (PROD_MAP) or Lua (single-file under lua/<cat>/<id>.lua)
+    lua_handle = _resolve_lua_product(product)
+    if lua_handle is None and product not in PROD_MAP:
         print(f"Error: Generator for product '{product}' not yet implemented")
         sys.exit(1)
 
-    mod_name, func_names = PROD_MAP[product]
-    gen_mod = importlib.import_module(mod_name)
+    if lua_handle is not None:
+        # Adopt the Lua header's routing hints so the rest of hec_sender treats
+        # this product like any structured/raw generator.
+        if lua_handle.sourcetype:
+            SOURCETYPE_MAP[product] = lua_handle.sourcetype
+        if lua_handle.hec_path == "event":
+            JSON_PRODUCTS.add(product)
+        elif lua_handle.hec_path == "raw":
+            JSON_PRODUCTS.discard(product)
+        # Synthesize the same shape PROD_MAP would have produced: a list of
+        # zero-arg callables that each return one event.
+        gen_mod = None
+        func_names = [f"{product}_log"]
+    else:
+        mod_name, func_names = PROD_MAP[product]
+        gen_mod = importlib.import_module(mod_name)
     
     # Parse custom metadata fields if provided
     attr_fields = {}
@@ -1636,7 +1733,10 @@ if __name__ == "__main__":
             print(f"Error: Invalid JSON in --metadata argument: {e}")
             sys.exit(1)
     
-    generators = [getattr(gen_mod, fn) for fn in func_names]
+    if lua_handle is not None:
+        generators = [lua_handle.emit_one]
+    else:
+        generators = [getattr(gen_mod, fn) for fn in func_names]
 
     # For large counts (continuous mode), stream events instead of pre-generating
     STREAMING_THRESHOLD = 10000

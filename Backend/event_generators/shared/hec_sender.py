@@ -203,7 +203,12 @@ PROD_MAP = {
     ),
     "microsoft_defender_email": (
         "microsoft_defender_email",
-        ["microsoft_defender_email_log"],
+        [
+            "microsoft_defender_email_log",
+            "email_events_log",
+            "email_url_info_log",
+            "url_click_events_log",
+        ],
     ),
     "beyondtrust_passwordsafe": (
         "beyondtrust_passwordsafe",
@@ -391,7 +396,18 @@ PROD_MAP = {
     ),
     "microsoft_365_defender": (
         "microsoft_365_defender",
-        ["microsoft_365_defender_log"],
+        [
+            "microsoft_365_defender_log",
+            "device_file_events_log",
+            "device_process_events_log",
+            "device_network_events_log",
+            "device_events_log",
+            "device_registry_events_log",
+            "device_logon_events_log",
+            "identity_logon_events_log",
+            "entra_id_signin_events_log",
+            "cloud_app_events_log",
+        ],
     ),
     "pingfederate": (
         "pingfederate",

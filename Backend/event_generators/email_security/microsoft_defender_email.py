@@ -214,6 +214,164 @@ def microsoft_defender_email_log(overrides: dict | None = None) -> Dict:
     
     return event
 
+# ---------------------------------------------------------------------------
+# Defender XDR Advanced Hunting MDO tables (schema-accurate)
+# Schemas mirror microsoft_defender_telemetry_and_alerts.md sections 1.1 – 1.3.
+# ---------------------------------------------------------------------------
+
+
+def _iso_z_defender(dt: datetime) -> str:
+    """ISO-8601 with 7-digit fractional second + Z suffix (Defender format)."""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    base = dt.strftime("%Y-%m-%dT%H:%M:%S")
+    frac = f"{dt.microsecond:06d}{random.randint(0, 9)}"
+    return f"{base}.{frac}Z"
+
+
+_DEFAULT_DEFENDER_PROFILE = {
+    "tenant_id": "b3c1b5fc-828c-45fa-a1e1-10d74f6d6e9c",
+    "victim_upn": "alex.morgan@contoso.com",
+    "victim_object_id": "9a8b7c6d-1234-5678-90ab-cdef01234567",
+    "sender_from": "billing-noreply@arcadia-invoices.com",
+    "sender_mail_from": "bounce+04827@arcadia-invoices.com",
+    "sender_domain": "arcadia-invoices.com",
+    "sender_display": "Arcadia Billing",
+    "sender_ip": "185.220.101.42",
+    "subject": "Invoice #INV-2026-04827 \u2014 Payment Past Due",
+    "url": "https://secure-invoice-portal.arcadia-cdn[.]net/inv/04827/view?token=eyJhbGciOiJIUzI1NiJ9",
+    "url_clean": "https://secure-invoice-portal.arcadia-cdn.net/inv/04827/view?token=eyJhbGciOiJIUzI1NiJ9",
+    "url_domain": "secure-invoice-portal.arcadia-cdn.net",
+    "url_chain": [
+        "https://secure-invoice-portal.arcadia-cdn.net/inv/04827/view",
+        "https://arcadia-cdn-edge.b-cdn.net/dl/invoice-04827.zip",
+    ],
+    "network_message_id": "5c44b08a-b1c2-4d3e-9f87-2e8a4b6c0d12",
+    "email_cluster_id": "ec_2026-05-29_a17f9c",
+    "alert_id": "ad9d8c7b-6e5f-4a3b-2c1d-0e9f8a7b6c5d",
+    "client_ip": "172.18.84.119",
+}
+
+
+def _merge_profile(overrides):
+    prof = dict(_DEFAULT_DEFENDER_PROFILE)
+    if overrides and isinstance(overrides.get("_profile"), dict):
+        prof.update(overrides["_profile"])
+    return prof
+
+
+def _clean_overrides(overrides):
+    if not overrides:
+        return {}
+    return {k: v for k, v in overrides.items() if not k.startswith("_")}
+
+
+def email_events_log(overrides: dict | None = None) -> Dict:
+    """Generate a Defender for Office 365 ``EmailEvents`` row."""
+    prof = _merge_profile(overrides)
+    now = datetime.now(timezone.utc)
+    event = {
+        "Timestamp": _iso_z_defender(now),
+        "NetworkMessageId": prof["network_message_id"],
+        "InternetMessageId": f"<{uuid.uuid4()}@{prof['sender_domain']}>",
+        "SenderFromAddress": prof["sender_from"],
+        "SenderDisplayName": prof["sender_display"],
+        "SenderObjectId": None,
+        "SenderMailFromAddress": prof["sender_mail_from"],
+        "SenderIPv4": prof["sender_ip"],
+        "SenderIPv6": None,
+        "SenderFromDomain": prof["sender_domain"],
+        "SenderMailFromDomain": prof["sender_domain"],
+        "RecipientEmailAddress": prof["victim_upn"],
+        "RecipientObjectId": prof["victim_object_id"],
+        "Subject": prof["subject"],
+        "EmailClusterId": prof["email_cluster_id"],
+        "EmailDirection": "Inbound",
+        "DeliveryAction": "Delivered",
+        "DeliveryLocation": "Inbox",
+        "OriginalDeliveryAction": None,
+        "OriginalDeliveryLocation": None,
+        "Connectors": "",
+        "EmailLanguage": "en",
+        "AuthenticationDetails": json.dumps(
+            {"SPF": "pass", "DKIM": "pass", "DMARC": "none", "CompAuth": "pass"}
+        ),
+        "AttachmentCount": 0,
+        "UrlCount": 1,
+        "EmailAction": "",
+        "EmailActionPolicy": "",
+        "EmailActionPolicyGuid": None,
+        "ThreatTypes": "Phish",
+        "ThreatNames": "Phish.URL",
+        "DetectionMethods": json.dumps(
+            {"Phish": ["URL reputation", "URL detonation reputation"]}
+        ),
+        "ConfidenceLevel": json.dumps({"Phish": "High"}),
+        "Connector": "",
+        "BulkComplaintLevel": 4,
+        "PhishConfidenceLevel": "High",
+        "LatestDeliveryAction": "Delivered",
+        "LatestDeliveryLocation": "Inbox",
+        "UserLevelAction": "",
+        "UserLevelPolicy": "",
+        "OrgLevelAction": "",
+        "OrgLevelPolicy": "",
+        "ThreatOriginatingService": "EOP",
+        "AlertId": prof["alert_id"],
+        "ReportId": random.randint(8_472_690_000, 8_472_699_999),
+        "AdditionalFields": json.dumps(
+            {
+                "TenantId": prof["tenant_id"],
+                "FirstSeenInOrg": True,
+                "FirstSeenForRecipient": True,
+            }
+        ),
+        "_table": "EmailEvents",
+    }
+    event.update(_clean_overrides(overrides))
+    return event
+
+
+def email_url_info_log(overrides: dict | None = None) -> Dict:
+    """Generate an ``EmailUrlInfo`` row."""
+    prof = _merge_profile(overrides)
+    now = datetime.now(timezone.utc)
+    event = {
+        "Timestamp": _iso_z_defender(now),
+        "NetworkMessageId": prof["network_message_id"],
+        "Url": prof["url"],
+        "UrlDomain": prof["url_domain"],
+        "UrlLocation": "Body",
+        "ReportId": random.randint(8_472_690_000, 8_472_699_999),
+        "_table": "EmailUrlInfo",
+    }
+    event.update(_clean_overrides(overrides))
+    return event
+
+
+def url_click_events_log(overrides: dict | None = None) -> Dict:
+    """Generate a ``UrlClickEvents`` row (Safe Links click-through)."""
+    prof = _merge_profile(overrides)
+    now = datetime.now(timezone.utc)
+    event = {
+        "Timestamp": _iso_z_defender(now),
+        "Url": prof["url"],
+        "ActionType": "ClickAllowed",
+        "AccountUpn": prof["victim_upn"],
+        "Workload": "Email",
+        "NetworkMessageId": prof["network_message_id"],
+        "ThreatTypes": "Phish",
+        "DetectionMethods": "URL reputation",
+        "IPAddress": prof["client_ip"],
+        "IsClickedThrough": True,
+        "UrlChain": json.dumps(prof["url_chain"]),
+        "ReportId": random.randint(8_472_690_000, 8_472_699_999),
+        "_table": "UrlClickEvents",
+    }
+    event.update(_clean_overrides(overrides))
+    return event
+
+
 if __name__ == "__main__":
     # Generate sample logs
     print("Sample Microsoft Defender for Email events:")
@@ -221,3 +379,7 @@ if __name__ == "__main__":
         print(f"\n{threat} event:")
         print(microsoft_defender_email_log({"ThreatTypes": threat}))
         print()
+    print("\nDefender Advanced Hunting MDO samples:")
+    print(json.dumps(email_events_log(), indent=2))
+    print(json.dumps(email_url_info_log(), indent=2))
+    print(json.dumps(url_click_events_log(), indent=2))

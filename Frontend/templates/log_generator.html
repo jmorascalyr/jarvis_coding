@@ -3300,10 +3300,15 @@
                 correlationOutputBox.innerText = 'Fetching XDR assets from S1 management API...\n';
                 
                 try {
+                    const assetNames = currentCorrelationScenario?.asset_filter_names || [];
                     const res = await fetch('/xdr/assets', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ destination_id: destinationId })
+                        body: JSON.stringify({
+                            destination_id: destinationId,
+                            names: assetNames,
+                            max_results: 50
+                        })
                     });
                     
                     const data = await res.json();

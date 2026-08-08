@@ -1,0 +1,40 @@
+{
+    "finding_info": {
+        "uid": "placeholder_uid",
+        "title": "Defender for Endpoint - Outbound connection to known command-and-control server",
+        "desc": "powershell.exe on ws-fin-042.contoso.corp established an outbound TCP connection to 195.201.59.127:4443, a known command-and-control infrastructure node geolocated to DE (ASN 24940). The connecting process was spawned from cmd.exe with an obfuscated, base64-encoded command line consistent with the Bovter reverse-shell pattern. MITRE ATT&CK: T1071.001 (Web Protocols), T1095 (Non-Application Layer Protocol), T1573 (Encrypted Channel)."
+    },
+    "resources": [
+        {
+            "uid": "DYNAMIC_RESOURCE_UID",
+            "name": "ws-fin-042.contoso.corp"
+        }
+    ],
+    "severity": "high",
+    "category_uid": 2,
+    "class_uid": 99602001,
+    "class_name": "S1 Security Alert",
+    "type_uid": 9960200101,
+    "type_name": "S1 Security Alert: Create",
+    "category_name": "Findings",
+    "activity_id": 1,
+    "metadata": {
+        "version": "1.1.0",
+        "extension": {
+            "name": "s1",
+            "uid": "998",
+            "version": "0.1.0"
+        },
+        "product": {
+            "name": "Microsoft Defender for Endpoint",
+            "vendor_name": "Microsoft"
+        },
+        "logged_time": "DYNAMIC",
+        "modified_time": "DYNAMIC"
+    },
+    "time": "DYNAMIC",
+    "attack_surface_ids": [1],
+    "severity_id": 4,
+    "state_id": 1,
+    "s1_classification_id": 28
+}

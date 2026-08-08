@@ -1,12 +1,15 @@
 metadata_details:
-  purpose: Parser for Microsoft 365 Defender endpoint security logs using JSON parsing to normalise events
-    into the AI-SIEM schema with OCSF compliance.
+  purpose: Parser for Microsoft Defender XDR Advanced Hunting tables (DeviceFileEvents,
+    DeviceProcessEvents, DeviceNetworkEvents, DeviceEvents, DeviceRegistryEvents,
+    DeviceLogonEvents, IdentityLogonEvents, EntraIdSignInEvents, CloudAppEvents,
+    AlertInfo). Maps to the SentinelOne EDR schema (endpoint/src/tgt/event/registry).
   datasource_vendor: microsoft
   dataSource: m365_defender
   format: JSON
-  ingestion_method: unknown
-  dependency_summary: Requires ingestion of Microsoft 365 Defender DeviceEvents logs.
-  performance_impact: "Minimal – this parser processes JSON formatted endpoint security logs."
-  tags: microsoft, m365, defender, endpoint, security, logs, json, parser, ocsf
+  ingestion_method: HEC
+  dependency_summary: Ingests Microsoft Defender XDR Advanced Hunting rows; each event
+    carries a "_table" hint that drives per-table mapping blocks.
+  performance_impact: "Minimal – flat JSON parse with table-keyed predicates."
+  tags: microsoft, defender, xdr, mde, edr, endpoint, advanced_hunting, json, parser
   author: Community
   version: latest

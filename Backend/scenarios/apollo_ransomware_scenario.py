@@ -88,6 +88,10 @@ CORRELATION_CONFIG = {
     "scenario_id": "apollo_ransomware_scenario",
     "name": "Apollo Ransomware - STARFLEET Attack",
     "description": "Correlates Proofpoint and M365 events with existing EDR/WEL data for the Apollo ransomware attack chain targeting STARFLEET.",
+
+    # Machine names used to filter XDR asset lookups in the UI's "Get Assets" button.
+    # Substring matched (case-insensitive) against active agent assets.
+    "asset_filter_names": ["bridge", "Enterprise"],
     
     "default_query": """dataSource.name in ('SentinelOne','Windows Event Logs') endpoint.name contains ("Enterprise", "bridge")  AND  (winEventLog.id = 4698 or * contains "apollo") 
 
@@ -998,38 +1002,80 @@ def generate_apollo_ransomware_scenario(
                 try:
                     import urllib.request
                     import urllib.parse
-                    params = {"accountIds": uam_account_id}
+                    # The S1 XDR assets endpoint may ignore limit/query/isActive filters,
+                    # so we paginate via cursor and filter client-side. We stop early once
+                    # both target machines are matched, or after a hard page cap.
+                    max_pages = 50
+                    all_assets: list = []
+
+                    # S1 XDR assets endpoint rejects `limit` and `isActive` with 400 — pass
+                    # only scope params and filter client-side after pagination.
+                    base_params = {"accountIds": uam_account_id}
                     if uam_site_id:
-                        params["siteIds"] = uam_site_id
-                    lookup_url = f"{s1_mgmt_url.rstrip('/')}/web/api/v2.1/xdr/assets?{urllib.parse.urlencode(params)}"
-                    req = urllib.request.Request(lookup_url, headers={
-                        "Authorization": f"ApiToken {s1_api_token}",
-                        "Content-Type": "application/json",
-                    })
-                    with urllib.request.urlopen(req, timeout=15) as resp:
-                        assets_data = json.loads(resp.read().decode())
-                        assets = assets_data.get("data", [])
-                        # Find real agent assets (have 'agent' field) for both machines
-                        for asset in assets:
+                        base_params["siteIds"] = uam_site_id
+
+                    targets = {
+                        bridge_name.lower(): None,
+                        enterprise_name.lower(): None,
+                    }
+
+                    def _name_matches(asset_name: str, machine_name: str) -> bool:
+                        a = asset_name.lower()
+                        m = machine_name.lower()
+                        return a == m or m in a
+
+                    cursor = None
+                    for _ in range(max_pages):
+                        params = dict(base_params)
+                        if cursor:
+                            params["cursor"] = cursor
+                        url = f"{s1_mgmt_url.rstrip('/')}/web/api/v2.1/xdr/assets?{urllib.parse.urlencode(params)}"
+                        req = urllib.request.Request(url, headers={
+                            "Authorization": f"ApiToken {s1_api_token}",
+                            "Content-Type": "application/json",
+                        })
+                        with urllib.request.urlopen(req, timeout=20) as resp:
+                            body = json.loads(resp.read().decode())
+                        page = body.get("data", []) or []
+                        all_assets.extend(page)
+
+                        # Try to match remaining targets
+                        for asset in page:
                             if not asset.get("agent"):
                                 continue
-                            name = asset.get("name", "").lower()
-                            asset_id = asset.get("id", "")
-                            agent_uuid = asset.get("agent", {}).get("uuid", "")
-                            if name == bridge_name.lower():
-                                print(f"   ✓ Bridge asset: {asset.get('name')} → {asset_id}")
-                                uam_config['xdr_asset_id_bridge'] = asset_id
-                                uam_config['xdr_asset_name_bridge'] = asset.get("name", "")
-                            elif name == enterprise_name.lower():
-                                print(f"   ✓ Enterprise asset: {asset.get('name')} → {asset_id}")
-                                uam_config['xdr_asset_id_enterprise'] = asset_id
-                                uam_config['xdr_asset_name_enterprise'] = asset.get("name", "")
-                        
-                        if not uam_config.get('xdr_asset_id_bridge'):
-                            print(f"   ⚠ No XDR agent asset found for '{bridge_name}'")
-                        if not uam_config.get('xdr_asset_id_enterprise'):
-                            print(f"   ⚠ No XDR agent asset found for '{enterprise_name}'")
-                        print(f"     Scanned {len(assets)} total assets")
+                            asset_name = asset.get("name", "")
+                            for machine_name in list(targets.keys()):
+                                if targets[machine_name] is None and _name_matches(asset_name, machine_name):
+                                    targets[machine_name] = asset
+
+                        if all(v is not None for v in targets.values()):
+                            break
+                        cursor = (body.get("pagination") or {}).get("nextCursor")
+                        if not cursor or not page:
+                            break
+
+                    total_scanned = len(all_assets)
+
+                    def _lookup_asset(machine_name: str):
+                        return targets.get(machine_name.lower())
+
+                    bridge_asset = _lookup_asset(bridge_name)
+                    if bridge_asset:
+                        print(f"   ✓ Bridge asset: {bridge_asset.get('name')} → {bridge_asset.get('id')}")
+                        uam_config['xdr_asset_id_bridge'] = bridge_asset.get("id", "")
+                        uam_config['xdr_asset_name_bridge'] = bridge_asset.get("name", "")
+                    else:
+                        print(f"   ⚠ No active XDR agent asset found for '{bridge_name}'")
+
+                    enterprise_asset = _lookup_asset(enterprise_name)
+                    if enterprise_asset:
+                        print(f"   ✓ Enterprise asset: {enterprise_asset.get('name')} → {enterprise_asset.get('id')}")
+                        uam_config['xdr_asset_id_enterprise'] = enterprise_asset.get("id", "")
+                        uam_config['xdr_asset_name_enterprise'] = enterprise_asset.get("name", "")
+                    else:
+                        print(f"   ⚠ No active XDR agent asset found for '{enterprise_name}'")
+
+                    print(f"     Scanned {total_scanned} total assets across lookups")
                 except Exception as e:
                     print(f"   ⚠ XDR asset lookup failed: {e}")
             

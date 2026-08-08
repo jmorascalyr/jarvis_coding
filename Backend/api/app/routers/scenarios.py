@@ -188,7 +188,8 @@ async def list_correlation_scenarios(
             "default_query": CORRELATION_CONFIG["default_query"],
             "time_anchors": CORRELATION_CONFIG["time_anchors"],
             "phase_mapping": CORRELATION_CONFIG["phase_mapping"],
-            "fallback_behavior": CORRELATION_CONFIG.get("fallback_behavior", "offset_from_now")
+            "fallback_behavior": CORRELATION_CONFIG.get("fallback_behavior", "offset_from_now"),
+            "asset_filter_names": CORRELATION_CONFIG.get("asset_filter_names", [])
         })
     except ImportError as e:
         logger.warning(f"Failed to import apollo_ransomware_scenario: {e}")

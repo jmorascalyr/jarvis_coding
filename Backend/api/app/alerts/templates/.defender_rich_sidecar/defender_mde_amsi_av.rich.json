@@ -1,0 +1,336 @@
+{
+    "finding_info": {
+        "uid": "placeholder_uid",
+        "title": "Defender for Endpoint - AMSI and Antivirus blocked credential-theft tooling",
+        "desc": "AMSI scanned the in-memory contents of powershell.exe on ws-fin-042.contoso.corp and identified the script as Backdoor:PowerShell/Bovter.A. Defender Antivirus subsequently quarantined the process while it was executing. The same process tree then attempted LSASS memory access via rundll32.exe loading diag.dll - a classic credential dumping pattern. MITRE ATT&CK: T1003.001 (LSASS Memory), T1059.001 (PowerShell), T1140 (Deobfuscate/Decode Files or Information).",
+        "src_url": "https://security.microsoft.com/alerts/df0a9b8c-7d6e-5f4a-3b2c-1d0e9f8a7b6c",
+        "related_events": [
+            {
+                "uid": "ws-fin-042.contoso.corp (1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081): malicious",
+                "message": "ws-fin-042.contoso.corp (1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081): malicious"
+            },
+            {
+                "uid": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2 (mdeDeviceId): malicious",
+                "message": "processEvidence rundll32.exe -> LSASS access on mdeDeviceId 47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2: malicious"
+            },
+            {
+                "uid": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run (HKEY_CURRENT_USER): suspicious",
+                "message": "registryValueEvidence persistence Run key SecurityHealthCheck: suspicious"
+            },
+            {
+                "uid": "contoso (a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71): suspicious",
+                "message": "userEvidence alex.morgan@contoso.com: suspicious"
+            }
+        ]
+    },
+    "resources": [
+        {
+            "uid": "DYNAMIC_RESOURCE_UID",
+            "name": "ws-fin-042.contoso.corp",
+            "type": "Windows11",
+            "version": "10.0.22631.3737",
+            "owner": {
+                "email_addr": "alex.morgan"
+            }
+        }
+    ],
+    "observables": [
+        {
+            "name": "azureAdDeviceId",
+            "type": "Resource UID",
+            "type_id": 10,
+            "value": "1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081"
+        },
+        {
+            "name": "ipInterfaces",
+            "type": "IP Address",
+            "type_id": 2,
+            "value": "10.84.17.42"
+        },
+        {
+            "name": "osPlatform",
+            "type": "Endpoint",
+            "type_id": 20,
+            "value": "Windows11"
+        },
+        {
+            "name": "loggedOnUsers",
+            "type": "User",
+            "type_id": 21,
+            "value": "alex.morgan"
+        },
+        {
+            "name": "mdeDeviceId",
+            "type": "Resource UID",
+            "type_id": 10,
+            "value": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2"
+        },
+        {
+            "name": "processId",
+            "type": "Process",
+            "type_id": 25,
+            "value": "11247"
+        },
+        {
+            "name": "registryKey",
+            "type": "Other",
+            "type_id": 99,
+            "value": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"
+        }
+    ],
+    "evidences": [
+        {
+            "process": {
+                "cmd_line": "rundll32.exe C:\\Users\\alex.morgan\\AppData\\Local\\Temp\\diag.dll,Entry",
+                "parent_process": {
+                    "name": "powershell.exe"
+                },
+                "user": {
+                    "name": "alex.morgan@contoso.com"
+                },
+                "file": {
+                    "name": "diag.dll",
+                    "path": "C:\\Users\\alex.morgan\\AppData\\Local\\Temp",
+                    "size": 184320,
+                    "hashes": [
+                        {
+                            "algorithm_id": 2,
+                            "algorithm": "SHA-1",
+                            "value": "c4d5e6f70819223a4b5c6d7e8f90a1b2c3d4e5f6"
+                        },
+                        {
+                            "algorithm_id": 3,
+                            "algorithm": "SHA-256",
+                            "value": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "severity": "high",
+    "severity_id": 4,
+    "activity_id": 1,
+    "category_uid": 2,
+    "category_name": "Findings",
+    "class_uid": 99602001,
+    "class_name": "S1 Security Alert",
+    "type_uid": 9960200101,
+    "type_name": "S1 Security Alert: Create",
+    "attack_surface_ids": [
+        1
+    ],
+    "s1_classification_id": 28,
+    "dataSource": {
+        "name": "Microsoft O365",
+        "category": "security",
+        "vendor": "Microsoft"
+    },
+    "cloud": {
+        "provider": "Microsoft Azure"
+    },
+    "metadata": {
+        "version": "1.1.0",
+        "product": {
+            "name": "Microsoft Defender for Endpoint",
+            "vendor_name": "Microsoft"
+        },
+        "logged_time": "DYNAMIC",
+        "modified_time": "DYNAMIC",
+        "extension": {
+            "name": "s1",
+            "uid": "998",
+            "version": "0.1.0"
+        }
+    },
+    "time": "DYNAMIC",
+    "raw_data": "DYNAMIC",
+    "additional_data": {
+        "graph_alert": {
+            "@odata.type": "#microsoft.graph.security.alert",
+            "id": "df0a9b8c-7d6e-5f4a-3b2c-1d0e9f8a7b6c",
+            "providerAlertId": "da637551227677561287_-961444815",
+            "incidentId": "28293",
+            "incidentWebUrl": "https://security.microsoft.com/incidents2/28293",
+            "alertWebUrl": "https://security.microsoft.com/alerts/df0a9b8c-7d6e-5f4a-3b2c-1d0e9f8a7b6c",
+            "title": "AMSI detection and credential-theft tooling blocked",
+            "description": "AMSI identified Backdoor:PowerShell/Bovter.A in the in-memory contents of powershell.exe. Defender Antivirus quarantined the process while executing, and the host subsequently exhibited LSASS access attempts via rundll32.exe loading diag.dll.",
+            "category": "DefenseEvasion",
+            "severity": "high",
+            "status": "new",
+            "classification": "unknown",
+            "determination": "unknown",
+            "serviceSource": "microsoftDefenderForEndpoint",
+            "detectionSource": "antivirus",
+            "detectorId": "5f8b3c1d-2e4a-49a7-8c6e-1b2c3d4e5f6a",
+            "productName": "Microsoft Defender for Endpoint",
+            "tenantId": "b3c1b5fc-828c-45fa-a1e1-10d74f6d6e9c",
+            "actorDisplayName": null,
+            "threatDisplayName": "Backdoor:PowerShell/Bovter.A",
+            "threatFamilyName": "Bovter",
+            "mitreTechniques": [
+                "T1003.001",
+                "T1059.001",
+                "T1140"
+            ],
+            "systemTags": [
+                "AMSI",
+                "CredentialTheft"
+            ],
+            "comments": [],
+            "createdDateTime": "DYNAMIC",
+            "lastUpdateDateTime": "DYNAMIC",
+            "resolvedDateTime": null,
+            "firstActivityDateTime": "DYNAMIC",
+            "lastActivityDateTime": "DYNAMIC",
+            "additionalData": {
+                "AmsiProvider": "Windows Defender",
+                "DetectionName": "Backdoor:PowerShell/Bovter.A",
+                "EngineVersion": "1.1.24050.5",
+                "SignatureVersion": "1.413.847.0",
+                "RemediationAction": "Quarantine",
+                "WasRemediated": true
+            },
+            "recommendedActions": "1. Isolate the device and perform forensic collection of the LSASS memory dump artifacts. 2. Rotate credentials for any account that has interactively logged in to the host. 3. Audit for use of stolen credentials elsewhere. 4. Review process tree for additional credential-theft tradecraft.",
+            "evidence": [
+                {
+                    "@odata.type": "#microsoft.graph.security.deviceEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "none",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "azureAdDeviceId": "1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081",
+                    "deviceDnsName": "ws-fin-042.contoso.corp",
+                    "osPlatform": "Windows11",
+                    "osBuild": 22631,
+                    "version": "10.0.22631.3737",
+                    "healthStatus": "active",
+                    "riskScore": "high",
+                    "ipInterfaces": [
+                        "10.84.17.42"
+                    ],
+                    "vmMetadata": null,
+                    "loggedOnUsers": [
+                        {
+                            "accountName": "alex.morgan",
+                            "domainName": "contoso"
+                        }
+                    ]
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.processEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "remediated",
+                    "remediationStatusDetails": "rundll32.exe LSASS access blocked",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [
+                        "CredentialTheft"
+                    ],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "processId": 11247,
+                    "parentProcessId": 10284,
+                    "processCommandLine": "rundll32.exe C:\\Users\\alex.morgan\\AppData\\Local\\Temp\\diag.dll,Entry",
+                    "processCreationDateTime": "DYNAMIC",
+                    "parentProcessCreationDateTime": "DYNAMIC",
+                    "detectionStatus": "detected",
+                    "imageFile": {
+                        "sha1": "5e6f70819223a4b5c6d7e8f90a1b2c3d4e5f6071",
+                        "sha256": "d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4",
+                        "fileName": "rundll32.exe",
+                        "filePath": "C:\\Windows\\System32",
+                        "fileSize": 71680,
+                        "filePublisher": "Microsoft Corporation",
+                        "signer": "Microsoft Windows",
+                        "issuer": "Microsoft Windows Production PCA 2011"
+                    },
+                    "parentProcessImageFile": {
+                        "fileName": "powershell.exe",
+                        "filePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
+                        "sha1": "3f0d8e7c6b5a4938271605f4e3d2c1b0a9887654"
+                    },
+                    "userAccount": {
+                        "accountName": "alex.morgan",
+                        "domainName": "contoso",
+                        "userPrincipalName": "alex.morgan@contoso.com",
+                        "userSid": "S-1-5-21-1004336348-1177238915-682003330-1284",
+                        "azureAdUserId": "a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71"
+                    }
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.fileEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "remediated",
+                    "remediationStatusDetails": "File quarantined",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "detectionStatus": "detected",
+                    "fileDetails": {
+                        "sha1": "c4d5e6f70819223a4b5c6d7e8f90a1b2c3d4e5f6",
+                        "sha256": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3",
+                        "fileName": "diag.dll",
+                        "filePath": "C:\\Users\\alex.morgan\\AppData\\Local\\Temp",
+                        "fileSize": 184320,
+                        "filePublisher": null,
+                        "signer": null,
+                        "issuer": null
+                    }
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.registryValueEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "suspicious",
+                    "remediationStatus": "none",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [
+                        "persistence"
+                    ],
+                    "tags": [
+                        "Persistence"
+                    ],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "registryHive": "HKEY_CURRENT_USER",
+                    "registryKey": "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                    "registryValueName": "SecurityHealthCheck",
+                    "registryValueType": "String",
+                    "registryValueData": "rundll32.exe C:\\Users\\alex.morgan\\AppData\\Roaming\\Microsoft\\Spool\\diag.dll,Entry"
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.userEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "suspicious",
+                    "remediationStatus": "none",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "userAccount": {
+                        "accountName": "alex.morgan",
+                        "domainName": "contoso",
+                        "userPrincipalName": "alex.morgan@contoso.com",
+                        "userSid": "S-1-5-21-1004336348-1177238915-682003330-1284",
+                        "azureAdUserId": "a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71"
+                    },
+                    "stream": null
+                }
+            ]
+        }
+    },
+    "state_id": 1
+}

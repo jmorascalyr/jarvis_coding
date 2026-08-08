@@ -1,0 +1,40 @@
+{
+    "finding_info": {
+        "uid": "placeholder_uid",
+        "title": "Defender for Endpoint - Suspicious 'Bovter' backdoor was prevented",
+        "desc": "Malicious activity matching the PowerShell-based Bovter backdoor family was detected by Microsoft Defender Antivirus on ws-fin-042.contoso.corp. A malicious LNK shortcut spawned cmd.exe which launched powershell.exe with an obfuscated, base64-encoded command line attempting to establish a reverse TCP connection to 195.201.59.127:4443. AMSI detected the script content and Defender Antivirus quarantined the process. MITRE ATT&CK: T1059.001 (PowerShell), T1027 (Obfuscated Files or Information), T1140 (Deobfuscate/Decode Files or Information)."
+    },
+    "resources": [
+        {
+            "uid": "DYNAMIC_RESOURCE_UID",
+            "name": "ws-fin-042.contoso.corp"
+        }
+    ],
+    "severity": "high",
+    "category_uid": 2,
+    "class_uid": 99602001,
+    "class_name": "S1 Security Alert",
+    "type_uid": 9960200101,
+    "type_name": "S1 Security Alert: Create",
+    "category_name": "Findings",
+    "activity_id": 1,
+    "metadata": {
+        "version": "1.1.0",
+        "extension": {
+            "name": "s1",
+            "uid": "998",
+            "version": "0.1.0"
+        },
+        "product": {
+            "name": "Microsoft Defender for Endpoint",
+            "vendor_name": "Microsoft"
+        },
+        "logged_time": "DYNAMIC",
+        "modified_time": "DYNAMIC"
+    },
+    "time": "DYNAMIC",
+    "attack_surface_ids": [1],
+    "severity_id": 4,
+    "state_id": 1,
+    "s1_classification_id": 28
+}

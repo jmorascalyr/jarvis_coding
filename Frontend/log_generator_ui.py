@@ -361,6 +361,14 @@ def list_scenarios():
             'phases': ['Normal Baseline', 'Phishing Delivery', 'PDF Exploitation', 'PowerShell Execution', 'Payload Download', 'Process Injection', 'Persistence', 'Reconnaissance', 'C2 Communication', 'Lateral Movement', 'Data Exfiltration Prep', 'Detection & Response']
         },
         {
+            'id': 'defender_edr_scenario',
+            'name': 'Microsoft Defender EDR Story',
+            'description': 'Defender XDR Advanced Hunting telemetry (11 tables) plus 3 SentinelOne UAM alerts covering the phishing → LNK → PowerShell → C2 → AMSI/AV response story.',
+            'duration_minutes': 16,
+            'total_events': 15,
+            'phases': ['Phish Delivery & Safe Links', 'PowerShell Execution & AMSI', 'C2 + Persistence + Brute Force', 'Identity & Cloud Impact']
+        },
+        {
             'id': 'scenario_hec_sender',
             'name': 'Scenario HEC Sender',
             'description': 'Generic scenario sender that replays a scenario JSON to HEC.',
@@ -440,6 +448,7 @@ def list_all_scenarios():
         {'id': 'quick_scenario_simple', 'name': 'Quick Scenario (Simple)'},
         {'id': 'finance_mfa_fatigue_scenario', 'name': 'Finance Employee MFA Fatigue Attack'},
         {'id': 'insider_cloud_download_exfiltration', 'name': 'Insider Data Exfiltration via Cloud Download'},
+        {'id': 'defender_edr_scenario', 'name': 'Microsoft Defender EDR Story'},
         {'id': 'scenario_hec_sender', 'name': 'Scenario HEC Sender'},
         {'id': 'star_trek_integration_test', 'name': 'Integration Test (Star Trek)'},
         {'id': 'hr_phishing_pdf_c2', 'name': 'HR Phishing PDF → PowerShell → Task → C2'},
@@ -554,6 +563,14 @@ def get_xdr_assets():
         if not destination_id:
             return jsonify({'error': 'No destination_id provided'}), 400
 
+        # Optional: filter to assets whose name contains any of these (case-insensitive)
+        name_filters = [str(n).strip().lower() for n in (data.get('names') or []) if str(n).strip()]
+        # Hard cap on total assets returned to the UI
+        try:
+            max_results = int(data.get('max_results') or 50)
+        except (TypeError, ValueError):
+            max_results = 50
+
         # Resolve S1 API token from destination
         s1_resp = requests.get(
             f"{API_BASE_URL}/api/v1/destinations/{destination_id}/s1-api-token",
@@ -579,27 +596,75 @@ def get_xdr_assets():
             return jsonify({'error': 'Failed to fetch destination details'}), 400
         dest = dest_resp.json()
 
-        params = {}
+        # NOTE: The S1 XDR assets endpoint is picky about query params — `limit > default`
+        # and `isActive` both trigger 400. Stick to the scope params it accepts and do all
+        # filtering (active / name) client-side after paginating via cursor.
+        base_params = {}
         if dest.get('uam_account_id'):
-            params['accountIds'] = dest['uam_account_id']
+            base_params['accountIds'] = dest['uam_account_id']
         if dest.get('uam_site_id'):
-            params['siteIds'] = dest['uam_site_id']
+            base_params['siteIds'] = dest['uam_site_id']
 
-        # Call XDR assets API
+        # Paginate XDR assets endpoint and filter client-side by name.
+        # S1 sometimes ignores `limit` (returning ~10 per page), so we use cursor pagination.
         xdr_url = f"{s1_mgmt_url.rstrip('/')}/web/api/v2.1/xdr/assets"
-        xdr_resp = requests.get(
-            xdr_url,
-            headers={
-                "Authorization": f"ApiToken {s1_token}",
-                "Content-Type": "application/json",
-            },
-            params=params,
-            timeout=20
-        )
-        xdr_resp.raise_for_status()
-        assets_data = xdr_resp.json()
+        headers = {
+            "Authorization": f"ApiToken {s1_token}",
+            "Content-Type": "application/json",
+        }
 
-        return jsonify(assets_data)
+        def _is_active(asset: dict) -> bool:
+            # An asset is considered active if its agent (if any) is not decommissioned
+            # and reports as connected/active. Non-agent device assets are kept by default.
+            agent = asset.get('agent') or {}
+            if not agent:
+                return True
+            if agent.get('isDecommissioned') is True:
+                return False
+            if agent.get('isActive') is False:
+                return False
+            return True
+
+        def _matches_name(asset_name: str) -> bool:
+            if not name_filters:
+                return True
+            a = (asset_name or "").lower()
+            return any(n in a for n in name_filters)
+
+        collected: list = []
+        total_scanned = 0
+        cursor = None
+        max_pages = 50  # safety net for accounts with many assets
+        for _ in range(max_pages):
+            params = dict(base_params)
+            if cursor:
+                params['cursor'] = cursor
+            xdr_resp = requests.get(xdr_url, headers=headers, params=params, timeout=30)
+            xdr_resp.raise_for_status()
+            body = xdr_resp.json()
+            page = body.get('data', []) or []
+            total_scanned += len(page)
+
+            for asset in page:
+                if not _is_active(asset):
+                    continue
+                if not _matches_name(asset.get('name', '')):
+                    continue
+                collected.append(asset)
+                if len(collected) >= max_results:
+                    break
+            if len(collected) >= max_results:
+                break
+
+            cursor = (body.get('pagination') or {}).get('nextCursor')
+            if not cursor or not page:
+                break
+
+        return jsonify({
+            'data': collected,
+            'pagination': {'totalScanned': total_scanned, 'returned': len(collected)},
+            'filters': {'names': name_filters, 'activeOnly': True, 'maxResults': max_results},
+        })
     except requests.exceptions.RequestException as e:
         logger.error(f"XDR assets API call failed: {e}")
         return jsonify({'error': f'XDR assets API call failed: {str(e)}'}), 500

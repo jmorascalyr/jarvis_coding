@@ -65,6 +65,17 @@ class ScenarioService:
                     {"name": "Data Exfiltration", "generators": ["netskope"], "duration": 10}
                 ]
             },
+            "defender_edr_scenario": {
+                "id": "defender_edr_scenario",
+                "name": "Microsoft Defender EDR Scenario",
+                "description": "Defender XDR Advanced Hunting telemetry (11 tables) plus 3 UAM alerts showing phishing → PowerShell → C2 → AMSI/AV detections.",
+                "phases": [
+                    {"name": "Phish Delivery & Safe Links Click", "generators": ["microsoft_defender_email"], "duration": 5},
+                    {"name": "Endpoint Execution & AMSI", "generators": ["microsoft_365_defender"], "duration": 5},
+                    {"name": "C2, Persistence & Brute Force", "generators": ["microsoft_365_defender"], "duration": 5},
+                    {"name": "Identity & Cloud Impact", "generators": ["microsoft_365_defender"], "duration": 5}
+                ]
+            },
             "attack_scenario_orchestrator": {
                 "id": "attack_scenario_orchestrator",
                 "name": "Operation Digital Heist",

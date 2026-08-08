@@ -1,0 +1,100 @@
+{
+    "activity_id": 1,
+    "activity_name": "Create",
+    "category_uid": 2,
+    "category_name": "Findings",
+    "class_uid": 99602001,
+    "class_name": "S1 Security Alert",
+    "type_uid": 9960200101,
+    "type_name": "S1 Security Alert: Create",
+    "finding_info": {
+        "uid": "placeholder_uid",
+        "title": "LockBit 4.0 Ransomware Encryption Behavior Detected and Killed",
+        "desc": "The SentinelOne agent on ws-fin-042.contoso.corp observed a high-confidence behavioral chain matching LockBit 4.0 ransomware. The process svchost_helper.exe (parent: rundll32.exe) rapidly enumerated user document directories, deleted volume shadow copies via vssadmin.exe delete shadows /all /quiet, disabled Windows Recovery via bcdedit.exe /set {default} recoveryenabled No, and began renaming files with the .lockbit4 extension while writing ransom notes named !!!-Restore-My-Files-!!!.txt to every touched directory. The Storyline engine linked the process tree back to an initial-access LNK executed by the user 12 minutes earlier. The threat was auto-mitigated: process killed, files rolled back from local cache, and the endpoint quarantined from the network. MITRE ATT&CK: T1486 (Data Encrypted for Impact), T1490 (Inhibit System Recovery), T1489 (Service Stop), T1059.003 (Windows Command Shell)."
+    },
+    "evidences": [
+        {
+            "process": {
+                "name": "svchost_helper.exe",
+                "pid": 8412,
+                "cmd_line": "C:\\Users\\alex.morgan\\AppData\\Local\\Temp\\svchost_helper.exe -enc -mode fast -ext .lockbit4",
+                "file": {
+                    "name": "svchost_helper.exe",
+                    "path": "C:\\Users\\alex.morgan\\AppData\\Local\\Temp\\svchost_helper.exe",
+                    "size": 68,
+                    "type_id": 1,
+                    "hashes": [
+                        {
+                            "algorithm_id": 3,
+                            "algorithm": "SHA-256",
+                            "value": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f"
+                        },
+                        {
+                            "algorithm_id": 2,
+                            "algorithm": "SHA-1",
+                            "value": "3395856ce81f2b7382dee72602f798b642f14140"
+                        },
+                        {
+                            "algorithm_id": 1,
+                            "algorithm": "MD5",
+                            "value": "44d88612fea8a8f36de82e1278abb02f"
+                        }
+                    ]
+                },
+                "parent_process": {
+                    "name": "rundll32.exe",
+                    "pid": 7120,
+                    "cmd_line": "C:\\Windows\\System32\\rundll32.exe C:\\Users\\alex.morgan\\AppData\\Local\\Temp\\diag.dll,#1",
+                    "file": {
+                        "name": "rundll32.exe",
+                        "path": "C:\\Windows\\System32\\rundll32.exe",
+                        "hashes": [
+                            {
+                                "algorithm_id": 3,
+                                "algorithm": "SHA-256",
+                                "value": "b53f3c0cd32c78955d72d94daf03bff5c8de19f61a6da3d68d1c39c48f0aa5b1"
+                            }
+                        ]
+                    }
+                }
+            },
+            "actor": {
+                "user": {
+                    "name": "alex.morgan",
+                    "domain": "CONTOSO"
+                }
+            }
+        }
+    ],
+    "resources": [
+        {
+            "uid": "DYNAMIC_RESOURCE_UID",
+            "name": "ws-fin-042.contoso.corp",
+            "type": "Endpoint"
+        }
+    ],
+    "metadata": {
+        "version": "1.1.0",
+        "extension": {
+            "name": "s1",
+            "uid": "998",
+            "version": "0.1.0"
+        },
+        "product": {
+            "name": "SentinelOne EDR",
+            "vendor_name": "SentinelOne"
+        },
+        "logged_time": "DYNAMIC",
+        "modified_time": "DYNAMIC"
+    },
+    "time": "DYNAMIC",
+    "attack_surface_ids": [1],
+    "severity_id": 5,
+    "state_id": 1,
+    "status": "New",
+    "status_id": 1,
+    "s1_classification_id": 24,
+    "verdict_id": 1,
+    "verdict_fidelity_id": 3,
+    "confidence_id": 3
+}

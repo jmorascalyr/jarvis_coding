@@ -1,207 +1,246 @@
 {
-    "attributes": {
-        "dataSource.name": "Microsoft 365 Defender",
-        "dataSource.vendor": "Microsoft",
-        "dataSource.category": "security",
-        "metadata.product.name": "Microsoft 365 Defender for Endpoint",
-        "metadata.product.vendor_name": "Microsoft",
-        "metadata.version": "1.0.0"
-    },
-    "formats": [
+  "attributes": {
+    "dataSource.name": "SentinelOne",
+    "dataSource.vendor": "SentinelOne",
+    "dataSource.category": "security",
+    "metadata.product.name": "SentinelOne",
+    "metadata.product.vendor_name": "SentinelOne",
+    "metadata.product.category": "EDR",
+    "metadata.version": "2.0.0"
+  },
+  "formats": [
+    {
+      "format": "${parse=json}$",
+      "discardAttributes": ["message"],
+      "rewrites": [
         {
-            "format": "$unmapped.{parse=gron}$",
-            "rewrites": [
-                {
-                    "input": "unmapped.Timestamp",
-                    "output": "timestamp",
-                    "match": ".*",
-                    "replace": "$0"
-                }
-            ]
+          "input": "Timestamp",
+          "output": "timestamp",
+          "match": ".*",
+          "replace": "$0"
         }
-    ],
-    "mappings": {
-        "version": 1,
-        "mappings": [
-            {
-                "predicate": "true",
-                "transformations": [
-                    {
-                        "constant": {
-                            "value": 1,
-                            "field": "activity_id"
-                        }
-                    },
-                    {
-                        "constant": {
-                            "value": "Launch",
-                            "field": "activity_name"
-                        }
-                    },
-                    {
-                        "constant": {
-                            "value": 1,
-                            "field": "category_uid"
-                        }
-                    },
-                    {
-                        "constant": {
-                            "value": 1007,
-                            "field": "class_uid"
-                        }
-                    },
-                    {
-                        "constant": {
-                            "value": "Process Activity",
-                            "field": "class_name"
-                        }
-                    },
-                    {
-                        "constant": {
-                            "value": "System Activity",
-                            "field": "category_name"
-                        }
-                    },
-                    {
-                        "constant": {
-                            "value": 100701,
-                            "field": "type_uid"
-                        }
-                    },
-                    {
-                        "constant": {
-                            "value": "Process Activity: Launch",
-                            "field": "type_name"
-                        }
-                    },
-                    {
-                        "copy": {
-                            "from": "unmapped.Timestamp",
-                            "to": "time"
-                        }
-                    },
-                    {
-                        "cast": {
-                            "field": "time",
-                            "type": "iso8601TimestampToEpochSec"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.DeviceName",
-                            "to": "device.hostname"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.DeviceId",
-                            "to": "device.uid"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.AccountName",
-                            "to": "actor.user.name"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.AccountDomain",
-                            "to": "actor.user.domain"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.ActionType",
-                            "to": "activity_name"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.FileName",
-                            "to": "file.name"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.FolderPath",
-                            "to": "file.path"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.SHA1",
-                            "to": "file.hashes.sha1"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.MD5",
-                            "to": "file.hashes.md5"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.DetectionId",
-                            "to": "malware.name"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.ProcessName",
-                            "to": "process.name"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.ProcessId",
-                            "to": "process.pid"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.ProcessCommandLine",
-                            "to": "process.command_line"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.ParentProcessId",
-                            "to": "process.parent_process.pid"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.ParentProcessName",
-                            "to": "process.parent_process.name"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.RemoteIP",
-                            "to": "dst_endpoint.ip"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.RemotePort",
-                            "to": "dst_endpoint.port"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.RemoteUrl",
-                            "to": "dst_endpoint.url.url_string"
-                        }
-                    },
-                    {
-                        "rename": {
-                            "from": "unmapped.Protocol",
-                            "to": "connection_info.protocol_name"
-                        }
-                    }
-                ]
-            }
-        ]
+      ]
     }
+  ],
+  "mappings": {
+    "version": 1,
+    "mappings": [
+      {
+        "predicate": "true",
+        "transformations": [
+          {"constant": {"value": "edr", "field": "i.scheme"}},
+          {"constant": {"value": "SentinelOne", "field": "dataSource.name"}},
+          {"constant": {"value": "SentinelOne", "field": "dataSource.vendor"}},
+          {"constant": {"value": "security", "field": "dataSource.category"}},
+          {"constant": {"value": "Microsoft Defender for Endpoint", "field": "event.source"}},
+
+          {"copy": {"from": "Timestamp", "to": "event.time"}},
+          {"cast": {"field": "event.time", "type": "iso8601TimestampToEpochSec"}},
+          {"replace": {"field": "event.time", "regexp": "(\\d+)", "replacement": "$1000"}},
+
+          {"copy": {"from": "DeviceId", "to": "endpoint.id"}},
+          {"copy": {"from": "endpoint.id", "to": "agent.uuid"}},
+          {"copy": {"from": "DeviceName", "to": "endpoint.name"}},
+          {"copy": {"from": "ReportId", "to": "event.id"}},
+          {"copy": {"from": "ActionType", "to": "event.providerEventName"}},
+          {"copy": {"from": "ActionType", "to": "event.type"}},
+          {"copy": {"from": "AdditionalFields", "to": "event.details"}},
+
+          {"copy": {"from": "InitiatingProcessFileName", "to": "src.process.name"}},
+          {"copy": {"from": "InitiatingProcessId", "to": "src.process.pid"}},
+          {"copy": {"from": "InitiatingProcessCommandLine", "to": "src.process.cmdline"}},
+          {"copy": {"from": "InitiatingProcessCreationTime", "to": "src.process.startTime"}},
+          {"copy": {"from": "InitiatingProcessIntegrityLevel", "to": "src.process.integrityLevel"}},
+          {"copy": {"from": "InitiatingProcessTokenElevation", "to": "src.process.tokenElevation"}},
+          {"copy": {"from": "InitiatingProcessFolderPath", "to": "src.process.image.path"}},
+          {"copy": {"from": "InitiatingProcessFileSize", "to": "src.process.image.size"}},
+          {"copy": {"from": "InitiatingProcessSHA1", "to": "src.process.image.sha1"}},
+          {"copy": {"from": "InitiatingProcessSHA256", "to": "src.process.image.sha256"}},
+          {"copy": {"from": "InitiatingProcessMD5", "to": "src.process.image.md5"}},
+          {"copy": {"from": "InitiatingProcessSignerType", "to": "src.process.publisher"}},
+          {"copy": {"from": "InitiatingProcessSignatureStatus", "to": "src.process.signedStatus"}},
+          {"copy": {"from": "InitiatingProcessUniqueId", "to": "src.process.uid"}},
+          {"copy": {"from": "InitiatingProcessUniqueId", "to": "src.process.storyline.id"}},
+          {"copy": {"from": "InitiatingProcessVersionInfoFileDescription", "to": "src.process.displayName"}},
+          {"copy": {"from": "InitiatingProcessLogonId", "to": "src.process.sessionId"}},
+          {"copy": {"from": "InitiatingProcessAccountName", "to": "src.process.user"}},
+          {"copy": {"from": "InitiatingProcessAccountDomain", "to": "src.process.rUserName"}},
+          {"copy": {"from": "InitiatingProcessAccountSid", "to": "src.process.lUserUid"}},
+          {"copy": {"from": "InitiatingProcessAccountUpn", "to": "src.process.eUserName"}},
+          {"copy": {"from": "InitiatingProcessAccountObjectId", "to": "src.process.userId"}},
+          {"copy": {"from": "InitiatingProcessParentFileName", "to": "src.process.parent.name"}},
+          {"copy": {"from": "InitiatingProcessParentId", "to": "src.process.parent.pid"}},
+          {"copy": {"from": "InitiatingProcessParentCreationTime", "to": "src.process.parent.startTime"}},
+
+          {"copy": {"from": "FileName",   "to": "tgt.file.location", "predicate": "_table = 'DeviceFileEvents'"}},
+          {"copy": {"from": "FolderPath", "to": "tgt.file.path",     "predicate": "_table = 'DeviceFileEvents'"}},
+          {"copy": {"from": "FileSize",   "to": "tgt.file.size",     "predicate": "_table = 'DeviceFileEvents'"}},
+          {"copy": {"from": "SHA1",       "to": "tgt.file.sha1",     "predicate": "_table = 'DeviceFileEvents'"}},
+          {"copy": {"from": "SHA256",     "to": "tgt.file.sha256",   "predicate": "_table = 'DeviceFileEvents'"}},
+          {"copy": {"from": "MD5",        "to": "tgt.file.md5",      "predicate": "_table = 'DeviceFileEvents'"}},
+          {"copy": {"from": "PreviousFolderPath", "to": "tgt.file.oldPath"}},
+          {"copy": {"from": "PreviousFileName",   "to": "tgt.file.oldName"}},
+          {"copy": {"from": "FileOriginUrl", "to": "event.url.action"}},
+          {"copy": {"from": "FileOriginIP",  "to": "src.endpoint.ip.address"}},
+
+          {"copy": {"from": "FileName",   "to": "tgt.process.name",         "predicate": "_table = 'DeviceProcessEvents'"}},
+          {"copy": {"from": "FolderPath", "to": "tgt.process.image.path",   "predicate": "_table = 'DeviceProcessEvents'"}},
+          {"copy": {"from": "FileSize",   "to": "tgt.process.image.size",   "predicate": "_table = 'DeviceProcessEvents'"}},
+          {"copy": {"from": "SHA1",       "to": "tgt.process.image.sha1",   "predicate": "_table = 'DeviceProcessEvents'"}},
+          {"copy": {"from": "SHA256",     "to": "tgt.process.image.sha256", "predicate": "_table = 'DeviceProcessEvents'"}},
+          {"copy": {"from": "MD5",        "to": "tgt.process.image.md5",    "predicate": "_table = 'DeviceProcessEvents'"}},
+
+          {"copy": {"from": "FileName",   "to": "tgt.process.name",         "predicate": "_table = 'DeviceEvents'"}},
+          {"copy": {"from": "FolderPath", "to": "tgt.process.image.path",   "predicate": "_table = 'DeviceEvents'"}},
+          {"copy": {"from": "FileSize",   "to": "tgt.process.image.size",   "predicate": "_table = 'DeviceEvents'"}},
+          {"copy": {"from": "SHA1",       "to": "tgt.process.image.sha1",   "predicate": "_table = 'DeviceEvents'"}},
+          {"copy": {"from": "SHA256",     "to": "tgt.process.image.sha256", "predicate": "_table = 'DeviceEvents'"}},
+          {"copy": {"from": "MD5",        "to": "tgt.process.image.md5",    "predicate": "_table = 'DeviceEvents'"}},
+
+          {"copy": {"from": "ProcessId",                          "to": "tgt.process.pid"}},
+          {"copy": {"from": "ProcessCommandLine",                 "to": "tgt.process.cmdline"}},
+          {"copy": {"from": "ProcessCreationTime",                "to": "tgt.process.startTime"}},
+          {"copy": {"from": "ProcessIntegrityLevel",              "to": "tgt.process.integrityLevel"}},
+          {"copy": {"from": "ProcessTokenElevation",              "to": "tgt.process.tokenElevation"}},
+          {"copy": {"from": "ProcessUniqueId",                    "to": "tgt.process.uid"}},
+          {"copy": {"from": "ProcessVersionInfoCompanyName",      "to": "tgt.process.publisher"}},
+          {"copy": {"from": "ProcessVersionInfoOriginalFileName", "to": "tgt.process.displayName"}},
+          {"copy": {"from": "ProcessVersionInfoFileDescription",  "to": "tgt.process.description"}},
+          {"copy": {"from": "ProcessVersionInfoProductVersion",   "to": "tgt.process.image.binaryVersion"}},
+
+          {"copy": {"from": "AccountName", "to": "tgt.process.user"}},
+          {"copy": {"from": "AccountDomain", "to": "tgt.process.rUserName"}},
+          {"copy": {"from": "AccountSid", "to": "tgt.process.lUserUid"}},
+          {"copy": {"from": "AccountUpn", "to": "tgt.process.eUserName"}},
+          {"copy": {"from": "AccountObjectId", "to": "tgt.process.userId"}},
+          {"copy": {"from": "LogonId", "to": "tgt.process.sessionId"}},
+
+          {"copy": {"from": "RemoteIP", "to": "dst.ip.address"}},
+          {"copy": {"from": "RemotePort", "to": "dst.port.number"}},
+          {"copy": {"from": "RemoteUrl", "to": "event.url.action"}},
+          {"copy": {"from": "RemoteDeviceName", "to": "dst.endpoint.name"}},
+          {"copy": {"from": "LocalIP", "to": "src.ip.address"}},
+          {"copy": {"from": "LocalPort", "to": "src.port.number"}},
+          {"copy": {"from": "Protocol", "to": "event.network.protocolName"}},
+
+          {"copy": {"from": "RegistryKey", "to": "registry.keyPath"}},
+          {"copy": {"from": "RegistryValueName", "to": "registry.value"}},
+          {"copy": {"from": "RegistryValueData", "to": "registry.valueFullSize"}},
+          {"copy": {"from": "RegistryValueType", "to": "registry.valueType"}},
+          {"copy": {"from": "PreviousRegistryKey", "to": "registry.oldValue"}},
+          {"copy": {"from": "PreviousRegistryValueName", "to": "registry.oldValueType"}},
+          {"copy": {"from": "PreviousRegistryValueData", "to": "registry.oldValueFullSize"}},
+
+          {"copy": {"from": "LogonType", "to": "event.login.type"}},
+          {"copy": {"from": "FailureReason", "to": "event.login.failureReason"}},
+          {"copy": {"from": "Application", "to": "event.classification"}},
+          {"copy": {"from": "IPAddress", "to": "src.ip.address"}},
+          {"copy": {"from": "Port", "to": "src.port.number"}},
+          {"copy": {"from": "DestinationIPAddress", "to": "dst.ip.address"}},
+          {"copy": {"from": "DestinationPort", "to": "dst.port.number"}},
+          {"copy": {"from": "SessionId", "to": "event.login.sessionId"}},
+          {"copy": {"from": "ErrorCode", "to": "event.login.failureReason"}},
+          {"copy": {"from": "AccountUpn", "to": "event.login.userName"}},
+          {"copy": {"from": "AccountDisplayName", "to": "event.login.accountDomain"}},
+          {"copy": {"from": "OSPlatform", "to": "endpoint.os"}},
+          {"copy": {"from": "UserAgent", "to": "event.profileAddition.update"}},
+          {"copy": {"from": "RiskState", "to": "event.outcome.reason"}},
+          {"copy": {"from": "RiskLevelAggregated", "to": "event.certainty"}},
+          {"copy": {"from": "ConditionalAccessStatus", "to": "event.outcome.result"}},
+          {"copy": {"from": "DeviceType", "to": "endpoint.type"}},
+
+          {"copy": {"from": "AlertId", "to": "event.externalID"}},
+          {"copy": {"from": "Title", "to": "event.classification"}},
+          {"copy": {"from": "Category", "to": "event.mitreTactic"}},
+          {"copy": {"from": "Severity", "to": "event.outcome.result"}},
+          {"copy": {"from": "AttackTechniques", "to": "event.mitreTechnique.name"}},
+          {"copy": {"from": "DetectionSource", "to": "event.source"}},
+          {"copy": {"from": "ServiceSource", "to": "event.outcome.reason"}},
+
+          {"constant": {"value": "file", "field": "event.category", "predicate": "_table = 'DeviceFileEvents'"}},
+          {"constant": {"value": "process", "field": "event.category", "predicate": "_table = 'DeviceProcessEvents'"}},
+          {"constant": {"value": "ip", "field": "event.category", "predicate": "_table = 'DeviceNetworkEvents'"}},
+          {"constant": {"value": "registry", "field": "event.category", "predicate": "_table = 'DeviceRegistryEvents'"}},
+          {"constant": {"value": "logins", "field": "event.category", "predicate": "_table = 'DeviceLogonEvents'"}},
+          {"constant": {"value": "logins", "field": "event.category", "predicate": "_table = 'IdentityLogonEvents'"}},
+          {"constant": {"value": "logins", "field": "event.category", "predicate": "_table = 'EntraIdSignInEvents'"}},
+          {"constant": {"value": "profile_activity", "field": "event.category", "predicate": "_table = 'CloudAppEvents'"}},
+          {"constant": {"value": "threat_intelligence_indicators", "field": "event.category", "predicate": "_table = 'AlertInfo'"}},
+
+          {"copy": {"from": "_table", "to": "event.target"}},
+
+          {"constant": {"value": true, "field": "event.login.loginIsSuccessful", "predicate": "ActionType = 'LogonSuccess'"}},
+          {"constant": {"value": false, "field": "event.login.loginIsSuccessful", "predicate": "ActionType = 'LogonFailed'"}},
+
+          {"constant": {"value": "File Creation",              "field": "event.type", "predicate": "ActionType = 'FileCreated'"}},
+          {"constant": {"value": "File Modification",          "field": "event.type", "predicate": "ActionType = 'FileModified'"}},
+          {"constant": {"value": "File Rename",                "field": "event.type", "predicate": "ActionType = 'FileRenamed'"}},
+          {"constant": {"value": "File Deletion",              "field": "event.type", "predicate": "ActionType = 'FileDeleted'"}},
+
+          {"constant": {"value": "Process Creation",           "field": "event.type", "predicate": "ActionType = 'ProcessCreated'"}},
+          {"constant": {"value": "Process Modification",       "field": "event.type", "predicate": "ActionType = 'ProcessPrimaryTokenModified'"}},
+          {"constant": {"value": "Open Remote Process Handle", "field": "event.type", "predicate": "ActionType = 'LsassAccess'"}},
+          {"constant": {"value": "Open Remote Process Handle", "field": "event.type", "predicate": "ActionType = 'OpenProcessApiCall'"}},
+          {"constant": {"value": "Duplicate Process Handle",   "field": "event.type", "predicate": "ActionType = 'ProcessDuplicateHandle'"}},
+
+          {"constant": {"value": "Module Load",                "field": "event.type", "predicate": "ActionType = 'ImageLoaded'"}},
+
+          {"constant": {"value": "IP Connect",                 "field": "event.type", "predicate": "ActionType = 'ConnectionSuccess'"}},
+          {"constant": {"value": "IP Connect",                 "field": "event.type", "predicate": "ActionType = 'ConnectionAttempt'"}},
+          {"constant": {"value": "IP Connect",                 "field": "event.type", "predicate": "ActionType = 'ConnectionFailed'"}},
+          {"constant": {"value": "IP Listen",                  "field": "event.type", "predicate": "ActionType = 'InboundConnectionAccepted'"}},
+          {"constant": {"value": "IP Listen",                  "field": "event.type", "predicate": "ActionType = 'ListeningConnectionCreated'"}},
+          {"constant": {"value": "DNS Resolved",               "field": "event.type", "predicate": "ActionType = 'DnsConnectionInspected'"}},
+          {"constant": {"value": "DNS Resolved",               "field": "event.type", "predicate": "ActionType = 'DnsQueryResponse'"}},
+          {"constant": {"value": "GET",                        "field": "event.type", "predicate": "ActionType = 'HttpConnectionInspected'"}},
+          {"constant": {"value": "Named Pipe Connection",      "field": "event.type", "predicate": "ActionType = 'NamedPipeEvent'"}},
+          {"constant": {"value": "Named Pipe Creation",        "field": "event.type", "predicate": "ActionType = 'NamedPipeCreated'"}},
+
+          {"constant": {"value": "Registry Value Modified",    "field": "event.type", "predicate": "ActionType = 'RegistryValueSet'"}},
+          {"constant": {"value": "Registry Value Modified",    "field": "event.type", "predicate": "ActionType = 'RegistryValueModified'"}},
+          {"constant": {"value": "Registry Value Create",      "field": "event.type", "predicate": "ActionType = 'RegistryValueCreated'"}},
+          {"constant": {"value": "Registry Value Delete",      "field": "event.type", "predicate": "ActionType = 'RegistryValueDeleted'"}},
+          {"constant": {"value": "Registry Key Create",        "field": "event.type", "predicate": "ActionType = 'RegistryKeyCreated'"}},
+          {"constant": {"value": "Registry Key Delete",        "field": "event.type", "predicate": "ActionType = 'RegistryKeyDeleted'"}},
+          {"constant": {"value": "Registry Key Rename",        "field": "event.type", "predicate": "ActionType = 'RegistryKeyRenamed'"}},
+
+          {"constant": {"value": "Command Script",             "field": "event.type", "predicate": "ActionType = 'AmsiScriptDetection'"}},
+          {"constant": {"value": "Command Script",             "field": "event.type", "predicate": "ActionType = 'PowerShellCommand'"}},
+          {"constant": {"value": "File Scan",                  "field": "event.type", "predicate": "ActionType = 'AntivirusDetection'"}},
+          {"constant": {"value": "File Scan",                  "field": "event.type", "predicate": "ActionType = 'AntivirusScanCompleted'"}},
+          {"constant": {"value": "Behavioral Indicators",      "field": "event.type", "predicate": "ActionType = 'ExploitGuardNonMicrosoftSignedBlocked'"}},
+          {"constant": {"value": "Behavioral Indicators",      "field": "event.type", "predicate": "ActionType = 'ExploitGuardChildProcessBlocked'"}},
+          {"constant": {"value": "Behavioral Indicators",      "field": "event.type", "predicate": "ActionType = 'AsrLsassCredentialTheftAudited'"}},
+          {"constant": {"value": "Behavioral Indicators",      "field": "event.type", "predicate": "ActionType = 'AsrLsassCredentialTheftBlocked'"}},
+
+          {"constant": {"value": "Task Register",              "field": "event.type", "predicate": "ActionType = 'ScheduledTaskCreated'"}},
+          {"constant": {"value": "Task Update",                "field": "event.type", "predicate": "ActionType = 'ScheduledTaskUpdated'"}},
+          {"constant": {"value": "Task Start",                 "field": "event.type", "predicate": "ActionType = 'ScheduledTaskStart'"}},
+          {"constant": {"value": "Task Trigger",               "field": "event.type", "predicate": "ActionType = 'ScheduledTaskTriggered'"}},
+          {"constant": {"value": "Task Delete",                "field": "event.type", "predicate": "ActionType = 'ScheduledTaskDeleted'"}},
+
+          {"constant": {"value": "Login",                      "field": "event.type", "predicate": "ActionType = 'LogonSuccess'"}},
+          {"constant": {"value": "Login",                      "field": "event.type", "predicate": "ActionType = 'LogonFailed'"}},
+          {"constant": {"value": "Login",                      "field": "event.type", "predicate": "ActionType = 'LogonAttempted'"}},
+          {"constant": {"value": "Logout",                     "field": "event.type", "predicate": "ActionType = 'Logoff'"}},
+
+          {"constant": {"value": "Not Reported",               "field": "event.type", "predicate": "_table = 'CloudAppEvents'"}},
+          {"constant": {"value": "Not Reported",               "field": "event.type", "predicate": "_table = 'AlertInfo'"}},
+
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'ConnectionSuccess'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'ConnectionAttempt'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'ConnectionFailed'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'ConnectionRequest'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'ConnectionFound'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'HttpConnectionInspected'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'SslConnectionInspected'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'DnsConnectionInspected'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'IcmpConnectionInspected'"}},
+          {"constant": {"value": "OUTGOING", "field": "event.network.direction", "predicate": "ActionType = 'DnsQueryResponse'"}},
+          {"constant": {"value": "INCOMING", "field": "event.network.direction", "predicate": "ActionType = 'InboundConnectionAccepted'"}},
+          {"constant": {"value": "LISTEN",   "field": "event.network.direction", "predicate": "ActionType = 'ListeningConnectionCreated'"}}
+        ]
+      }
+    ]
+  }
 }
